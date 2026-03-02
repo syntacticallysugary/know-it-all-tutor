@@ -208,8 +208,15 @@ jobs:
           fi
           echo "AWS credentials are present."
 
-      - name: Verify CDK is available
-        run: /usr/local/bin/cdk --version
+      - name: Add user npm-global to PATH and verify CDK
+        run: |
+          echo "$HOME/.npm-global/bin" >> $GITHUB_PATH
+          # Use user-installed CDK if newer than system CDK
+          CDK_BIN="$(command -v cdk || echo /usr/local/bin/cdk)"
+          if [ -x "$HOME/.npm-global/bin/cdk" ]; then
+            CDK_BIN="$HOME/.npm-global/bin/cdk"
+          fi
+          $CDK_BIN --version
 
       - name: Create Python venv and add to PATH
         run: |
