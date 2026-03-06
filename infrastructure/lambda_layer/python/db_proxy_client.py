@@ -23,20 +23,65 @@ class DBProxyClient:
                           Defaults to DB_PROXY_FUNCTION_NAME env var
         """
         self.function_name = function_name or os.environ.get('DB_PROXY_FUNCTION_NAME')
-        
-        if not self.function_name:
+
+        if not self.function_name and os.environ.get('LOCAL_DEV') != 'true':
             raise ValueError("DB_PROXY_FUNCTION_NAME environment variable not set")
     
+    def _invoke_local(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute database operation directly for LOCAL_DEV mode (no Lambda hop)."""
+        from database import get_db_connection
+
+        operation = payload.get('operation')
+        query = payload.get('query', '')
+        params = payload.get('params')
+        return_dict = payload.get('return_dict', False)
+
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+
+            if operation == 'health_check':
+                cursor.execute("SELECT 1")
+                return {'healthy': True}
+
+            elif operation == 'execute_query':
+                cursor.execute(query, params or [])
+                if cursor.description is not None:
+                    if return_dict:
+                        columns = [col.name for col in cursor.description]
+                        rows = [dict(zip(columns, row)) for row in cursor.fetchall()]
+                    else:
+                        rows = cursor.fetchall()
+                    return {'result': rows}
+                return {'result': []}
+
+            elif operation == 'execute_query_one':
+                cursor.execute(query, params or [])
+                row = cursor.fetchone()
+                if row is not None and return_dict:
+                    columns = [col.name for col in cursor.description]
+                    row = dict(zip(columns, row))
+                return {'result': row}
+
+            elif operation == 'execute_many':
+                cursor.executemany(query, payload.get('params_list', []))
+                return {'row_count': cursor.rowcount}
+
+            else:
+                raise Exception(f"Unknown operation: {operation}")
+
     def _invoke(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         """
         Invoke the DB proxy Lambda
-        
+
         Args:
             payload: Event payload for the Lambda
-            
+
         Returns:
             Response from the Lambda
         """
+        if os.environ.get('LOCAL_DEV') == 'true':
+            return self._invoke_local(payload)
+
         response = lambda_client.invoke(
             FunctionName=self.function_name,
             InvocationType='RequestResponse',  # Synchronous

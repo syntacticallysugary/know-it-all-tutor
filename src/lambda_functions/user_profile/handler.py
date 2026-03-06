@@ -13,6 +13,7 @@ sys.path.append('/opt/python')
 
 from db_proxy_client import DBProxyClient
 from response_utils import create_success_response, create_error_response
+from auth_utils import extract_user_from_cognito_event
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -32,13 +33,10 @@ def lambda_handler(event, context):
     try:
         http_method = event.get('httpMethod')
         
-        # Extract user from Cognito authorizer
-        authorizer = event.get('requestContext', {}).get('authorizer', {})
-        claims = authorizer.get('claims', {})
-        cognito_sub = claims.get('sub')
-        
-        if not cognito_sub:
+        auth_result = extract_user_from_cognito_event(event)
+        if not auth_result['valid']:
             return create_error_response(401, 'Unauthorized - No user identity found')
+        cognito_sub = auth_result['user_id']
         
         if http_method == 'GET':
             return handle_get_profile(cognito_sub)

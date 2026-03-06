@@ -1,0 +1,208 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Local development SAM template for AI Tutor System.
+  Mirrors backend_stack.py routes but uses direct DB connections instead of DB Proxy Lambda.
+  Only use with: sam local start-api --docker-network host
+
+# ---------------------------------------------------------------------------
+# Global defaults applied to every AWS::Serverless::Function below.
+# DB_PASSWORD being set activates the fast-path in database.py that skips
+# Secrets Manager entirely and reads credentials from environment variables.
+# LOCAL_DEV=true activates local-dev shims in the Lambda layer:
+#   - auth_utils.py  → decodes JWT from Authorization header (no sig verification)
+#   - db_proxy_client.py → direct psycopg DB call instead of Lambda invocation
+# ---------------------------------------------------------------------------
+Globals:
+  Function:
+    Runtime: python3.12
+    Timeout: 30
+    MemorySize: 512
+    Layers:
+      - !Ref TutorLayer
+    Environment:
+      Variables:
+        LOCAL_DEV: "true"
+        # DB credentials — match scripts/sql/setup-ci-testdb.sql.
+        # DB_HOST is the Docker bridge gateway (172.17.0.1) so Lambda containers
+        # on the bridge network can reach the pg-proxy running on the host.
+        # pg-proxy (scripts/pg-proxy.py) forwards port 15432 → 127.0.0.1:5432.
+        DB_HOST: "172.17.0.1"
+        DB_PORT: "15432"
+        DB_NAME: "tutor_system_test"
+        DB_USER: "testuser"
+        DB_PASSWORD: "testpassword"
+        AWS_DEFAULT_REGION: "us-east-1"
+
+Resources:
+
+  # -------------------------------------------------------------------------
+  # REST API — SAM adds a mock OPTIONS integration on every path so the
+  # browser CORS preflight resolves without hitting your Lambda code.
+  # -------------------------------------------------------------------------
+  TutorApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: local
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,Authorization,X-Api-Key,X-Amz-Date,X-Amz-Security-Token'"
+        AllowOrigin: "'http://localhost:5173'"
+        AllowCredentials: true
+
+  # -------------------------------------------------------------------------
+  # Lambda Layer — pre-built; psycopg[binary] and shared Python modules.
+  # SAM mounts infrastructure/lambda_layer/python/ at /opt/python/ inside
+  # each Lambda container.
+  # -------------------------------------------------------------------------
+  TutorLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: tutor-layer-local
+      ContentUri: infrastructure/lambda_layer/
+      CompatibleRuntimes:
+        - python3.12
+
+  # -------------------------------------------------------------------------
+  # Auth — calls real AWS Cognito (public API, no VPC required).
+  # POST /auth/register  POST /auth/login
+  # No Cognito authorizer on these routes (same as production).
+  # -------------------------------------------------------------------------
+  AuthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/lambda_functions/auth/
+      Handler: handler.lambda_handler
+      Environment:
+        Variables:
+          COGNITO_USER_POOL_ID: "us-east-1_Bg1FA4097"
+          COGNITO_CLIENT_ID: "6d56bp4dfiu42chkdjjmln6bb9"
+      Events:
+        RegisterPost:
+          Type: Api
+          Properties:
+            Path: /auth/register
+            Method: POST
+            RestApiId: !Ref TutorApi
+        LoginPost:
+          Type: Api
+          Properties:
+            Path: /auth/login
+            Method: POST
+            RestApiId: !Ref TutorApi
+
+  # -------------------------------------------------------------------------
+  # User Profile — GET /profile
+  # Expects Authorization: Bearer <cognito-jwt>; LOCAL_DEV shim decodes it.
+  # -------------------------------------------------------------------------
+  ProfileFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/lambda_functions/user_profile/
+      Handler: handler.lambda_handler
+      Events:
+        ProfileGet:
+          Type: Api
+          Properties:
+            Path: /profile
+            Method: GET
+            RestApiId: !Ref TutorApi
+
+  # -------------------------------------------------------------------------
+  # Domains — GET /domains
+  # -------------------------------------------------------------------------
+  DomainFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/lambda_functions/domain_management/
+      Handler: handler.lambda_handler
+      Events:
+        DomainsGet:
+          Type: Api
+          Properties:
+            Path: /domains
+            Method: GET
+            RestApiId: !Ref TutorApi
+
+  # -------------------------------------------------------------------------
+  # Batch Upload — POST /batch/validate   POST /batch/upload
+  # Note: S3 upload step won't work locally (no S3 bucket), but validation
+  # is DB-only and will work fine.
+  # -------------------------------------------------------------------------
+  BatchUploadFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/lambda_functions/batch_upload/
+      Handler: handler.lambda_handler
+      Environment:
+        Variables:
+          S3_BUCKET_NAME: "local-tutor-uploads"
+      Events:
+        BatchValidatePost:
+          Type: Api
+          Properties:
+            Path: /batch/validate
+            Method: POST
+            RestApiId: !Ref TutorApi
+        BatchUploadPost:
+          Type: Api
+          Properties:
+            Path: /batch/upload
+            Method: POST
+            RestApiId: !Ref TutorApi
+
+  # -------------------------------------------------------------------------
+  # Quiz Engine — POST /quiz/start   POST /quiz/answer   GET /quiz/question
+  # -------------------------------------------------------------------------
+  QuizEngineFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/lambda_functions/quiz_engine/
+      Handler: handler.lambda_handler
+      Events:
+        QuizStartPost:
+          Type: Api
+          Properties:
+            Path: /quiz/start
+            Method: POST
+            RestApiId: !Ref TutorApi
+        QuizAnswerPost:
+          Type: Api
+          Properties:
+            Path: /quiz/answer
+            Method: POST
+            RestApiId: !Ref TutorApi
+        QuizQuestionGet:
+          Type: Api
+          Properties:
+            Path: /quiz/question
+            Method: GET
+            RestApiId: !Ref TutorApi
+
+  # -------------------------------------------------------------------------
+  # Progress — GET /progress   GET /progress/dashboard
+  # -------------------------------------------------------------------------
+  ProgressFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/lambda_functions/progress_tracking/
+      Handler: handler.lambda_handler
+      Events:
+        ProgressGet:
+          Type: Api
+          Properties:
+            Path: /progress
+            Method: GET
+            RestApiId: !Ref TutorApi
+        DashboardGet:
+          Type: Api
+          Properties:
+            Path: /progress/dashboard
+            Method: GET
+            RestApiId: !Ref TutorApi
+
+  # -------------------------------------------------------------------------
+  # Answer Evaluator (ML / Docker) is intentionally omitted.
+  # POST /quiz/evaluate requires a 795 MB ONNX container — too heavy for
+  # local dev.  The quiz flow (start → question → answer) works without it.
+  # -------------------------------------------------------------------------

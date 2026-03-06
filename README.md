@@ -1,279 +1,247 @@
 # Know-It-All Tutor System
 
-A serverless web application that transforms terminology-heavy subjects into interactive, hands-on learning experiences. Built with AWS Lambda, React, and a custom ML model for intelligent answer evaluation.
+A serverless web application that transforms terminology-heavy subjects into interactive, ML-powered learning experiences. Users create knowledge domains, define terms, and are quizzed with semantic answer evaluation — meaning the system understands *meaning*, not just exact wording.
 
-## 🎯 Project Vision
-
-To empower students of any subject by providing an interactive, web-based learning environment that transforms complex vocabularies into intuitive, progressive learning experiences.
-
-**Target Users**: Professionals preparing for AWS certification, Python developers, and anyone mastering terminology-heavy subjects.
-
-## 🏗️ Architecture Overview
-
-- **Frontend**: React 18 + TypeScript + Tailwind CSS
-- **Backend**: AWS Lambda (Node.js/Python) + Aurora Serverless PostgreSQL
-- **ML Model**: Custom fine-tuned sentence transformer for semantic answer evaluation
-- **Infrastructure**: Serverless-first with AWS Always Free tier optimization
-
-## 📁 Project Structure
-
-```
-├── artifacts/                          # Professional UI design artifacts (HTML)
-│   ├── sitemap.html                    # Interactive information architecture
-│   ├── user_flow_onboarding.html       # Complete user journey mapping
-│   ├── wireframe_dashboard.html        # Responsive dashboard layouts
-│   ├── wireframe_quiz_interface.html   # Interactive learning interface
-│   └── component_library.html          # Complete design system
-├── final_similarity_model/             # Custom ML model for answer evaluation
-├── .kiro/specs/tutor-system/          # Complete system specifications
-│   ├── requirements.md                 # Functional requirements
-│   ├── design.md                      # System architecture & UI design
-│   ├── datamodel.md                   # Database design & queries
-│   ├── model_interface.md             # ML model integration
-│   ├── vision.md                      # Product vision & roadmap
-│   ├── qa_testing_plan.md             # Testing strategy
-│   ├── ci-cd_plan.md                  # Deployment automation
-│   └── ui/                            # UI/UX design documentation
-│       ├── ui_design.md               # Design plan & principles
-│       ├── design_system.md           # Component library specs
-│       ├── wireframes.md              # Low-fidelity layouts
-│       ├── user_flows.md              # User journey diagrams
-│       ├── sitemap.md                 # Information architecture
-│       ├── mood_boards_style_tiles.md # Visual design direction
-│       └── technical_specifications.md # Implementation details
-└── README.md                          # This file
-```
-
-## 🌐 Live Environments
-
-### Development Environment
-- **Frontend URL**: https://d3awlgby2429wc.cloudfront.net
-- **API URL**: https://3kuv3v3u89.execute-api.us-east-1.amazonaws.com/prod/
-- **Cognito User Pool**: us-east-1_Bg1FA4097
-- **CloudWatch Dashboard**: https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#dashboards:name=TutorSystem-dev
-- **Status**: Active (AWS Free Tier) - Testing multi-stack architecture
-
-## 🚀 Key Features
-
-### For Students
-- **Interactive Quizzes**: Semantic answer evaluation with immediate feedback
-- **Progress Tracking**: Visual progress indicators and achievement system
-- **Domain-Agnostic**: Works with any terminology-heavy subject
-- **Responsive Design**: Optimized for desktop, tablet, and mobile
-
-### For Content Creators
-- **Easy Domain Creation**: Intuitive interface for adding knowledge domains
-- **Bulk Import**: JSON-based batch upload for large content sets
-- **Preview & Validation**: Test content before publishing
-
-### For Administrators
-- **Batch Upload**: Efficient content management for large datasets
-- **Analytics Dashboard**: Usage metrics and performance insights
-- **Content Moderation**: Review and approve user-generated content
-
-## 🎨 Design System
-
-The system features a comprehensive design system with:
-- **Professional aesthetic** suitable for certification prep and professional development
-- **Accessibility-first** approach with WCAG 2.1 AA compliance
-- **Responsive design** with mobile-first approach
-- **Interactive components** with smooth animations and feedback
-
-**View Design Artifacts**: Open any HTML file in the `artifacts/` directory to see interactive design documentation.
-
-## 🧠 ML-Powered Answer Evaluation
-
-- **Custom Model**: Fine-tuned DistilBERT sentence transformer
-- **Semantic Understanding**: Recognizes synonyms and alternative phrasings
-- **Graduated Feedback**: Constructive guidance based on similarity scores
-- **Domain-Agnostic**: Works across any knowledge domain without retraining
-
-## 📊 Technical Highlights
-
-### Performance Targets
-- **First Contentful Paint**: < 1.5 seconds
-- **Time to Interactive**: < 3 seconds
-- **Lighthouse Score**: > 90 across all metrics
-- **Bundle Size**: < 250KB gzipped
-
-### Scalability
-- **Serverless Architecture**: Auto-scaling with AWS Lambda
-- **Database**: Aurora Serverless PostgreSQL with connection pooling
-- **CDN**: CloudFront distribution for global performance
-- **Cost-Optimized**: Designed for AWS Always Free tier
-
-## 🔧 Development
-
-### Prerequisites
-- Node.js 18+
-- Python 3.11+
-- AWS CLI configured
-- Docker and Docker Compose (for LocalStack)
-
-### Local Development with LocalStack
-
-This project uses [LocalStack](https://localstack.cloud/) for local AWS development and testing. LocalStack provides a fully functional local AWS cloud stack that runs in Docker.
-
-#### Quick Start with LocalStack
-```bash
-# Clone repository
-git clone <repository-url>
-cd know-it-all-tutor
-
-# Install dependencies
-make install
-
-# First time setup (creates database + starts LocalStack)
-make local-dev
-
-# Daily usage (just start LocalStack)
-make localstack-start
-
-# Run tests against LocalStack
-make local-test
-
-# Stop LocalStack when done (PostgreSQL keeps running)
-make localstack-stop
-```
-
-#### Database Options
-
-**Option 1: Use Existing PostgreSQL (Recommended)**
-If you have PostgreSQL installed on your system (which you do), the setup will use your existing PostgreSQL service:
-```bash
-# Setup uses your existing PostgreSQL on port 5432
-make local-dev
-```
-
-**Option 2: Use Containerized PostgreSQL**
-If you prefer to use a separate PostgreSQL container on port 5433:
-```bash
-# Use alternative compose file
-docker-compose -f docker-compose.localstack-with-db.yml up -d
-make localstack-setup
-```
-
-#### LocalStack Development Environment
-
-The project uses LocalStack RDS emulation for Aurora Serverless-like development:
-
-```bash
-make local-dev
-```
-
-#### LocalStack Services Available
-- **Lambda**: Serverless functions
-- **RDS**: PostgreSQL emulation (Aurora Serverless-like)
-- **S3**: Object storage
-- **API Gateway**: REST APIs
-- **Secrets Manager**: Credential storage
-- **Authentication**: Mock authentication (Cognito requires paid LocalStack tier)
-- **CloudWatch**: Logging and monitoring
-- **IAM**: Identity and access management
-
-#### LocalStack Commands
-```bash
-# Development Environment
-make local-dev          # Start RDS emulation environment
-
-# Testing & Validation
-make localstack-verify  # Verify all services
-make test-rds          # Test RDS connectivity
-make test-rds-secret   # Test Secrets Manager integration
-
-# Management
-make localstack-status # Check status
-make localstack-logs   # View logs
-make localstack-stop   # Stop services
-make localstack-stop
-
-# Full local development setup (start + setup)
-make local-dev
-```
-
-#### Environment Configuration
-LocalStack uses `.env.localstack` for configuration:
-- **LocalStack endpoint**: `http://localhost:4566`
-- **PostgreSQL**: `localhost:5432`
-- **Test credentials**: `test/test` (AWS keys)
-- **Sample data**: Pre-loaded users and domains
-
-#### LocalStack Web UI
-Access the LocalStack Web UI at: `http://localhost:4566/_localstack/health`
-
-### Traditional Development
-```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Run tests
-npm test
-```
-
-### Documentation
-- **System Design**: See `.kiro/specs/tutor-system/design.md`
-- **API Documentation**: See `.kiro/specs/tutor-system/model_interface.md`
-- **UI Components**: Open `artifacts/component_library.html`
-- **User Flows**: Open `artifacts/user_flow_onboarding.html`
-
-## 🧪 Testing Strategy
-
-- **Unit Tests**: Jest + React Testing Library
-- **Integration Tests**: API and database integration
-- **E2E Tests**: Playwright for complete user journeys
-- **Property-Based Tests**: fast-check for comprehensive coverage
-- **Accessibility Tests**: jest-axe for WCAG compliance
-- **Performance Tests**: Lighthouse CI for web vitals
-
-## 🚀 Deployment
-
-### Current Deployment Architecture
-
-The system uses an **iterative deployment approach** for incremental infrastructure development:
-
-```bash
-# Deploy current infrastructure
-cd infrastructure
-cdk deploy
-```
-
-This deploys the active stack (`auth_only_stack.py`) which includes:
-- VPC, RDS PostgreSQL, Cognito User Pool
-- Lambda functions (Auth, Profile, Domain, Progress, Answer Evaluator)
-- API Gateway with Cognito authorizer
-- S3 + CloudFront for frontend hosting
-
-**For complete deployment documentation, see [`infrastructure/README.md`](infrastructure/README.md)**
-
-### Future Production Deployment
-
-The system will transition to automated deployment via AWS CodePipeline:
-- **Development**: Auto-deploy from `develop` branch
-- **Production**: Auto-deploy from `main` branch
-- **Infrastructure**: AWS CDK for infrastructure as code
-- **Database**: Automated migrations with rollback support
-
-## 📈 Success Metrics
-
-- **Retention**: Percentage of users completing full domains
-- **Activation**: Time from landing to first quiz completion
-- **Engagement**: Average session duration and return visits
-- **Learning Effectiveness**: Improvement in quiz scores over time
-
-## 🤝 Contributing
-
-1. Review the system design in `.kiro/specs/tutor-system/`
-2. Check the UI design system in `artifacts/component_library.html`
-3. Follow the testing strategy outlined in `qa_testing_plan.md`
-4. Ensure accessibility compliance with design standards
-
-## 📄 License
-
-[License information to be added]
+**Portfolio project** demonstrating production AWS architecture, multi-stack CDK IaC, CI/CD automation, and custom ML model deployment.
 
 ---
 
-**Built with ❤️ for effective learning and professional development**
+## Live Environment
+
+| Resource | URL |
+|----------|-----|
+| Frontend | https://d3awlgby2429wc.cloudfront.net |
+| API | https://3kuv3v3u89.execute-api.us-east-1.amazonaws.com/prod/ |
+| Cognito User Pool | `us-east-1_Bg1FA4097` |
+
+---
+
+## Architecture
+
+### Infrastructure: 6-Stack CDK Deployment
+
+The system uses AWS CDK with explicit dependency ordering across six stacks:
+
+```
+NetworkStack     → VPC, subnets, security groups
+DatabaseStack    → RDS PostgreSQL, Secrets Manager, DB Proxy Lambda
+AuthStack        → Cognito User Pool, Pre-SignUp trigger
+BackendStack     → API Gateway, Lambda functions, Lambda Layer
+FrontendStack    → S3 bucket, CloudFront distribution
+MonitoringStack  → CloudWatch dashboards, alarms, budget alerts
+```
+
+Each stack is independently deployable (within dependency constraints), making incremental updates fast and rollbacks surgical.
+
+**Entry point:** `infrastructure/app_multistack.py`
+
+### Backend: Lambda Functions
+
+All business logic runs in Python 3.11 Lambda functions sharing a common Lambda Layer (`infrastructure/lambda_layer/python/`) that provides:
+- `db_proxy_client.py` — DB Proxy pattern (all DB access goes through a proxy Lambda)
+- `auth_utils.py` — Cognito JWT validation helpers
+- `response_utils.py` — Standardized API response formatting
+
+Active Lambda functions (`src/lambda_functions/`):
+
+| Function | Purpose |
+|----------|---------|
+| `auth` | Login, token refresh, Cognito integration |
+| `user_profile` | User account management |
+| `domain_management` | CRUD for knowledge domains and terms |
+| `quiz_engine` | Quiz session management and answer submission |
+| `progress_tracking` | Learning progress and statistics |
+| `batch_upload` | Bulk content import (JSON format) |
+| `db_proxy` | Centralized database access (no direct DB connections from other Lambdas) |
+| `migration_runner` | Schema migration execution |
+| `db_schema_migration` | CDK custom resource for automated migrations on deploy |
+| `secrets_rotation` | Automated DB credential rotation handler |
+| `cognito_pre_signup` | Pre-signup validation trigger |
+| `cognito_triggers` | General Cognito event handling |
+| `db_migration` | Database migration utilities |
+
+The **DB Proxy pattern** deserves mention: rather than giving every Lambda VPC access and a DB connection pool, all database calls route through a single `db_proxy` Lambda. This keeps the architecture simple and avoids connection exhaustion.
+
+### ML: Semantic Answer Evaluation
+
+The answer evaluator uses a custom fine-tuned DistilBERT sentence transformer, optimized to ONNX format for Lambda deployment:
+
+- **Model:** Fine-tuned sentence-transformers model → converted to ONNX
+- **Runtime:** `onnxruntime` + `transformers` (no PyTorch) → ~795MB Docker image
+- **Deployment:** Docker Lambda (`lambda/answer-evaluator/`) with the model embedded
+- **Result:** Semantic similarity scoring that recognizes synonyms and paraphrases — "rapid" matches "fast" matches "quick"
+
+The ONNX conversion reduced the container size by ~60% vs PyTorch and eliminated a heavy dependency.
+
+Local model files:
+- `final_similarity_model/` — original PyTorch checkpoint (reference/retraining)
+- `final_similarity_model_onnx/` — deployed ONNX version (tracked via Git LFS)
+
+### Frontend
+
+React 18 + TypeScript + Tailwind CSS, built with Vite.
+
+- **Source:** `frontend/src/`
+- **Build output:** `frontend/dist/` (deployed to S3 by CDK)
+- **Auth:** AWS Cognito via Amplify SDK
+
+### Database
+
+PostgreSQL on Amazon RDS (single-instance, not Aurora Serverless — cost-optimized for a personal project).
+
+- **Schema migrations:** versioned SQL files in `database/migrations/`, applied automatically on deploy via CDK custom resource
+- **Connection pattern:** DB Proxy Lambda (see above) — no direct Lambda-to-RDS connections
+
+---
+
+## CI/CD
+
+Push to `main` → GitHub Actions runs → CDK deploys (~5 minutes end-to-end).
+
+```
+.github/workflows/github-ci-cd.yml   ← active workflow
+.github/workflows/rollback.yml       ← manual rollback trigger
+```
+
+Pipeline stages:
+1. **Security scans** — Bandit (SAST), Checkov (IaC), TruffleHog (secrets), pip-audit (dependencies)
+2. **Unit tests** — pytest with Moto (AWS mocking, no real AWS calls)
+3. **CDK deploy** — `cdk deploy --all --require-approval never`
+4. **Frontend build + deploy** — `npm run build` → S3 sync → CloudFront invalidation
+
+Tests use [Moto](https://github.com/getmoto/moto) for AWS mocking rather than LocalStack — faster, no Docker required in CI, and runs in-process.
+
+---
+
+## Project Structure
+
+```
+infrastructure/
+├── app_multistack.py           # CDK app entry point (6 stacks)
+├── stacks/                     # One file per CDK stack
+└── lambda_layer/python/        # Shared Lambda Layer code
+
+src/lambda_functions/           # All Lambda business logic
+lambda/answer-evaluator/        # ML inference Docker Lambda
+
+frontend/                       # React app (Vite)
+database/migrations/            # Versioned SQL migrations
+tests/                          # pytest test suite
+scripts/                        # Dev utilities
+data/                           # Sample domain content (seed data)
+docs/                           # Technical documentation
+
+.kiro/specs/                    # System specs and design docs
+.github/workflows/              # CI/CD pipelines
+```
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Python 3.11+
+- Node.js 18+
+- AWS CLI configured (`~/.aws/credentials`)
+- AWS CDK installed (`npm install -g aws-cdk`)
+- Docker (for building the answer-evaluator Lambda image)
+
+### Local Development
+
+```bash
+# Clone and set up Python environment
+git clone git@github.com:huschlej111/ai-tutor-system.git
+cd ai-tutor-system
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+
+# Set up frontend
+cd frontend && npm install
+
+# Run backend tests (uses Moto — no AWS connection needed)
+pytest tests/ -v --ignore=tests/test_localstack_integration.py
+
+# Local DB setup (requires PostgreSQL running locally)
+./scripts/seed-local-dev.sh
+```
+
+### Deployment
+
+```bash
+source venv/bin/activate
+cd infrastructure
+cdk deploy --all
+```
+
+Or just push to `main` — GitHub Actions handles it.
+
+---
+
+## Key Design Decisions
+
+**Why DB Proxy Lambda instead of direct RDS access?**
+VPC-attached Lambdas have cold start overhead and each needs a connection pool slot. The proxy pattern centralizes DB access, keeps non-DB Lambdas outside the VPC (faster cold starts), and prevents connection exhaustion.
+
+**Why ONNX instead of PyTorch for the ML model?**
+PyTorch adds ~1.5GB to a Lambda container. The ONNX runtime with `transformers` handles inference at ~795MB — still large, but within Lambda limits and significantly cheaper in both image storage and cold start time.
+
+**Why 6 CDK stacks instead of one?**
+Separation of concerns in deployment. Network and database changes are rare and risky — having them in separate stacks means a backend code change doesn't trigger a network stack update. It also enables faster targeted deploys (`cdk deploy BackendStack-dev`).
+
+**Cost optimization:**
+- Removed Secrets Manager VPC endpoint (~$14.40/month saved)
+- RDS single-instance instead of Aurora Serverless (right-sized for dev traffic)
+- ECR lifecycle policies to cap stored image count
+- CloudFront caching to minimize Lambda invocations for static assets
+
+---
+
+## Security
+
+See [SECURITY.md](SECURITY.md) for the full security policy.
+
+Security scanning runs automatically in CI:
+- **Bandit** — Python SAST
+- **Checkov** — IaC security validation
+- **TruffleHog** — secrets detection across git history
+- **pip-audit** — dependency vulnerability scanning
+
+Configuration: `.bandit`, `.checkov.yml`
+
+---
+
+## Testing
+
+```bash
+# Full test suite
+pytest tests/ -v
+
+# Specific modules
+pytest tests/test_domain_unit.py -v
+pytest tests/test_quiz_unit.py -v
+
+# Skip integration tests that need a live DB
+pytest tests/ -v --ignore=tests/integration/
+```
+
+Test breakdown:
+- **Unit tests** — individual Lambda handlers with Moto mocks
+- **Property-based tests** — Hypothesis for invariant testing (auth, domains, quiz, batch upload)
+- **Integration tests** — full API call chains against a real local DB
+
+---
+
+## Specifications
+
+Full system specs live in `.kiro/specs/`:
+- `tutor-system/requirements.md` — functional requirements
+- `tutor-system/design.md` — system architecture
+- `tutor-system/datamodel.md` — database schema and query patterns
+- `ci-cd/` — CI/CD pipeline design
+
+---
+
+## License
+
+[License to be added]

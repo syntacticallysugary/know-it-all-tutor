@@ -13,10 +13,15 @@ def create_response(
 ) -> Dict[str, Any]:
     """Create standardized HTTP response for API Gateway"""
     
-    # Default headers with CORS
+    # Default headers with CORS — allow localhost in local dev, CloudFront in production
+    cors_origin = (
+        'http://localhost:5173'
+        if os.environ.get('LOCAL_DEV') == 'true'
+        else 'https://d3awlgby2429wc.cloudfront.net'
+    )
     default_headers = {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'https://d3awlgby2429wc.cloudfront.net',
+        'Access-Control-Allow-Origin': cors_origin,
         'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
         'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
         'Access-Control-Allow-Credentials': 'true'
