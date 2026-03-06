@@ -107,6 +107,7 @@ celerybeat.pid
 .env.localstack
 .env.localstack.rds
 .venv
+.ci-venv/
 env/
 venv/
 ENV/
