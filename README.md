@@ -158,12 +158,67 @@ pip install -r requirements.txt
 
 # Set up frontend
 cd frontend && npm install
+```
 
+#### Running the full stack locally (SAM)
+
+AWS SAM runs the API Gateway and Lambda functions in Docker containers on your machine.
+The frontend dev server (Vite) talks to the local API instead of production.
+
+**One-time setup:**
+
+```bash
+# 1. Install SAM CLI (https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html)
+
+# 2. Create the local test database (requires PostgreSQL running)
+sudo -u postgres psql -f scripts/sql/setup-ci-testdb.sql
+
+# 3. Apply schema + migrations
+psql postgresql://testuser:testpassword@localhost/tutor_system_test \
+     -f src/lambda_functions/migration_runner/migrations/schema_v2.sql
+psql postgresql://testuser:testpassword@localhost/tutor_system_test \
+     -f src/lambda_functions/migration_runner/migrations/003_add_public_domains.sql
+psql postgresql://testuser:testpassword@localhost/tutor_system_test \
+     -f src/lambda_functions/migration_runner/migrations/004_update_quiz_sessions_schema.sql
+
+# 4. Seed your Cognito user into the local DB (fetches your sub from AWS automatically)
+./scripts/seed-local-dev.sh
+
+# 5. Pre-pull the Lambda Docker image (optional, saves time on first run)
+docker pull public.ecr.aws/lambda/python:3.12
+```
+
+**Daily use:**
+
+```bash
+./dev.sh
+# Opens:
+#   http://localhost:5173  — frontend (Vite)
+#   http://localhost:3000  — API (SAM)
+# Ctrl-C stops everything.
+```
+
+`dev.sh` starts three processes: a TCP proxy that bridges Docker containers to
+host PostgreSQL (port 15432 → 5432), the SAM local API gateway, and the Vite
+dev server. First request to each endpoint has a ~10s cold start.
+
+The `template.yaml` at the project root mirrors the CDK backend stack routes.
+`LOCAL_DEV=true` activates shims in the Lambda Layer so that:
+- `auth_utils.py` decodes Cognito JWTs from the Authorization header directly
+  (SAM doesn't run the Cognito authorizer)
+- `db_proxy_client.py` queries PostgreSQL directly instead of invoking the DB
+  Proxy Lambda
+- `response_utils.py` sets CORS to `http://localhost:5173`
+
+> **Note:** The ML answer evaluator (`POST /quiz/evaluate`) is omitted from the
+> local template — it requires a 795 MB Docker image. The rest of the quiz flow
+> (start, question, answer) works without it.
+
+#### Running tests only
+
+```bash
 # Run backend tests (uses Moto — no AWS connection needed)
 pytest tests/ -v --ignore=tests/test_localstack_integration.py
-
-# Local DB setup (requires PostgreSQL running locally)
-./scripts/seed-local-dev.sh
 ```
 
 ### Deployment
