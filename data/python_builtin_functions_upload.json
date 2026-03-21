@@ -21,7 +21,7 @@
           "functions",
           "standard-library"
         ],
-        "source": "py_methods.json"
+        "source": "py_methods.json (updated with type constructors)"
       },
       "terms": [
         {
@@ -658,51 +658,6 @@
         {
           "node_type": "term",
           "data": {
-            "term": "property.getter()",
-            "definition": "Python built-in function: property.getter()",
-            "difficulty": "intermediate",
-            "module": "built-in",
-            "code_example": "@getter"
-          },
-          "metadata": {
-            "signature": "@getter",
-            "has_examples": false
-          }
-        },
-        {
-          "node_type": "term",
-          "data": {
-            "term": "property.setter()",
-            "definition": "Python built-in function: property.setter()",
-            "difficulty": "intermediate",
-            "module": "built-in",
-            "code_example": "@setter"
-          },
-          "metadata": {
-            "signature": "@setter",
-            "has_examples": false
-          }
-        },
-        {
-          "node_type": "term",
-          "data": {
-            "term": "property.deleter()",
-            "definition": "A property object has getter , setter ,\nand deleter methods usable as decorators that create a\ncopy of the property with the corresponding accessor function set to the\ndecorated function.  This is best explained with an example:\n\nThis code is exactly equivalent to the first example.  Be sure to give the\nadditional functions the same name as the original property ( x in this\ncase.)\n\nThe returned property object also has the attributes fget , fset , and fdel corresponding to the constructor arguments.",
-            "difficulty": "intermediate",
-            "module": "built-in",
-            "code_example": "@deleter",
-            "examples": [
-              "classC:def__init__(self):self._x=None@propertydefx(self):\"\"\"I'm the 'x' property.\"\"\"returnself._x@x.setterdefx(self,value):self._x=value@x.deleterdefx(self):delself._x"
-            ]
-          },
-          "metadata": {
-            "signature": "@deleter",
-            "has_examples": true
-          }
-        },
-        {
-          "node_type": "term",
-          "data": {
             "term": "repr()",
             "definition": "Return a string containing a printable representation of an object.  For many\ntypes, this function makes an attempt to return a string that would yield an\nobject with the same value when passed to eval() ; otherwise, the\nrepresentation is a string enclosed in angle brackets that contains the name\nof the type of the object together with additional information often\nincluding the name and address of the object.  A class can control what this\nfunction returns for its instances\nby defining a __repr__() method.\nIf sys.displayhook() is not accessible, this function will raise RuntimeError .\n\nThis class has a custom representation that can be evaluated:",
             "difficulty": "intermediate",
@@ -839,8 +794,8 @@
         {
           "node_type": "term",
           "data": {
-            "term": "import__()",
-            "definition": "This function is invoked by the import statement.  It can be\nreplaced (by importing the builtins module and assigning to builtins.__import__ ) in order to change semantics of the import statement, but doing so is strongly discouraged as it\nis usually simpler to use import hooks (see PEP 302 ) to attain the same\ngoals and does not cause issues with code which assumes the default import\nimplementation is in use.  Direct use of __import__() is also\ndiscouraged in favor of importlib.import_module() .\n\nThe function imports the module name , potentially using the given globals and locals to determine how to interpret the name in a package context.\nThe fromlist gives the names of objects or submodules that should be\nimported from the module given by name .  The standard implementation does\nnot use its locals argument at all and uses its globals only to\ndetermine the package context of the import statement.\n\nlevel specifies whether to use absolute or relative imports. 0 (the\ndefault) means only perform absolute imports.  Positive values for level indicate the number of parent directories to search relative to the\ndirectory of the module calling __import__() (see PEP 328 for the\ndetails).\n\nWhen the name variable is of the form package.module , normally, the\ntop-level package (the name up till the first dot) is returned, not the\nmodule named by name .  However, when a non-empty fromlist argument is\ngiven, the module named by name is returned.\n\nFor example, the statement import spam results in bytecode resembling the\nfollowing code:\n\nThe statement import spam.ham results in this call:\n\nNote how __import__() returns the toplevel module here because this is\nthe object that is bound to a name by the import statement.\n\nOn the other hand, the statement from spam.ham import eggs, sausage as saus results in\n\nHere, the spam.ham module is returned from __import__() .  From this\nobject, the names to import are retrieved and assigned to their respective\nnames.\n\nIf you simply want to import a module (potentially within a package) by name,\nuse importlib.import_module() .\n\nChanged in version 3.3: Negative values for level are no longer supported (which also changes\nthe default value to 0).\n\nChanged in version 3.9: When the command line options -E or -I are being used,\nthe environment variable PYTHONCASEOK is now ignored.\n\nNotes:\n- Note This is an advanced function that is not needed in everyday Python\nprogramming, unlike importlib.import_module() .",
+            "term": "__import__()",
+            "definition": "This function is invoked by the import statement. It can be replaced to change the semantics of the import statement, but doing so is strongly discouraged. The function imports the module name, potentially using the given globals and locals to determine how to interpret the name in a package context. The fromlist gives the names of objects or submodules that should be imported from the module. The standard implementation does not use its locals argument and uses its globals only to determine the package context. The level specifies whether to use absolute or relative imports (0 means only absolute imports).",
             "difficulty": "intermediate",
             "module": "built-in",
             "code_example": "__import__(name, globals=None, locals=None, fromlist=(), level=0)",
@@ -853,6 +808,794 @@
           "metadata": {
             "signature": "__import__(name, globals=None, locals=None, fromlist=(), level=0)",
             "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "bool()",
+            "definition": "Return a Boolean value, i.e. one of True or False. x is converted using the standard truth testing procedure. If x is false or omitted, this returns False; otherwise, it returns True. The bool class is a subclass of int. It cannot be subclassed further. Its only instances are False and True.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "code_example": "bool(x=False)"
+          },
+          "metadata": {
+            "signature": "bool(x=False)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "bytearray()",
+            "definition": "Return a new array of bytes. The bytearray class is a mutable sequence of integers in the range 0 <= x < 256. It has most of the usual methods of mutable sequences as well as most methods that the bytes type has. The optional source parameter can be used to initialize the array: if it is a string, you must also give the encoding; if it is an integer, the array will have that size and will be initialized with null bytes; if it is an iterable, it must be an iterable of integers in the range 0 <= x < 256.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "code_example": "bytearray(source=b'')\nbytearray(source, encoding)\nbytearray(int)"
+          },
+          "metadata": {
+            "signature": "bytearray([source[, encoding[, errors]]])",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "bytes()",
+            "definition": "Return a new bytes object which is an immutable sequence of integers in the range 0 <= x < 256. bytes is an immutable version of bytearray \u2014 it has the same non-mutating methods and the same indexing and slicing behavior. The constructor arguments are interpreted as for bytearray().",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "code_example": "bytes(source=b'')\nbytes(source, encoding)\nbytes(int)"
+          },
+          "metadata": {
+            "signature": "bytes([source[, encoding[, errors]]])",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "complex()",
+            "definition": "Return a complex number with the value real + imag*1j or convert a string or number to a complex number. If the first parameter is a string, it will be interpreted as a complex number and the function must be called without a second parameter. If the second argument is never allowed to be a string. Each argument may be any numeric type including complex.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "code_example": "complex(real=0, imag=0)"
+          },
+          "metadata": {
+            "signature": "complex(real=0, imag=0)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "dict()",
+            "definition": "Create a new dictionary. The dict object is the dictionary class. This constructor creates a dictionary from an optional positional argument and a possibly empty set of keyword arguments. Dictionaries can also be created with the literal syntax {} or with dict comprehensions.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "code_example": "dict(**kwargs)\ndict(mapping, **kwargs)\ndict(iterable, **kwargs)"
+          },
+          "metadata": {
+            "signature": "dict(**kwargs)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "float()",
+            "definition": "Return a floating-point number constructed from a number or a string. If the argument is a string, it should contain a decimal number, optionally preceded by a sign, and optionally embedded in whitespace. The optional sign may be '+' or '-'. It may also be a string representing a NaN (not-a-number) or positive or negative infinity. If no argument is given, 0.0 is returned.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "code_example": "float(x=0.0)"
+          },
+          "metadata": {
+            "signature": "float(x=0.0)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "frozenset()",
+            "definition": "Return a new frozenset object, optionally with elements taken from iterable. frozenset is a built-in class that is the immutable version of set. Since it is immutable, it is hashable and can be used as a dictionary key or as an element of another set. It supports the same methods as set that do not mutate the set (such as union, intersection, difference).",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "code_example": "frozenset(iterable=set())"
+          },
+          "metadata": {
+            "signature": "frozenset(iterable=set())",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "int()",
+            "definition": "Return an integer object constructed from a number or string x, or return 0 if no arguments are given. If x is not a number or if base is given, then x must be a string, bytes, or bytearray instance representing an integer literal in radix base. The literal can be preceded by '+' or '-' and surrounded by whitespace. A base-n literal consists of the digits 0 to n-1. The default base is 10.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "code_example": "int(x=0)\nint(x, base=10)"
+          },
+          "metadata": {
+            "signature": "int(x=0, base=10)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "list()",
+            "definition": "Rather than being a function, list is actually a mutable sequence type. The constructor creates a list whose items are the same and in the same order as iterable's items. iterable may be either a sequence, a container that supports iteration, or an iterator object. If no argument is given, the constructor creates a new empty list [].",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "code_example": "list(iterable=())"
+          },
+          "metadata": {
+            "signature": "list(iterable=())",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "memoryview()",
+            "definition": "Return a memory view object created from the given argument. A memoryview allows Python code to access the internal data of an object that supports the buffer protocol without copying. It is used for zero-copy operations on binary data such as bytes and bytearray objects, enabling efficient slicing and manipulation of large data buffers.",
+            "difficulty": "advanced",
+            "module": "built-in",
+            "code_example": "memoryview(object)"
+          },
+          "metadata": {
+            "signature": "memoryview(object)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "object()",
+            "definition": "Return a new featureless object. object is a base for all classes. It has methods that are common to all instances of Python classes. This function does not accept any arguments. object does not have a __dict__, so you cannot assign arbitrary attributes to an instance of the object class.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "code_example": "object()"
+          },
+          "metadata": {
+            "signature": "object()",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "property()",
+            "definition": "Return a property attribute. fget is a function for getting an attribute value. fset is a function for setting an attribute value. fdel is a function for deleting an attribute value. doc creates a docstring for the attribute. A typical use is to define a managed attribute. The @property decorator turns a method into a getter for a read-only attribute with the same name, and is the idiomatic way to use property() in modern Python.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "code_example": "property(fget=None, fset=None, fdel=None, doc=None)"
+          },
+          "metadata": {
+            "signature": "property(fget=None, fset=None, fdel=None, doc=None)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "range()",
+            "definition": "Rather than being a function, range is actually an immutable sequence type. The range constructor returns an object that produces a sequence of integers from start (inclusive) to stop (exclusive) by step. If only one argument is provided, it is interpreted as stop. range objects implement the collections.abc.Sequence ABC, and provide features such as containment tests, element index lookup, slicing, and support for negative indices.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "code_example": "range(stop)\nrange(start, stop)\nrange(start, stop, step)"
+          },
+          "metadata": {
+            "signature": "range(start, stop[, step])",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "set()",
+            "definition": "Return a new set object, optionally with elements taken from iterable. set is a built-in class representing an unordered collection of unique hashable elements. The set type supports mathematical set operations like union, intersection, difference, and symmetric difference. Sets are mutable; for an immutable variant, see frozenset.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "code_example": "set(iterable=())"
+          },
+          "metadata": {
+            "signature": "set(iterable=())",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "slice()",
+            "definition": "Return a slice object representing the set of indices specified by range(start, stop, step). The start and step arguments default to None. Slice objects have read-only data attributes start, stop, and step which merely return the argument values. They are used internally by the extended indexing syntax (e.g. a[1:10:2]) and can also be useful in implementing __getitem__() methods of custom container types.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "code_example": "slice(stop)\nslice(start, stop)\nslice(start, stop, step)"
+          },
+          "metadata": {
+            "signature": "slice(start, stop[, step])",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "str()",
+            "definition": "Return a string version of object. If object is not provided, returns the empty string. If neither encoding nor errors is given, str(object) returns type(object).__str__(object). For bytes and bytearray objects, str(object, encoding, errors) is equivalent to bytes.decode(encoding, errors). str is the built-in string class and supports a wide range of methods for string manipulation.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "code_example": "str(object='')\nstr(object, encoding='utf-8', errors='strict')"
+          },
+          "metadata": {
+            "signature": "str(object='', encoding='utf-8', errors='strict')",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "super()",
+            "definition": "Return a proxy object that delegates method calls to a parent or sibling class of type. This is useful for accessing inherited methods that have been overridden in a class. In the typical use case inside a method definition, both arguments can be omitted (zero-argument form) and Python will automatically fill them in. The two-argument form super(type, object-or-type) is useful for class methods and static methods.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "code_example": "super()\nsuper(type, object_or_type=None)"
+          },
+          "metadata": {
+            "signature": "super(type, object_or_type=None)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "tuple()",
+            "definition": "Rather than being a function, tuple is actually an immutable sequence type. The constructor builds a tuple whose items are the same and in the same order as iterable's items. iterable may be a sequence, a container that supports iteration, or an iterator object. If no argument is given, the constructor creates a new empty tuple (). Tuples are immutable and hashable (if all elements are hashable), making them suitable for use as dictionary keys.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "code_example": "tuple(iterable=())"
+          },
+          "metadata": {
+            "signature": "tuple(iterable=())",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "type()",
+            "definition": "With one argument, return the type of an object. The return value is a type object and generally the same object as returned by object.__class__. The isinstance() built-in function is recommended for testing the type of an object because it takes subclasses into account. With three arguments, type() works as a dynamic class constructor: it returns a new type object, essentially a dynamic form of the class statement.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "code_example": "type(object)\ntype(name, bases, dict)"
+          },
+          "metadata": {
+            "signature": "type(object_or_name, bases=None, dict=None)",
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Python Built-in Decorators",
+        "description": "Essential decorators that are part of Python's standard library for enhancing class and function behavior",
+        "subject": "python",
+        "difficulty": "intermediate",
+        "estimated_hours": 8,
+        "prerequisites": [
+          "Python functions",
+          "Object-oriented programming"
+        ]
+      },
+      "metadata": {
+        "version": 1,
+        "tags": [
+          "python",
+          "decorators",
+          "built-in",
+          "standard-library",
+          "contextlib",
+          "functools"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@property",
+            "definition": "The @property decorator transforms a method of a class into a 'getter' for a property of the same name. This allows you to access the method as if it were an attribute. It can be combined with @<property_name>.setter and @<property_name>.deleter to control the modification and deletion of the attribute, respectively.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "examples": [
+              "Creating read-only attributes",
+              "Computed properties with validation",
+              "Getter/setter/deleter patterns"
+            ],
+            "code_example": "class Circle:\n    def __init__(self, radius):\n        self._radius = radius\n\n    @property\n    def radius(self):\n        \"\"\"The radius property.\"\"\"\n        print(\"Getting radius\")\n        return self._radius\n\n    @radius.setter\n    def radius(self, value):\n        if value <= 0:\n            raise ValueError(\"Radius must be positive\")\n        print(f\"Setting radius to {value}\")\n        self._radius = value\n\n    @radius.deleter\n    def radius(self):\n        print(\"Deleting radius\")\n        del self._radius\n\n# Usage\ncircle = Circle(10)\nprint(f\"The radius is: {circle.radius}\")\ncircle.radius = 12\nprint(f\"The new radius is: {circle.radius}\")\ndel circle.radius"
+          },
+          "metadata": {
+            "keywords": [
+              "property",
+              "getter",
+              "setter",
+              "deleter",
+              "attribute"
+            ],
+            "related_concepts": [
+              "@staticmethod",
+              "@classmethod"
+            ]
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@staticmethod",
+            "definition": "The @staticmethod decorator defines a static method within a class. A static method does not receive an implicit first argument (neither `self` for an instance nor `cls` for the class). It is essentially a regular function namespaced within the class and cannot modify the object's or class's state.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "examples": [
+              "Utility functions within classes",
+              "Mathematical operations",
+              "Helper methods that don't need instance data"
+            ],
+            "code_example": "class MathOperations:\n    @staticmethod\n    def add(x, y):\n        return x + y\n\n    @staticmethod\n    def multiply(x, y):\n        return x * y\n\n# Usage\nsum_result = MathOperations.add(5, 3)\nproduct_result = MathOperations.multiply(5, 3)\nprint(f\"Sum: {sum_result}\")\nprint(f\"Product: {product_result}\")"
+          },
+          "metadata": {
+            "keywords": [
+              "static",
+              "method",
+              "utility",
+              "namespace"
+            ],
+            "related_concepts": [
+              "@classmethod",
+              "@property"
+            ]
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@classmethod",
+            "definition": "The @classmethod decorator defines a method that receives the class as its first argument, conventionally named `cls`, rather than the instance. It can be used to work with the class itself, such as creating factory methods that can instantiate the class in alternative ways.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "examples": [
+              "Factory methods for alternative constructors",
+              "Class-level operations",
+              "Alternative initialization patterns"
+            ],
+            "code_example": "from datetime import date\n\nclass Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\n\n    @classmethod\n    def from_birth_year(cls, name, birth_year):\n        current_year = date.today().year\n        age = current_year - birth_year\n        return cls(name, age)\n\n# Usage\nperson1 = Person(\"Alice\", 30)\nperson2 = Person.from_birth_year(\"Bob\", 1995)\n\nprint(f\"{person1.name} is {person1.age} years old.\")\nprint(f\"{person2.name} is {person2.age} years old.\")"
+          },
+          "metadata": {
+            "keywords": [
+              "class",
+              "method",
+              "factory",
+              "constructor",
+              "cls"
+            ],
+            "related_concepts": [
+              "@staticmethod",
+              "@property"
+            ]
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@abstractmethod",
+            "definition": "The @abstractmethod decorator is used to declare a method as abstract. A class containing one or more abstract methods becomes an abstract base class and cannot be instantiated. Subclasses must implement all inherited abstract methods to be instantiable.",
+            "difficulty": "advanced",
+            "module": "abc",
+            "examples": [
+              "Abstract base classes",
+              "Interface definitions",
+              "Template method patterns"
+            ],
+            "code_example": "from abc import ABC, abstractmethod\n\nclass Shape(ABC):\n    @abstractmethod\n    def area(self):\n        pass\n\n    @abstractmethod\n    def perimeter(self):\n        pass\n\nclass Square(Shape):\n    def __init__(self, side):\n        self.side = side\n\n    def area(self):\n        return self.side * self.side\n\n    def perimeter(self):\n        return 4 * self.side\n\n# try:\n#     shape = Shape()  # This would raise a TypeError\n# except TypeError as e:\n#     print(e)\n\nsquare = Square(5)\nprint(f\"Area of the square: {square.area()}\")\nprint(f\"Perimeter of the square: {square.perimeter()}\")"
+          },
+          "metadata": {
+            "keywords": [
+              "abstract",
+              "method",
+              "abc",
+              "interface",
+              "inheritance"
+            ],
+            "related_concepts": [
+              "inheritance",
+              "polymorphism"
+            ]
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@atexit.register",
+            "definition": "The @atexit.register decorator registers a function to be executed when the Python interpreter exits. These functions are called in the reverse order of their registration.",
+            "difficulty": "intermediate",
+            "module": "atexit",
+            "examples": [
+              "Cleanup operations",
+              "Resource deallocation",
+              "Graceful shutdown procedures"
+            ],
+            "code_example": "import atexit\n\n@atexit.register\ndef cleanup():\n    print(\"Performing cleanup tasks...\")\n\nprint(\"Program is running.\")\n# When the script finishes, the cleanup function will be called."
+          },
+          "metadata": {
+            "keywords": [
+              "atexit",
+              "cleanup",
+              "exit",
+              "shutdown"
+            ],
+            "related_concepts": [
+              "context managers",
+              "resource management"
+            ]
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@dataclass",
+            "definition": "The @dataclass decorator automatically generates special methods such as `__init__()`, `__repr__()`, `__eq__()`, and others for user-defined classes. This reduces boilerplate code for classes that primarily store data.",
+            "difficulty": "intermediate",
+            "module": "dataclasses",
+            "examples": [
+              "Data containers with automatic methods",
+              "Immutable data structures",
+              "Configuration objects"
+            ],
+            "code_example": "from dataclasses import dataclass\n\n@dataclass\nclass Point:\n    x: float\n    y: float\n\n# Usage\np1 = Point(1.0, 2.0)\np2 = Point(1.0, 2.0)\n\nprint(p1)\nprint(p1 == p2)"
+          },
+          "metadata": {
+            "keywords": [
+              "dataclass",
+              "data",
+              "boilerplate",
+              "automatic"
+            ],
+            "related_concepts": [
+              "type hints",
+              "classes"
+            ]
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@unique",
+            "definition": "The @unique decorator for enumerations ensures that each value within the enumeration is distinct. If duplicate values are found, a `ValueError` is raised.",
+            "difficulty": "intermediate",
+            "module": "enum",
+            "examples": [
+              "Ensuring unique enum values",
+              "Preventing duplicate constants",
+              "Validation of enumeration definitions"
+            ],
+            "code_example": "from enum import Enum, unique\n\n@unique\nclass Color(Enum):\n    RED = 1\n    GREEN = 2\n    BLUE = 3\n    # CRIMSON = 1  # This would raise a ValueError\n\n# Usage\nprint(Color.RED)"
+          },
+          "metadata": {
+            "keywords": [
+              "unique",
+              "enum",
+              "enumeration",
+              "validation"
+            ],
+            "related_concepts": [
+              "enumerations",
+              "constants"
+            ]
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@functools.wraps",
+            "definition": "The @functools.wraps decorator is a helper for creating well-behaved decorators. It updates the wrapper function to look like the wrapped function by copying attributes such as `__name__`, `__doc__`, and the function's signature.",
+            "difficulty": "advanced",
+            "module": "functools",
+            "examples": [
+              "Creating custom decorators",
+              "Preserving function metadata",
+              "Decorator composition"
+            ],
+            "code_example": "import functools\nimport time\n\ndef timer(func):\n    @functools.wraps(func)\n    def wrapper(*args, **kwargs):\n        \"\"\"A wrapper function that times the execution.\"\"\"\n        start_time = time.perf_counter()\n        result = func(*args, **kwargs)\n        end_time = time.perf_counter()\n        print(f\"'{func.__name__}' ran in {end_time - start_time:.4f}s\")\n        return result\n    return wrapper\n\n@timer\ndef long_running_function():\n    \"\"\"This is a function that takes some time to run.\"\"\"\n    time.sleep(1)\n\nlong_running_function()\nprint(long_running_function.__name__)\nprint(long_running_function.__doc__)"
+          },
+          "metadata": {
+            "keywords": [
+              "functools",
+              "wraps",
+              "decorator",
+              "metadata"
+            ],
+            "related_concepts": [
+              "custom decorators",
+              "function introspection"
+            ]
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@typing.overload",
+            "definition": "The @typing.overload decorator allows you to define multiple signatures for the same function. This is useful for static type checkers to understand that a function can be called with different argument types, and it helps in providing more precise type information.",
+            "difficulty": "advanced",
+            "module": "typing",
+            "examples": [
+              "Function overloading for type checkers",
+              "Multiple function signatures",
+              "Static type analysis"
+            ],
+            "code_example": "from typing import overload, Union\n\n@overload\ndef process(data: str) -> str: ...\n@overload\ndef process(data: int) -> int: ...\n\ndef process(data: Union[str, int]) -> Union[str, int]:\n    if isinstance(data, str):\n        return data.upper()\n    elif isinstance(data, int):\n        return data * 2\n\n# Usage\nprint(process(\"hello\"))\nprint(process(10))"
+          },
+          "metadata": {
+            "keywords": [
+              "typing",
+              "overload",
+              "type hints",
+              "static analysis"
+            ],
+            "related_concepts": [
+              "type hints",
+              "mypy",
+              "static analysis"
+            ]
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@unittest.mock.patch",
+            "definition": "The @unittest.mock.patch decorator is used to replace objects with `Mock` objects during tests. This allows for the isolation of the code under test from its dependencies. It can be used as a decorator or a context manager.",
+            "difficulty": "advanced",
+            "module": "unittest.mock",
+            "examples": [
+              "Mocking dependencies in tests",
+              "Isolating code under test",
+              "Test doubles and stubs"
+            ],
+            "code_example": "import unittest\nfrom unittest.mock import patch\nimport os\n\nclass MyTest(unittest.TestCase):\n    @patch('os.path.exists')\n    def test_path_exists(self, mock_exists):\n        # Configure the mock to return a specific value\n        mock_exists.return_value = True\n\n        # Call the code that uses os.path.exists\n        result = os.path.exists('/some/fake/path')\n\n        # Assert that the mock was called and the result is as expected\n        mock_exists.assert_called_with('/some/fake/path')\n        self.assertTrue(result)\n\nif __name__ == '__main__':\n    unittest.main(argv=['first-arg-is-ignored'], exit=False)"
+          },
+          "metadata": {
+            "keywords": [
+              "unittest",
+              "mock",
+              "patch",
+              "testing",
+              "isolation"
+            ],
+            "related_concepts": [
+              "unit testing",
+              "test doubles",
+              "dependency injection"
+            ]
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@functools.lru_cache",
+            "definition": "The @functools.lru_cache decorator wraps a function with a memoizing callable that saves up to the maxsize most recent calls. It can save time when an expensive or I/O bound function is periodically called with the same arguments. Results are cached using a Least Recently Used (LRU) eviction policy. The wrapped function exposes a cache_info() method for monitoring cache statistics and a cache_clear() method to empty the cache.",
+            "difficulty": "intermediate",
+            "module": "functools",
+            "examples": [
+              "Caching expensive computations",
+              "Memoizing recursive functions like Fibonacci",
+              "Reducing redundant API or database calls"
+            ],
+            "code_example": "from functools import lru_cache\n\n@lru_cache(maxsize=128)\ndef fibonacci(n):\n    if n < 2:\n        return n\n    return fibonacci(n - 1) + fibonacci(n - 2)\n\nprint(fibonacci(50))\nprint(fibonacci.cache_info())"
+          },
+          "metadata": {
+            "keywords": [
+              "lru_cache",
+              "cache",
+              "memoize",
+              "performance"
+            ],
+            "related_concepts": [
+              "@functools.cache",
+              "@functools.cached_property"
+            ]
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@functools.cache",
+            "definition": "The @functools.cache decorator is a simple unbounded cache, equivalent to lru_cache(maxsize=None). It is smaller and faster than lru_cache with a size limit because it never needs to evict old values. Since the cache never shrinks, it should only be used for functions whose arguments will have a bounded set of values over the lifetime of the program. Added in Python 3.9.",
+            "difficulty": "intermediate",
+            "module": "functools",
+            "examples": [
+              "Simple memoization without size limits",
+              "Caching pure functions",
+              "Replacing manual memoization dictionaries"
+            ],
+            "code_example": "from functools import cache\n\n@cache\ndef factorial(n):\n    return n * factorial(n - 1) if n else 1\n\nprint(factorial(10))\nprint(factorial(5))  # uses cached intermediate results"
+          },
+          "metadata": {
+            "keywords": [
+              "cache",
+              "memoize",
+              "unbounded",
+              "functools"
+            ],
+            "related_concepts": [
+              "@functools.lru_cache",
+              "@functools.cached_property"
+            ]
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@functools.cached_property",
+            "definition": "The @functools.cached_property decorator transforms a method of a class into a property whose value is computed once and then cached as a normal attribute for the life of the instance. Similar to @property but with caching \u2014 the cached value is stored directly in the instance __dict__, so subsequent accesses bypass the descriptor entirely. The cache can be cleared by deleting the attribute. Added in Python 3.8.",
+            "difficulty": "intermediate",
+            "module": "functools",
+            "examples": [
+              "Lazy-evaluated expensive attributes",
+              "Database query results cached on first access",
+              "Computed configuration values"
+            ],
+            "code_example": "from functools import cached_property\n\nclass DataAnalyzer:\n    def __init__(self, data):\n        self._data = data\n\n    @cached_property\n    def statistics(self):\n        print('Computing statistics...')\n        return {\n            'mean': sum(self._data) / len(self._data),\n            'total': sum(self._data)\n        }\n\nanalyzer = DataAnalyzer([1, 2, 3, 4, 5])\nprint(analyzer.statistics)  # computes\nprint(analyzer.statistics)  # cached, no recomputation"
+          },
+          "metadata": {
+            "keywords": [
+              "cached_property",
+              "lazy",
+              "property",
+              "cache"
+            ],
+            "related_concepts": [
+              "@property",
+              "@functools.lru_cache"
+            ]
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@functools.total_ordering",
+            "definition": "The @functools.total_ordering class decorator supplies the missing rich comparison methods (__lt__, __le__, __gt__, __ge__) given a class that defines __eq__ and one of the ordering methods. This simplifies the effort involved in specifying all of the possible rich comparison operations. The class must define at least one ordering operation and __eq__.",
+            "difficulty": "intermediate",
+            "module": "functools",
+            "examples": [
+              "Custom sortable objects",
+              "Comparable data classes",
+              "Ordered domain models"
+            ],
+            "code_example": "from functools import total_ordering\n\n@total_ordering\nclass Student:\n    def __init__(self, name, grade):\n        self.name = name\n        self.grade = grade\n\n    def __eq__(self, other):\n        return self.grade == other.grade\n\n    def __lt__(self, other):\n        return self.grade < other.grade\n\nstudents = [Student('Alice', 90), Student('Bob', 75), Student('Charlie', 85)]\nfor s in sorted(students):\n    print(f'{s.name}: {s.grade}')"
+          },
+          "metadata": {
+            "keywords": [
+              "total_ordering",
+              "comparison",
+              "sorting",
+              "rich comparison"
+            ],
+            "related_concepts": [
+              "@dataclass",
+              "__lt__",
+              "__eq__"
+            ]
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@functools.singledispatch",
+            "definition": "The @functools.singledispatch decorator transforms a function into a single-dispatch generic function. It enables function overloading based on the type of the first argument. Additional implementations are registered using the register() attribute of the generic function. When called, the generic function dispatches on the type of the first argument.",
+            "difficulty": "advanced",
+            "module": "functools",
+            "examples": [
+              "Type-based function dispatch",
+              "Processing different data formats",
+              "Extensible serialization"
+            ],
+            "code_example": "from functools import singledispatch\n\n@singledispatch\ndef process(arg):\n    print(f'Default: {arg}')\n\n@process.register(int)\ndef _(arg):\n    print(f'Integer: {arg * 2}')\n\n@process.register(list)\ndef _(arg):\n    print(f'List of {len(arg)} items')\n\nprocess('hello')  # Default: hello\nprocess(21)       # Integer: 42\nprocess([1,2,3])  # List of 3 items"
+          },
+          "metadata": {
+            "keywords": [
+              "singledispatch",
+              "generic",
+              "dispatch",
+              "overload"
+            ],
+            "related_concepts": [
+              "@typing.overload",
+              "pattern matching"
+            ]
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@contextlib.contextmanager",
+            "definition": "The @contextlib.contextmanager decorator allows you to write a context manager using a generator function instead of creating a class with __enter__ and __exit__ methods. The function must yield exactly once. Everything before the yield is executed on entering the context (the __enter__ phase), and everything after the yield is executed on exiting (the __exit__ phase). This is the most common way to create simple context managers.",
+            "difficulty": "intermediate",
+            "module": "contextlib",
+            "examples": [
+              "File handling with cleanup",
+              "Database transaction management",
+              "Temporary state changes"
+            ],
+            "code_example": "from contextlib import contextmanager\n\n@contextmanager\ndef temporary_directory_change(path):\n    import os\n    original = os.getcwd()\n    os.chdir(path)\n    try:\n        yield path\n    finally:\n        os.chdir(original)\n\nwith temporary_directory_change('/tmp') as p:\n    print(f'Working in: {p}')"
+          },
+          "metadata": {
+            "keywords": [
+              "contextmanager",
+              "with",
+              "context",
+              "generator",
+              "cleanup"
+            ],
+            "related_concepts": [
+              "@contextlib.asynccontextmanager",
+              "with statement"
+            ]
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@contextlib.asynccontextmanager",
+            "definition": "The @contextlib.asynccontextmanager decorator is the async equivalent of @contextlib.contextmanager. It allows you to write an asynchronous context manager using an async generator function. The function must use 'async def' and 'yield' exactly once. It is used with 'async with' statements for managing async resources like database connections, HTTP sessions, and locks.",
+            "difficulty": "advanced",
+            "module": "contextlib",
+            "examples": [
+              "Async database connections",
+              "HTTP session management",
+              "Async resource acquisition and release"
+            ],
+            "code_example": "from contextlib import asynccontextmanager\n\n@asynccontextmanager\nasync def async_db_connection(url):\n    conn = await connect(url)  # hypothetical async connect\n    try:\n        yield conn\n    finally:\n        await conn.close()\n\n# Usage:\n# async with async_db_connection('postgres://...') as conn:\n#     result = await conn.execute('SELECT 1')"
+          },
+          "metadata": {
+            "keywords": [
+              "asynccontextmanager",
+              "async",
+              "context",
+              "generator"
+            ],
+            "related_concepts": [
+              "@contextlib.contextmanager",
+              "async with"
+            ]
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@typing.runtime_checkable",
+            "definition": "The @typing.runtime_checkable decorator marks a Protocol class as runtime-checkable, meaning it can be used with isinstance() and issubclass() checks. Without this decorator, Protocol classes can only be used for static type checking. A runtime-checkable protocol can only check for the presence of required methods, not their type signatures. Added in Python 3.8.",
+            "difficulty": "advanced",
+            "module": "typing",
+            "examples": [
+              "Duck typing with isinstance checks",
+              "Runtime protocol validation",
+              "Plugin system type checking"
+            ],
+            "code_example": "from typing import Protocol, runtime_checkable\n\n@runtime_checkable\nclass Drawable(Protocol):\n    def draw(self) -> None: ...\n\nclass Circle:\n    def draw(self) -> None:\n        print('Drawing circle')\n\nclass Square:\n    def draw(self) -> None:\n        print('Drawing square')\n\nclass NotDrawable:\n    pass\n\nprint(isinstance(Circle(), Drawable))      # True\nprint(isinstance(NotDrawable(), Drawable)) # False"
+          },
+          "metadata": {
+            "keywords": [
+              "runtime_checkable",
+              "protocol",
+              "isinstance",
+              "duck typing"
+            ],
+            "related_concepts": [
+              "@typing.overload",
+              "Protocol",
+              "ABC"
+            ]
           }
         }
       ]
