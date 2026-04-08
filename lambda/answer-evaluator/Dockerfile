@@ -1,7 +1,7 @@
 FROM public.ecr.aws/lambda/python:3.12
 
 # Copy ONNX model and tokenizer files
-COPY final_similarity_model_onnx/ /opt/ml/model/
+COPY MNRL-Similarity/onnx_model/ /opt/ml/model/
 
 # Install onnxruntime (CPU) and tokenizer deps - no torch needed
 RUN pip install --no-cache-dir onnxruntime transformers
