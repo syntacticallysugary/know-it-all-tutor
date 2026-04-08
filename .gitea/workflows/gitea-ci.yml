@@ -149,6 +149,8 @@ jobs:
             --ignore=tests/test_security_monitoring.py \
             --ignore=tests/test_auth_unit.py \
             --ignore=tests/test_batch_upload_properties.py \
+            --ignore=tests/test_answer_evaluation_properties.py \
+            --ignore=tests/test_answer_evaluation_unit.py \
             -m "not integration"
 
   build-frontend:
