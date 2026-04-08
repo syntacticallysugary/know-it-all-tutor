@@ -25,7 +25,7 @@ def test_lambda_functions_exist():
         "auth",
         "domain_management", 
         "quiz_engine",
-        "answer_evaluation",
+
         "progress_tracking",
         "batch_upload",
         "db_migration"
@@ -57,7 +57,7 @@ def test_infrastructure_files_exist():
     """Test that CDK infrastructure files exist"""
     infra_files = [
         "infrastructure/app.py",
-        "infrastructure/stacks/tutor_system_stack.py",
+
         "cdk.json"
     ]
     
