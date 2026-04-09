@@ -38,7 +38,7 @@ def _similarity(a, b):
 def _feedback(score):
     if score >= 0.90: return "Excellent! Your answer matches the expected response."
     if score >= 0.80: return "Good answer, but could be more precise."
-    if score >= 0.70: return "Partially correct. Review the key concepts."
+    if score >= 0.60: return "Partially correct. Review the key concepts."
     return "Incorrect. Please review the material."
 
 def handler(event, context):
