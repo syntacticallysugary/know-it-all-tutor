@@ -36,9 +36,9 @@ def _similarity(a, b):
     return float(np.clip(cosine_similarity(emb[0:1], emb[1:2])[0][0], 0.0, 1.0))
 
 def _feedback(score):
-    if score >= 0.90: return "Excellent! Your answer matches the expected response."
-    if score >= 0.80: return "Good answer, but could be more precise."
-    if score >= 0.60: return "Partially correct. Review the key concepts."
+    if score >= 0.85: return "Excellent! Your answer matches the expected response."
+    if score >= 0.75: return "Good answer, but could be more precise."
+    if score >= 0.50: return "Partially correct. Review the key concepts."
     return "Incorrect. Please review the material."
 
 def handler(event, context):
