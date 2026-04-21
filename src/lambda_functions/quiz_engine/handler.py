@@ -29,7 +29,6 @@ lambda_client = boto3.client('lambda')
 ANSWER_EVALUATOR_FUNCTION_NAME = os.environ.get('ANSWER_EVALUATOR_FUNCTION_NAME')
 
 PASS_THRESHOLD = 0.50
-PARTIAL_THRESHOLD = 0.35
 
 
 def invoke_answer_evaluator(student_answer: str, correct_answer: str, threshold: float = PASS_THRESHOLD) -> Dict:
@@ -312,8 +311,6 @@ def handle_submit_answer(event: Dict[str, Any], user_id: str) -> Dict[str, Any]:
         if not feedback:
             if is_correct:
                 feedback = "Correct! Well done."
-            elif similarity_score >= PARTIAL_THRESHOLD:
-                feedback = f"Close, but not quite right. The correct answer is: {correct_answer}"
             else:
                 feedback = f"Incorrect. The correct answer is: {correct_answer}"
         
