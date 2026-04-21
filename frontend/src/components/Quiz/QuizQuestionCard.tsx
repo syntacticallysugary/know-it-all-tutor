@@ -7,6 +7,8 @@ interface QuizQuestionCardProps {
   isSubmitting: boolean
   lastResult: AnswerResult | null
   onNextQuestion: () => void
+  onViewSummary?: () => void
+  summaryReady?: boolean
 }
 
 const QuizQuestionCard: React.FC<QuizQuestionCardProps> = ({
@@ -14,7 +16,9 @@ const QuizQuestionCard: React.FC<QuizQuestionCardProps> = ({
   onSubmitAnswer,
   isSubmitting,
   lastResult,
-  onNextQuestion
+  onNextQuestion,
+  onViewSummary,
+  summaryReady = false
 }) => {
   const [answer, setAnswer] = useState('')
   const [submittedAnswer, setSubmittedAnswer] = useState('')
@@ -121,7 +125,7 @@ const QuizQuestionCard: React.FC<QuizQuestionCardProps> = ({
             <div className="text-gray-900">{lastResult.evaluation.correct_answer}</div>
           </div>
 
-          {/* Next Question Button */}
+          {/* Next Question / See Results Button */}
           {lastResult.next_question ? (
             <div className="text-center">
               <button
@@ -133,12 +137,21 @@ const QuizQuestionCard: React.FC<QuizQuestionCardProps> = ({
             </div>
           ) : (
             <div className="text-center">
-              <div className="text-lg font-medium text-gray-900 mb-2">
+              <div className="text-lg font-semibold text-gray-900 mb-4">
                 Quiz Complete!
               </div>
-              <div className="text-gray-600">
-                Loading your results...
-              </div>
+              <button
+                onClick={onViewSummary}
+                disabled={!summaryReady}
+                className="btn btn-primary btn-lg min-w-[200px]"
+              >
+                {summaryReady ? 'See Results' : (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    Loading Results...
+                  </div>
+                )}
+              </button>
             </div>
           )}
         </div>

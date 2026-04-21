@@ -14,6 +14,7 @@ interface QuizState {
   isSubmitting: boolean
   lastResult: AnswerResult | null
   summary: QuizSummary | null
+  showingSummary: boolean
   isPaused: boolean
 }
 
@@ -29,6 +30,7 @@ const QuizInterface = () => {
     isSubmitting: false,
     lastResult: null,
     summary: null,
+    showingSummary: false,
     isPaused: false
   })
 
@@ -80,7 +82,8 @@ const QuizInterface = () => {
         ...prev,
         lastResult: result,
         isSubmitting: false,
-        currentQuestion: result.next_question || null,
+        // Keep currentQuestion alive when quiz ends so the last result stays visible
+        currentQuestion: result.quiz_completed ? prev.currentQuestion : (result.next_question || null),
         session: prev.session ? {
           ...prev.session,
           progress: result.progress
@@ -180,6 +183,10 @@ const QuizInterface = () => {
     setState(prev => ({ ...prev, lastResult: null }))
   }
 
+  const handleViewSummary = () => {
+    setState(prev => ({ ...prev, showingSummary: true }))
+  }
+
   if (state.isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -213,8 +220,15 @@ const QuizInterface = () => {
     )
   }
 
-  // Show quiz summary if completed
-  if (state.summary) {
+  // Show quiz summary only after user clicks "See Results"
+  if (state.showingSummary) {
+    if (!state.summary) {
+      return (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <LoadingSpinner size="lg" />
+        </div>
+      )
+    }
     return (
       <div className="max-w-4xl mx-auto">
         <QuizSummaryCard
@@ -311,6 +325,8 @@ const QuizInterface = () => {
         isSubmitting={state.isSubmitting}
         lastResult={state.lastResult}
         onNextQuestion={handleNextQuestion}
+        onViewSummary={handleViewSummary}
+        summaryReady={!!state.summary}
       />
     </div>
   )
