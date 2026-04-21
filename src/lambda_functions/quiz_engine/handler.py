@@ -28,8 +28,11 @@ db_proxy = DBProxyClient(os.environ.get('DB_PROXY_FUNCTION_NAME'))
 lambda_client = boto3.client('lambda')
 ANSWER_EVALUATOR_FUNCTION_NAME = os.environ.get('ANSWER_EVALUATOR_FUNCTION_NAME')
 
+PASS_THRESHOLD = 0.50
+PARTIAL_THRESHOLD = 0.35
 
-def invoke_answer_evaluator(student_answer: str, correct_answer: str, threshold: float = 0.7) -> Dict:
+
+def invoke_answer_evaluator(student_answer: str, correct_answer: str, threshold: float = PASS_THRESHOLD) -> Dict:
     """Invoke Answer Evaluator Lambda"""
     payload = {
         'answer': student_answer,
@@ -45,8 +48,8 @@ def invoke_answer_evaluator(student_answer: str, correct_answer: str, threshold:
     result = json.loads(response['Payload'].read())
     if result.get('statusCode') != 200:
         raise Exception(f"Answer Evaluator error: {result.get('body')}")
-    
-    body = json.loads(result['body'])
+
+    body = result['body']
     return json.loads(body) if isinstance(body, str) else body
 
 
@@ -289,22 +292,30 @@ def handle_submit_answer(event: Dict[str, Any], user_id: str) -> Dict[str, Any]:
         term_text = term_result['term']
         correct_answer = term_result['definition']
         
-        # Evaluate the answer using semantic similarity
-        # For now, we'll use a simple evaluation - full integration with answer evaluation service
-        # would require making HTTP calls to the evaluation Lambda
-        
-        # Simple evaluation logic (placeholder for full semantic evaluation)
-        similarity_score = calculate_simple_similarity(student_answer.lower(), correct_answer.lower())
-        threshold = 0.7  # Default threshold
-        is_correct = similarity_score >= threshold
-        
-        # Generate feedback
-        if is_correct:
-            feedback = "Correct! Well done."
-        elif similarity_score >= 0.5:
-            feedback = f"Close, but not quite right. The correct answer is: {correct_answer}"
+        # Evaluate the answer using the semantic answer-evaluator Lambda
+        evaluator_feedback = None
+        if ANSWER_EVALUATOR_FUNCTION_NAME:
+            try:
+                evaluator_feedback = invoke_answer_evaluator(student_answer, correct_answer)
+            except Exception as eval_err:
+                logger.warning("Answer evaluator failed, falling back to Jaccard: %s", eval_err)
+
+        if evaluator_feedback:
+            similarity_score = float(evaluator_feedback.get('similarity', 0.0))
+            feedback = evaluator_feedback.get('feedback', '')
         else:
-            feedback = f"Incorrect. The correct answer is: {correct_answer}"
+            similarity_score = calculate_simple_similarity(student_answer.lower(), correct_answer.lower())
+            feedback = ''
+
+        is_correct = similarity_score >= PASS_THRESHOLD
+
+        if not feedback:
+            if is_correct:
+                feedback = "Correct! Well done."
+            elif similarity_score >= PARTIAL_THRESHOLD:
+                feedback = f"Close, but not quite right. The correct answer is: {correct_answer}"
+            else:
+                feedback = f"Incorrect. The correct answer is: {correct_answer}"
         
         # Record the progress
         progress_query = """

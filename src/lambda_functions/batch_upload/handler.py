@@ -488,7 +488,7 @@ def process_batch_upload_transaction(batch_data: Dict[str, Any], user_id: str) -
                     domain_payload = {
                         'name': domain_name,
                         'description': domain_data['description'].strip(),
-                        'created_by': user_id
+                        'created_by': str(user_id)
                     }
                     
                     # Preserve optional domain fields

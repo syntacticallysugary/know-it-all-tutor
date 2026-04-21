@@ -33,10 +33,12 @@ def _similarity(a, b):
     sig = float(1.0 / (1.0 + np.exp(-logits[0])))
     return float(np.clip((sig - 0.0347) / (0.1689 - 0.0347), 0.0, 1.0))
 
+PASS_THRESHOLD = 0.50
+PARTIAL_THRESHOLD = 0.35
+
 def _feedback(score):
-    if score >= 0.80: return "Excellent! Your answer matches the expected response."
-    if score >= 0.65: return "Good answer, but could be more precise."
-    if score >= 0.35: return "Partially correct. Review the key concepts."
+    if score >= PASS_THRESHOLD: return "Excellent! Your answer matches the expected response."
+    if score >= PARTIAL_THRESHOLD: return "Partially correct. Review the key concepts."
     return "Incorrect. Please review the material."
 
 def handler(event, context):

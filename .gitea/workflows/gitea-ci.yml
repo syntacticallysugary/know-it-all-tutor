@@ -29,7 +29,8 @@ jobs:
 
       - name: Install security tools
         run: |
-          pip install bandit checkov pip-audit truffleHog
+          mkdir -p "$GITHUB_WORKSPACE/.pip-tmp"
+          TMPDIR="$GITHUB_WORKSPACE/.pip-tmp" pip install bandit checkov pip-audit truffleHog
 
       - name: Install trufflehog Go binary
         run: |
