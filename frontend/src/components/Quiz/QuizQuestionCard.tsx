@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { QuizQuestion, AnswerResult } from '../../services/api'
+import type { QuizQuestion, AnswerResult } from '../../services/api'
 
 interface QuizQuestionCardProps {
   question: QuizQuestion
@@ -17,6 +17,7 @@ const QuizQuestionCard: React.FC<QuizQuestionCardProps> = ({
   onNextQuestion
 }) => {
   const [answer, setAnswer] = useState('')
+  const [submittedAnswer, setSubmittedAnswer] = useState('')
   const [showResult, setShowResult] = useState(false)
 
   // Show result when we get a new result
@@ -39,6 +40,7 @@ const QuizQuestionCard: React.FC<QuizQuestionCardProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (answer.trim() && !isSubmitting) {
+      setSubmittedAnswer(answer.trim())
       onSubmitAnswer(answer.trim())
     }
   }
@@ -105,6 +107,12 @@ const QuizQuestionCard: React.FC<QuizQuestionCardProps> = ({
             <div className="text-sm text-gray-600">
               Similarity Score: {Math.round(lastResult.evaluation.similarity_score * 100)}%
             </div>
+          </div>
+
+          {/* Your Answer Display */}
+          <div className="bg-blue-50 rounded-lg p-4">
+            <div className="text-sm font-medium text-gray-700 mb-2">Your Answer:</div>
+            <div className="text-gray-900">{submittedAnswer}</div>
           </div>
 
           {/* Correct Answer Display */}

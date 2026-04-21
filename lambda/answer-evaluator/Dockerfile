@@ -1,15 +1,19 @@
-FROM public.ecr.aws/lambda/python:3.12
+FROM python:3.12-slim
+
+# Lambda runtime interface client
+RUN pip install --no-cache-dir awslambdaric
 
 # Copy ONNX model and tokenizer files
-COPY MNRL-Similarity/onnx_model/ /opt/ml/model/
+COPY stsb-cross-encoder-onnx-q8/ /opt/ml/model/
 
-# Install onnxruntime (CPU) and tokenizer deps - no torch needed
-RUN pip install --no-cache-dir onnxruntime transformers
+# Install onnxruntime and tokenizer deps - no torch needed
+RUN pip install --no-cache-dir onnxruntime tokenizers
 
 # Copy Lambda function
 COPY lambda/answer-evaluator/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY lambda/answer-evaluator/lambda_function.py ${LAMBDA_TASK_ROOT}/
+COPY lambda/answer-evaluator/lambda_function.py /var/task/
 
+ENTRYPOINT ["/usr/local/bin/python", "-m", "awslambdaric"]
 CMD ["lambda_function.handler"]

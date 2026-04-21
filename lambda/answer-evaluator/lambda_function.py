@@ -2,8 +2,7 @@ import json
 import os
 import numpy as np
 import onnxruntime as ort
-from transformers import AutoTokenizer
-from sklearn.metrics.pairwise import cosine_similarity
+from tokenizers import Tokenizer
 
 MODEL_PATH = os.environ.get('MODEL_PATH', '/opt/ml/model')
 
@@ -17,28 +16,27 @@ def _load():
         opts = ort.SessionOptions()
         opts.intra_op_num_threads = 1
         _session = ort.InferenceSession(os.path.join(MODEL_PATH, 'model.onnx'), sess_options=opts)
-        _tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
-
-def _encode(texts):
-    _load()
-    enc = _tokenizer(texts, padding=True, truncation=True, max_length=128, return_tensors="np")
-    outputs = _session.run(None, {
-        "input_ids": enc["input_ids"].astype(np.int64),
-        "attention_mask": enc["attention_mask"].astype(np.int64),
-    })
-    mask = enc["attention_mask"][:, :, np.newaxis].astype(np.float32)
-    pooled = (outputs[0] * mask).sum(axis=1) / mask.sum(axis=1).clip(min=1e-9)
-    norms = np.linalg.norm(pooled, axis=1, keepdims=True).clip(min=1e-9)
-    return pooled / norms
+        tok = Tokenizer.from_file(os.path.join(MODEL_PATH, 'tokenizer.json'))
+        tok.enable_padding()
+        tok.enable_truncation(max_length=512)
+        _tokenizer = tok
 
 def _similarity(a, b):
-    emb = _encode([a, b])
-    return float(np.clip(cosine_similarity(emb[0:1], emb[1:2])[0][0], 0.0, 1.0))
+    _load()
+    encoded = _tokenizer.encode(a, b)
+    enc = {
+        "input_ids": np.array([encoded.ids], dtype=np.int64),
+        "attention_mask": np.array([encoded.attention_mask], dtype=np.int64),
+    }
+    logits = _session.run(None, enc)[0][0]
+    # Sigmoid then min-max normalize using empirical range from calibration set
+    sig = float(1.0 / (1.0 + np.exp(-logits[0])))
+    return float(np.clip((sig - 0.0347) / (0.1689 - 0.0347), 0.0, 1.0))
 
 def _feedback(score):
-    if score >= 0.85: return "Excellent! Your answer matches the expected response."
-    if score >= 0.75: return "Good answer, but could be more precise."
-    if score >= 0.50: return "Partially correct. Review the key concepts."
+    if score >= 0.80: return "Excellent! Your answer matches the expected response."
+    if score >= 0.65: return "Good answer, but could be more precise."
+    if score >= 0.35: return "Partially correct. Review the key concepts."
     return "Incorrect. Please review the material."
 
 def handler(event, context):
