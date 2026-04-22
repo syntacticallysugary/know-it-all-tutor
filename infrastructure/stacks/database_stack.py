@@ -55,7 +55,7 @@ class DatabaseStack(Stack):
             self,
             "TutorDatabase",
             engine=rds.DatabaseInstanceEngine.postgres(
-                version=rds.PostgresEngineVersion.VER_16_6  # Latest stable
+                version=rds.PostgresEngineVersion.VER_16_11
             ),
             instance_type=ec2.InstanceType.of(
                 ec2.InstanceClass.BURSTABLE4_GRAVITON,  # t4g
