@@ -31,6 +31,48 @@ ANSWER_EVALUATOR_FUNCTION_NAME = os.environ.get('ANSWER_EVALUATOR_FUNCTION_NAME'
 PASS_THRESHOLD = 0.50
 
 
+def acceptable_term_answers(term: str) -> set:
+    """
+    Return all lowercase strings that should count as correct for a term name.
+
+    Handles patterns like:
+      "AWS CDK (Cloud Development Kit)"
+        → {"aws cdk", "cdk", "cloud development kit", "aws cloud development kit"}
+      "Amazon S3 (Simple Storage Service)"
+        → {"amazon s3", "s3", "simple storage service", "amazon simple storage service"}
+      "AWS Lambda"
+        → {"aws lambda", "lambda"}
+      "VPC (Virtual Private Cloud)"
+        → {"vpc", "virtual private cloud"}
+    """
+    import re
+    term = term.strip()
+    accepted = set()
+
+    paren_match = re.search(r'\(([^)]+)\)', term)
+    if paren_match:
+        parens_content = paren_match.group(1).strip()
+        main = term[:paren_match.start()].strip()
+    else:
+        parens_content = None
+        main = term
+
+    accepted.add(main.lower())
+
+    # Strip "AWS " or "Amazon " prefix
+    bare = re.sub(r'^(?:AWS|Amazon)\s+', '', main, flags=re.IGNORECASE).strip()
+    if bare.lower() != main.lower():
+        accepted.add(bare.lower())
+
+    if parens_content:
+        accepted.add(parens_content.lower())
+        prefix_match = re.match(r'^(AWS|Amazon)\s+', main, flags=re.IGNORECASE)
+        if prefix_match:
+            accepted.add(f"{prefix_match.group(1)} {parens_content}".lower())
+
+    return accepted
+
+
 def invoke_answer_evaluator(student_answer: str, correct_answer: str, threshold: float = PASS_THRESHOLD) -> Dict:
     """Invoke Answer Evaluator Lambda"""
     payload = {
@@ -291,9 +333,8 @@ def handle_submit_answer(event: Dict[str, Any], user_id: str) -> Dict[str, Any]:
         definition_text = term_result['definition']
 
         if quiz_mode == 'reverse':
-            # Reverse mode: student must supply the exact term (case-insensitive)
             correct_answer = term_text
-            is_correct = student_answer.strip().lower() == correct_answer.strip().lower()
+            is_correct = student_answer.strip().lower() in acceptable_term_answers(term_text)
             similarity_score = 1.0 if is_correct else 0.0
             feedback = "Correct!" if is_correct else f"Incorrect. The correct answer is: {correct_answer}"
         else:
