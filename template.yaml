@@ -44,11 +44,31 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: local
+      Auth:
+        DefaultAuthorizer: LocalTokenAuth
+        Authorizers:
+          LocalTokenAuth:
+            FunctionArn: !GetAtt LocalAuthorizerFunction.Arn
+            FunctionPayloadType: TOKEN
+            Identity:
+              Header: Authorization
       Cors:
         AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
         AllowHeaders: "'Content-Type,Authorization,X-Api-Key,X-Amz-Date,X-Amz-Security-Token'"
         AllowOrigin: "'http://localhost:5173'"
         AllowCredentials: true
+
+  # -------------------------------------------------------------------------
+  # Local authorizer — decodes fake JWT and populates claims like Cognito does.
+  # NOT deployed to AWS. Keeps all LOCAL_DEV auth shims out of production code.
+  # -------------------------------------------------------------------------
+  LocalAuthorizerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: scripts/local_authorizer/
+      Handler: handler.lambda_handler
+      Runtime: python3.12
+      Layers: []  # Override global — no layer needed, pure stdlib
 
   # -------------------------------------------------------------------------
   # Lambda Layer — pre-built; psycopg[binary] and shared Python modules.
@@ -84,12 +104,16 @@ Resources:
             Path: /auth/register
             Method: POST
             RestApiId: !Ref TutorApi
+            Auth:
+              Authorizer: NONE
         LoginPost:
           Type: Api
           Properties:
             Path: /auth/login
             Method: POST
             RestApiId: !Ref TutorApi
+            Auth:
+              Authorizer: NONE
 
   # -------------------------------------------------------------------------
   # User Profile — GET /profile

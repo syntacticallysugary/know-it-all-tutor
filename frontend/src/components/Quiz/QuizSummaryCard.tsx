@@ -92,45 +92,57 @@ const QuizSummaryCard: React.FC<QuizSummaryCardProps> = ({
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Detailed Results</h3>
         <div className="space-y-4 max-h-96 overflow-y-auto">
-          {summary.detailed_results.map((result, index) => (
-            <div
-              key={index}
-              className={`p-4 rounded-lg border ${
-                result.is_correct 
-                  ? 'bg-green-50 border-green-200' 
-                  : 'bg-red-50 border-red-200'
-              }`}
-            >
-              <div className="flex items-start justify-between mb-2">
-                <div className="font-medium text-gray-900">{result.term}</div>
-                <div className={`text-sm font-medium ${
-                  result.is_correct ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  {result.is_correct ? '✓' : '✗'} {Math.round(result.similarity_score * 100)}%
+          {summary.detailed_results.map((result, index) => {
+            const isReverse = summary.quiz_mode === 'reverse'
+            const questionLabel = isReverse
+              ? (result.definition && result.definition.length > 120
+                  ? result.definition.slice(0, 120) + '…'
+                  : result.definition)
+              : result.term
+            const scoreDisplay = isReverse ? null : `${Math.round(result.similarity_score * 100)}%`
+
+            return (
+              <div
+                key={index}
+                className={`p-4 rounded-lg border ${
+                  result.is_correct
+                    ? 'bg-green-50 border-green-200'
+                    : 'bg-red-50 border-red-200'
+                }`}
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <div className="font-medium text-gray-900 text-sm leading-snug pr-4">
+                    {questionLabel}
+                  </div>
+                  <div className={`text-sm font-medium shrink-0 ${
+                    result.is_correct ? 'text-green-600' : 'text-red-600'
+                  }`}>
+                    {result.is_correct ? '✓' : '✗'}{scoreDisplay ? ` ${scoreDisplay}` : ''}
+                  </div>
                 </div>
-              </div>
-              
-              <div className="space-y-2 text-sm">
-                <div>
-                  <span className="font-medium text-gray-700">Your answer: </span>
-                  <span className="text-gray-900">{result.student_answer}</span>
-                </div>
-                
-                {!result.is_correct && (
+
+                <div className="space-y-2 text-sm">
                   <div>
-                    <span className="font-medium text-gray-700">Correct answer: </span>
-                    <span className="text-gray-900">{result.correct_answer}</span>
+                    <span className="font-medium text-gray-700">Your answer: </span>
+                    <span className="text-gray-900">{result.student_answer}</span>
                   </div>
-                )}
-                
-                {result.feedback && (
-                  <div className="text-gray-600 italic">
-                    {result.feedback}
-                  </div>
-                )}
+
+                  {!result.is_correct && (
+                    <div>
+                      <span className="font-medium text-gray-700">Correct answer: </span>
+                      <span className="text-gray-900">{result.correct_answer}</span>
+                    </div>
+                  )}
+
+                  {result.feedback && !isReverse && (
+                    <div className="text-gray-600 italic">
+                      {result.feedback}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
 

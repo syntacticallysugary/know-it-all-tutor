@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { apiClient, QuizSession, QuizQuestion, AnswerResult, QuizSummary } from '../services/api'
 import QuizQuestionCard from '../components/Quiz/QuizQuestionCard'
 import QuizProgress from '../components/Quiz/QuizProgress'
@@ -9,6 +9,7 @@ import LoadingSpinner from '../components/UI/LoadingSpinner'
 interface QuizState {
   session: QuizSession | null
   currentQuestion: QuizQuestion | null
+  quizMode: 'forward' | 'reverse'
   isLoading: boolean
   error: string | null
   isSubmitting: boolean
@@ -21,10 +22,13 @@ interface QuizState {
 const QuizInterface = () => {
   const { domainId } = useParams<{ domainId: string }>()
   const navigate = useNavigate()
-  
+  const [searchParams] = useSearchParams()
+  const modeParam = (searchParams.get('mode') as 'forward' | 'reverse') || 'forward'
+
   const [state, setState] = useState<QuizState>({
     session: null,
     currentQuestion: null,
+    quizMode: modeParam,
     isLoading: true,
     error: null,
     isSubmitting: false,
@@ -47,13 +51,14 @@ const QuizInterface = () => {
   const initializeQuiz = async () => {
     try {
       setState(prev => ({ ...prev, isLoading: true, error: null }))
-      
-      const session = await apiClient.startQuiz(domainId!)
-      
+
+      const session = await apiClient.startQuiz(domainId!, modeParam)
+
       setState(prev => ({
         ...prev,
         session,
         currentQuestion: session.current_question || null,
+        quizMode: session.quiz_mode || modeParam,
         isLoading: false,
         isPaused: session.status === 'paused'
       }))
@@ -153,13 +158,14 @@ const QuizInterface = () => {
 
     try {
       setState(prev => ({ ...prev, isLoading: true }))
-      
-      const session = await apiClient.restartQuiz(domainId)
-      
+
+      const session = await apiClient.restartQuiz(domainId, state.quizMode)
+
       setState(prev => ({
         ...prev,
         session,
         currentQuestion: session.current_question || null,
+        quizMode: session.quiz_mode || prev.quizMode,
         isLoading: false,
         lastResult: null,
         summary: null,
@@ -296,7 +302,9 @@ const QuizInterface = () => {
             <h1 className="text-2xl font-bold text-gray-900">
               {state.session.domain_name}
             </h1>
-            <p className="text-gray-600">Interactive Quiz</p>
+            <p className="text-gray-600">
+              {state.quizMode === 'reverse' ? 'Name the Term' : 'Define the Term'}
+            </p>
           </div>
           <div className="flex gap-3">
             <button
@@ -321,6 +329,7 @@ const QuizInterface = () => {
       {/* Quiz Question */}
       <QuizQuestionCard
         question={state.currentQuestion}
+        quizMode={state.quizMode}
         onSubmitAnswer={handleAnswerSubmit}
         isSubmitting={state.isSubmitting}
         lastResult={state.lastResult}

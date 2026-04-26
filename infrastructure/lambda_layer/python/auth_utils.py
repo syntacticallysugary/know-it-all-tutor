@@ -310,32 +310,6 @@ def extract_user_from_cognito_event(event: Dict[str, Any]) -> Dict[str, Any]:
                     'cognito:username': 'test@example.com'
                 }
             }
-        if os.environ.get('LOCAL_DEV') == 'true':
-            # SAM local doesn't run the Cognito authorizer, so claims are empty.
-            # Decode the Cognito JWT from the Authorization header directly
-            # (no signature verification — acceptable for local dev only).
-            headers = event.get('headers', {}) or {}
-            auth_header = headers.get('Authorization', '') or headers.get('authorization', '')
-            if auth_header.startswith('Bearer '):
-                try:
-                    import base64
-                    import json as _json
-                    token = auth_header[7:]
-                    parts = token.split('.')
-                    if len(parts) == 3:
-                        padded = parts[1] + '=' * (4 - len(parts[1]) % 4)
-                        payload = _json.loads(base64.urlsafe_b64decode(padded))
-                        return {
-                            'valid': True,
-                            'user_id': payload.get('sub'),
-                            'email': payload.get('email'),
-                            'username': payload.get('cognito:username', payload.get('email')),
-                            'email_verified': payload.get('email_verified', True),
-                            'claims': payload
-                        }
-                except Exception:
-                    pass
-            return {'valid': False, 'error': 'No auth token in LOCAL_DEV request'}
         return {'valid': False, 'error': 'No Cognito claims found'}
     
     return {

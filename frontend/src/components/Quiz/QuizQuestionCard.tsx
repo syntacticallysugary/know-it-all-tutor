@@ -3,6 +3,7 @@ import type { QuizQuestion, AnswerResult } from '../../services/api'
 
 interface QuizQuestionCardProps {
   question: QuizQuestion
+  quizMode: 'forward' | 'reverse'
   onSubmitAnswer: (answer: string) => void
   isSubmitting: boolean
   lastResult: AnswerResult | null
@@ -13,6 +14,7 @@ interface QuizQuestionCardProps {
 
 const QuizQuestionCard: React.FC<QuizQuestionCardProps> = ({
   question,
+  quizMode,
   onSubmitAnswer,
   isSubmitting,
   lastResult,
@@ -73,12 +75,25 @@ const QuizQuestionCard: React.FC<QuizQuestionCardProps> = ({
         <div className="text-sm text-gray-500 mb-2">
           Question {question.question_number} of {question.total_questions}
         </div>
-        <div className="text-3xl font-bold text-gray-900 mb-4">
-          {question.term}
-        </div>
-        <div className="text-lg text-gray-600">
-          What is the definition of this term?
-        </div>
+        {quizMode === 'reverse' ? (
+          <>
+            <div className="text-base text-gray-700 leading-relaxed mb-4 max-w-2xl mx-auto text-left bg-gray-50 rounded-lg p-4 border border-gray-200">
+              {question.definition}
+            </div>
+            <div className="text-lg text-gray-600">
+              What term is described by this definition?
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="text-3xl font-bold text-gray-900 mb-4">
+              {question.term}
+            </div>
+            <div className="text-lg text-gray-600">
+              What is the definition of this term?
+            </div>
+          </>
+        )}
       </div>
 
       {/* Answer Input or Result Display */}
@@ -108,9 +123,11 @@ const QuizQuestionCard: React.FC<QuizQuestionCardProps> = ({
             <div className="text-gray-700 mb-3">
               {lastResult.evaluation.feedback}
             </div>
-            <div className="text-sm text-gray-600">
-              Similarity Score: {Math.round(lastResult.evaluation.similarity_score * 100)}%
-            </div>
+            {quizMode === 'forward' && (
+              <div className="text-sm text-gray-600">
+                Similarity Score: {Math.round(lastResult.evaluation.similarity_score * 100)}%
+              </div>
+            )}
           </div>
 
           {/* Your Answer Display */}
@@ -162,16 +179,30 @@ const QuizQuestionCard: React.FC<QuizQuestionCardProps> = ({
             <label htmlFor="answer" className="block text-sm font-medium text-gray-700 mb-2">
               Your Answer
             </label>
-            <textarea
-              id="answer"
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              placeholder="Enter your definition here..."
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
-              rows={4}
-              disabled={isSubmitting}
-              required
-            />
+            {quizMode === 'reverse' ? (
+              <input
+                id="answer"
+                type="text"
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                placeholder="Enter the term..."
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                disabled={isSubmitting}
+                autoComplete="off"
+                required
+              />
+            ) : (
+              <textarea
+                id="answer"
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                placeholder="Enter your definition here..."
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                rows={4}
+                disabled={isSubmitting}
+                required
+              />
+            )}
           </div>
 
           {/* Submit Button */}

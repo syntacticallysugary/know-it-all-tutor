@@ -79,6 +79,7 @@ export interface QuizSession {
   session_id: string
   status: 'started' | 'resumed' | 'paused' | 'completed'
   domain_name: string
+  quiz_mode: 'forward' | 'reverse'
   current_question?: QuizQuestion
   progress: QuizProgress
   quiz_completed?: boolean
@@ -86,7 +87,8 @@ export interface QuizSession {
 
 export interface QuizQuestion {
   term_id: string
-  term: string
+  term?: string
+  definition?: string
   question_number: number
   total_questions: number
 }
@@ -119,6 +121,7 @@ export interface AnswerResult {
 export interface QuizSummary {
   session_id: string
   domain_name: string
+  quiz_mode: 'forward' | 'reverse'
   status: 'completed'
   completion_time: string
   performance: {
@@ -137,6 +140,7 @@ export interface QuizSummary {
   }
   detailed_results: Array<{
     term: string
+    definition?: string
     student_answer: string
     correct_answer: string
     is_correct: boolean
@@ -246,10 +250,10 @@ class APIClient {
   }
 
   // Quiz API
-  async startQuiz(domainId: string): Promise<QuizSession> {
+  async startQuiz(domainId: string, quizMode: 'forward' | 'reverse' = 'forward'): Promise<QuizSession> {
     return this.request<QuizSession>('/quiz/start', {
       method: 'POST',
-      body: JSON.stringify({ domain_id: domainId }),
+      body: JSON.stringify({ domain_id: domainId, quiz_mode: quizMode }),
     })
   }
 
@@ -274,10 +278,10 @@ class APIClient {
     })
   }
 
-  async restartQuiz(domainId: string): Promise<QuizSession> {
+  async restartQuiz(domainId: string, quizMode: 'forward' | 'reverse' = 'forward'): Promise<QuizSession> {
     return this.request<QuizSession>('/quiz/restart', {
       method: 'POST',
-      body: JSON.stringify({ domain_id: domainId }),
+      body: JSON.stringify({ domain_id: domainId, quiz_mode: quizMode }),
     })
   }
 

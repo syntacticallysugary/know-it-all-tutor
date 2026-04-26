@@ -109,9 +109,13 @@ def handle_start_quiz(event: Dict[str, Any], user_id: str) -> Dict[str, Any]:
         # Parse request body
         body = json.loads(event.get('body', '{}'))
         domain_id = body.get('domain_id')
-        
+        quiz_mode = body.get('quiz_mode', 'forward')
+
         if not domain_id:
             return create_response(400, {'error': 'domain_id is required'})
+
+        if quiz_mode not in ('forward', 'reverse'):
+            return create_response(400, {'error': "quiz_mode must be 'forward' or 'reverse'"})
         
         # Validate domain exists and belongs to user or is public
         domain_query = """
@@ -143,37 +147,34 @@ def handle_start_quiz(event: Dict[str, Any], user_id: str) -> Dict[str, Any]:
         if not terms_result:
             return create_response(400, {'error': 'Domain has no terms to quiz on'})
         
-        # Check for existing active session
+        # Check for existing active session matching this mode
         existing_session_query = """
             SELECT id, current_term_index, total_questions, session_data
-            FROM quiz_sessions 
+            FROM quiz_sessions
             WHERE user_id = %s AND domain_id = %s AND status = 'active'
+            AND COALESCE(session_data->>'quiz_mode', 'forward') = %s
         """
-        existing_session = db_proxy.execute_query_one(existing_session_query, (user_id, domain_id), return_dict=True)
-        
+        existing_session = db_proxy.execute_query_one(existing_session_query, (user_id, domain_id, quiz_mode), return_dict=True)
+
         if existing_session:
             # Return existing session
             session_id = existing_session['id']
             current_index = existing_session['current_term_index']
             total_questions = existing_session['total_questions']
             session_data = existing_session['session_data'] or {}
-            
+
             # Get current question
             if current_index < len(terms_result):
                 current_term = terms_result[current_index]
-                current_question = {
-                    'term_id': str(current_term['id']),
-                    'term': current_term['term'],
-                    'question_number': current_index + 1,
-                    'total_questions': total_questions
-                }
+                current_question = build_question(current_term['id'], current_term, current_index + 1, total_questions, quiz_mode)
             else:
                 current_question = None
-            
+
             return create_response(200, {
                 'session_id': str(session_id),
                 'status': 'resumed',
                 'domain_name': domain_result['name'],
+                'quiz_mode': quiz_mode,
                 'current_question': current_question,
                 'progress': {
                     'current_index': current_index,
@@ -186,12 +187,13 @@ def handle_start_quiz(event: Dict[str, Any], user_id: str) -> Dict[str, Any]:
         session_id = str(uuid.uuid4())
         total_questions = len(terms_result)
         
-        # Prepare session data with term order
+        # Prepare session data with term order and quiz mode
         session_data = {
             'term_order': [str(term['id']) for term in terms_result],
-            'domain_name': domain_result['name']
+            'domain_name': domain_result['name'],
+            'quiz_mode': quiz_mode
         }
-        
+
         # Insert new session
         insert_session_query = """
             INSERT INTO quiz_sessions (id, user_id, domain_id, status, current_term_index, total_questions, session_data)
@@ -200,20 +202,16 @@ def handle_start_quiz(event: Dict[str, Any], user_id: str) -> Dict[str, Any]:
         db_proxy.execute_query(insert_session_query, (
             session_id, user_id, domain_id, total_questions, json.dumps(session_data)
         ))
-        
+
         # Get first question
         first_term = terms_result[0]
-        current_question = {
-            'term_id': str(first_term['id']),
-            'term': first_term['term'],
-            'question_number': 1,
-            'total_questions': total_questions
-        }
-        
+        current_question = build_question(first_term['id'], first_term, 1, total_questions, quiz_mode)
+
         return create_response(200, {
             'session_id': session_id,
             'status': 'started',
             'domain_name': domain_result['name'],
+            'quiz_mode': quiz_mode,
             'current_question': current_question,
             'progress': {
                 'current_index': 0,
@@ -288,31 +286,40 @@ def handle_submit_answer(event: Dict[str, Any], user_id: str) -> Dict[str, Any]:
         if not term_result:
             return create_response(404, {'error': 'Current question not found'})
         
+        quiz_mode = session_data.get('quiz_mode', 'forward')
         term_text = term_result['term']
-        correct_answer = term_result['definition']
-        
-        # Evaluate the answer using the semantic answer-evaluator Lambda
-        evaluator_feedback = None
-        if ANSWER_EVALUATOR_FUNCTION_NAME:
-            try:
-                evaluator_feedback = invoke_answer_evaluator(student_answer, correct_answer)
-            except Exception as eval_err:
-                logger.warning("Answer evaluator failed, falling back to Jaccard: %s", eval_err)
+        definition_text = term_result['definition']
 
-        if evaluator_feedback:
-            similarity_score = float(evaluator_feedback.get('similarity', 0.0))
-            feedback = evaluator_feedback.get('feedback', '')
+        if quiz_mode == 'reverse':
+            # Reverse mode: student must supply the exact term (case-insensitive)
+            correct_answer = term_text
+            is_correct = student_answer.strip().lower() == correct_answer.strip().lower()
+            similarity_score = 1.0 if is_correct else 0.0
+            feedback = "Correct!" if is_correct else f"Incorrect. The correct answer is: {correct_answer}"
         else:
-            similarity_score = calculate_simple_similarity(student_answer.lower(), correct_answer.lower())
-            feedback = ''
+            # Forward mode: semantic evaluation of the student's definition
+            correct_answer = definition_text
+            evaluator_feedback = None
+            if ANSWER_EVALUATOR_FUNCTION_NAME:
+                try:
+                    evaluator_feedback = invoke_answer_evaluator(student_answer, correct_answer)
+                except Exception as eval_err:
+                    logger.warning("Answer evaluator failed, falling back to Jaccard: %s", eval_err)
 
-        is_correct = similarity_score >= PASS_THRESHOLD
-
-        if not feedback:
-            if is_correct:
-                feedback = "Correct! Well done."
+            if evaluator_feedback:
+                similarity_score = float(evaluator_feedback.get('similarity', 0.0))
+                feedback = evaluator_feedback.get('feedback', '')
             else:
-                feedback = f"Incorrect. The correct answer is: {correct_answer}"
+                similarity_score = calculate_simple_similarity(student_answer.lower(), correct_answer.lower())
+                feedback = ''
+
+            is_correct = similarity_score >= PASS_THRESHOLD
+
+            if not feedback:
+                if is_correct:
+                    feedback = "Correct! Well done."
+                else:
+                    feedback = f"Incorrect. The correct answer is: {correct_answer}"
         
         # Record the progress
         progress_query = """
@@ -354,19 +361,14 @@ def handle_submit_answer(event: Dict[str, Any], user_id: str) -> Dict[str, Any]:
         if not quiz_completed and new_index < len(term_order):
             next_term_id = term_order[new_index]
             next_term_query = """
-                SELECT data->>'term' as term
-                FROM tree_nodes 
+                SELECT data->>'term' as term, data->>'definition' as definition
+                FROM tree_nodes
                 WHERE id = %s
             """
             next_term_result = db_proxy.execute_query_one(next_term_query, (next_term_id,), return_dict=True)
-            
+
             if next_term_result:
-                next_question = {
-                    'term_id': next_term_id,
-                    'term': next_term_result['term'],
-                    'question_number': new_index + 1,
-                    'total_questions': total_questions
-                }
+                next_question = build_question(next_term_id, next_term_result, new_index + 1, total_questions, quiz_mode)
         
         return create_response(200, {
             'session_id': session_id,
@@ -399,35 +401,37 @@ def handle_restart_quiz(event: Dict[str, Any], user_id: str) -> Dict[str, Any]:
         # Parse request body
         body = json.loads(event.get('body', '{}'))
         domain_id = body.get('domain_id')
-        
+        quiz_mode = body.get('quiz_mode', 'forward')
+
         if not domain_id:
             return create_response(400, {'error': 'domain_id is required'})
-        
+
         # Validate domain exists and user has access
         domain_query = """
             SELECT id, data->>'name' as name, user_id, is_public
-            FROM tree_nodes 
+            FROM tree_nodes
             WHERE id = %s AND node_type = 'domain'
         """
         domain_result = db_proxy.execute_query_one(domain_query, (domain_id,), return_dict=True)
-        
+
         if not domain_result:
             return create_response(404, {'error': 'Domain not found'})
-        
+
         domain_user_id = domain_result['user_id']
         is_public = domain_result.get('is_public', False)
-        
+
         # Check if user has access to this domain (owner or public)
         if domain_user_id != user_id and not is_public:
             return create_response(403, {'error': 'Access denied to this domain'})
-        
-        # Mark any existing active or paused sessions as abandoned
+
+        # Abandon active/paused sessions for the same mode only
         abandon_query = """
-            UPDATE quiz_sessions 
+            UPDATE quiz_sessions
             SET status = 'abandoned'
             WHERE user_id = %s AND domain_id = %s AND status IN ('active', 'paused')
+            AND COALESCE(session_data->>'quiz_mode', 'forward') = %s
         """
-        db_proxy.execute_query(abandon_query, (user_id, domain_id))
+        db_proxy.execute_query(abandon_query, (user_id, domain_id, quiz_mode))
         
         # Start a new quiz session (reuse the start quiz logic)
         return handle_start_quiz(event, user_id)
@@ -446,17 +450,30 @@ def calculate_simple_similarity(answer1: str, answer2: str) -> float:
     """
     words1 = set(answer1.split())
     words2 = set(answer2.split())
-    
+
     if not words1 and not words2:
         return 1.0
-    
+
     if not words1 or not words2:
         return 0.0
-    
+
     intersection = words1.intersection(words2)
     union = words1.union(words2)
-    
+
     return len(intersection) / len(union) if union else 0.0
+
+
+def build_question(term_id: str, term_data: dict, question_number: int, total_questions: int, quiz_mode: str) -> dict:
+    q = {
+        'term_id': str(term_id),
+        'question_number': question_number,
+        'total_questions': total_questions
+    }
+    if quiz_mode == 'reverse':
+        q['definition'] = term_data.get('definition', '')
+    else:
+        q['term'] = term_data.get('term', '')
+    return q
 
 
 def handle_get_next_question(event: Dict[str, Any], user_id: str) -> Dict[str, Any]:
@@ -499,34 +516,31 @@ def handle_get_next_question(event: Dict[str, Any], user_id: str) -> Dict[str, A
                 'message': 'Quiz completed'
             })
         
+        quiz_mode = session_data.get('quiz_mode', 'forward')
+
         # Get current question
         term_order = session_data.get('term_order', [])
         if current_index < len(term_order):
             term_id = term_order[current_index]
-            
-            # Get term details
+
             term_query = """
                 SELECT data->>'term' as term, data->>'definition' as definition
-                FROM tree_nodes 
+                FROM tree_nodes
                 WHERE id = %s
             """
             term_result = db_proxy.execute_query_one(term_query, (term_id,), return_dict=True)
-            
+
             if term_result:
-                current_question = {
-                    'term_id': term_id,
-                    'term': term_result['term'],
-                    'question_number': current_index + 1,
-                    'total_questions': total_questions
-                }
+                current_question = build_question(term_id, term_result, current_index + 1, total_questions, quiz_mode)
             else:
                 return create_response(404, {'error': 'Question not found'})
         else:
             return create_response(404, {'error': 'Question not found'})
-        
+
         return create_response(200, {
             'session_id': session_id,
             'domain_name': domain_name,
+            'quiz_mode': quiz_mode,
             'current_question': current_question,
             'progress': {
                 'current_index': current_index,
@@ -534,7 +548,7 @@ def handle_get_next_question(event: Dict[str, Any], user_id: str) -> Dict[str, A
                 'completed': False
             }
         })
-        
+
     except Exception as e:
         logger.error(f"Error getting next question: {str(e)}")
         return handle_error(e)
@@ -631,35 +645,32 @@ def handle_resume_quiz(event: Dict[str, Any], user_id: str) -> Dict[str, Any]:
         """
         db_proxy.execute_query(update_query, (session_id,))
         
+        quiz_mode = session_data.get('quiz_mode', 'forward')
+
         # Get current question
         term_order = session_data.get('term_order', [])
         if current_index < len(term_order):
             term_id = term_order[current_index]
-            
-            # Get term details
+
             term_query = """
                 SELECT data->>'term' as term, data->>'definition' as definition
-                FROM tree_nodes 
+                FROM tree_nodes
                 WHERE id = %s
             """
             term_result = db_proxy.execute_query_one(term_query, (term_id,), return_dict=True)
-            
+
             if term_result:
-                current_question = {
-                    'term_id': term_id,
-                    'term': term_result['term'],
-                    'question_number': current_index + 1,
-                    'total_questions': total_questions
-                }
+                current_question = build_question(term_id, term_result, current_index + 1, total_questions, quiz_mode)
             else:
                 current_question = None
         else:
             current_question = None
-        
+
         return create_response(200, {
             'session_id': session_id,
             'status': 'resumed',
             'domain_name': domain_name,
+            'quiz_mode': quiz_mode,
             'current_question': current_question,
             'progress': {
                 'current_index': current_index,
@@ -667,7 +678,7 @@ def handle_resume_quiz(event: Dict[str, Any], user_id: str) -> Dict[str, Any]:
                 'completed': current_index >= total_questions
             }
         })
-        
+
     except json.JSONDecodeError:
         return create_response(400, {'error': 'Invalid JSON in request body'})
     except Exception as e:
@@ -707,6 +718,7 @@ def handle_complete_quiz(event: Dict[str, Any], user_id: str) -> Dict[str, Any]:
         completed_at = session_result['completed_at']
         session_data = session_result['session_data'] or {}
         domain_name = session_result['domain_name']
+        quiz_mode = session_data.get('quiz_mode', 'forward')
         
         # Check if quiz is completed
         if current_status != 'completed':
@@ -724,9 +736,9 @@ def handle_complete_quiz(event: Dict[str, Any], user_id: str) -> Dict[str, Any]:
         
         # Get detailed progress records for this session
         progress_query = """
-            SELECT pr.term_id, pr.student_answer, pr.correct_answer, pr.is_correct, 
+            SELECT pr.term_id, pr.student_answer, pr.correct_answer, pr.is_correct,
                    pr.similarity_score, pr.feedback, pr.created_at,
-                   tn.data->>'term' as term
+                   tn.data->>'term' as term, tn.data->>'definition' as definition
             FROM progress_records pr
             JOIN tree_nodes tn ON pr.term_id = tn.id
             WHERE pr.session_id = %s
@@ -760,6 +772,7 @@ def handle_complete_quiz(event: Dict[str, Any], user_id: str) -> Dict[str, Any]:
         for record in progress_results:
             detailed_results.append({
                 'term': record['term'],
+                'definition': record['definition'],
                 'student_answer': record['student_answer'],
                 'correct_answer': record['correct_answer'],
                 'is_correct': record['is_correct'],
@@ -787,6 +800,7 @@ def handle_complete_quiz(event: Dict[str, Any], user_id: str) -> Dict[str, Any]:
         quiz_summary = {
             'session_id': session_id,
             'domain_name': domain_name,
+            'quiz_mode': quiz_mode,
             'status': 'completed',
             'completion_time': completed_at.isoformat() if completed_at else None,
             'performance': {

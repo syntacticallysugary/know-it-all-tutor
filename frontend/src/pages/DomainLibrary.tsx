@@ -263,13 +263,20 @@ const DomainCard = ({ domain, onDelete }: DomainCardProps) => {
         </button>
         
         {showMenu && (
-          <div className="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-10">
+          <div className="absolute right-0 mt-1 w-52 bg-white rounded-md shadow-lg border border-gray-200 z-10">
             <Link
-              to={`/app/quiz/${domain.id}`}
+              to={`/app/quiz/${domain.id}?mode=forward`}
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
               onClick={() => setShowMenu(false)}
             >
-              Start Quiz
+              Quiz: Define Terms
+            </Link>
+            <Link
+              to={`/app/quiz/${domain.id}?mode=reverse`}
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+              onClick={() => setShowMenu(false)}
+            >
+              Quiz: Name Terms
             </Link>
             <Link
               to={`/app/domains/${domain.id}/edit`}
@@ -307,12 +314,18 @@ const DomainCard = ({ domain, onDelete }: DomainCardProps) => {
       </div>
 
       {/* Quick Actions */}
-      <div className="mt-4 pt-4 border-t border-gray-100">
+      <div className="mt-4 pt-4 border-t border-gray-100 flex gap-2">
         <Link
-          to={`/app/quiz/${domain.id}`}
-          className="btn btn-primary btn-sm w-full"
+          to={`/app/quiz/${domain.id}?mode=forward`}
+          className="btn btn-primary btn-sm flex-1"
         >
-          Start Quiz
+          Define Terms
+        </Link>
+        <Link
+          to={`/app/quiz/${domain.id}?mode=reverse`}
+          className="btn btn-secondary btn-sm flex-1"
+        >
+          Name Terms
         </Link>
       </div>
     </div>
