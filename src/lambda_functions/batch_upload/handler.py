@@ -544,7 +544,8 @@ def process_batch_upload_transaction(batch_data: Dict[str, Any], user_id: str) -
                         }
                         
                         # Add optional term fields
-                        optional_term_fields = ['difficulty', 'module', 'examples', 'code_example']
+                        optional_term_fields = ['difficulty', 'module', 'examples', 'code_example',
+                                                'category', 'short_reference']
                         for field in optional_term_fields:
                             if field in term_data:
                                 term_payload[field] = term_data[field]
