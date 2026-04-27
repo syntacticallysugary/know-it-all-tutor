@@ -766,12 +766,13 @@ def handle_complete_quiz(event: Dict[str, Any], user_id: str) -> Dict[str, Any]:
             # If quiz is not completed but all questions are answered, mark as completed
             if current_index >= total_questions:
                 update_query = """
-                    UPDATE quiz_sessions 
+                    UPDATE quiz_sessions
                     SET status = 'completed', completed_at = CURRENT_TIMESTAMP
                     WHERE id = %s
+                    RETURNING completed_at
                 """
-                db_proxy.execute_query(update_query, (session_id,))
-                completed_at = datetime.now()
+                row = db_proxy.execute_query_one(update_query, (session_id,), return_dict=True)
+                completed_at = row['completed_at'] if row else completed_at
             else:
                 return create_response(400, {'error': 'Quiz is not yet completed'})
         

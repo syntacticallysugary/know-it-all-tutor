@@ -119,6 +119,10 @@ const QuizInterface = () => {
       setState(prev => ({ ...prev, summary }))
     } catch (error) {
       console.error('Failed to fetch quiz summary:', error)
+      setState(prev => ({
+        ...prev,
+        error: `Quiz complete but results failed to load: ${error instanceof Error ? error.message : 'Unknown error'}. You can exit and try again.`
+      }))
     }
   }
 
