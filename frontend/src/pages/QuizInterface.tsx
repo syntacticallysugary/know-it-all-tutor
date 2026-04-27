@@ -9,6 +9,7 @@ import LoadingSpinner from '../components/UI/LoadingSpinner'
 interface QuizState {
   session: QuizSession | null
   currentQuestion: QuizQuestion | null
+  nextQuestion: QuizQuestion | null
   quizMode: 'forward' | 'reverse'
   isLoading: boolean
   error: string | null
@@ -28,6 +29,7 @@ const QuizInterface = () => {
   const [state, setState] = useState<QuizState>({
     session: null,
     currentQuestion: null,
+    nextQuestion: null,
     quizMode: modeParam,
     isLoading: true,
     error: null,
@@ -87,8 +89,10 @@ const QuizInterface = () => {
         ...prev,
         lastResult: result,
         isSubmitting: false,
-        // Keep currentQuestion alive when quiz ends so the last result stays visible
-        currentQuestion: result.quiz_completed ? prev.currentQuestion : (result.next_question || null),
+        // currentQuestion stays as the question just answered so the result
+        // display shows the right context. nextQuestion is staged and only
+        // moves to currentQuestion when the user dismisses the result.
+        nextQuestion: result.quiz_completed ? null : (result.next_question || null),
         session: prev.session ? {
           ...prev.session,
           progress: result.progress
@@ -186,7 +190,12 @@ const QuizInterface = () => {
   }
 
   const handleNextQuestion = () => {
-    setState(prev => ({ ...prev, lastResult: null }))
+    setState(prev => ({
+      ...prev,
+      lastResult: null,
+      currentQuestion: prev.nextQuestion,
+      nextQuestion: null
+    }))
   }
 
   const handleViewSummary = () => {
