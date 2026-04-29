@@ -297,10 +297,10 @@ class APIClient {
     })
   }
 
-  async processBatchUpload(batchData: any): Promise<BatchUploadResult> {
+  async processBatchUpload(batchData: any, overwrite: boolean = false): Promise<BatchUploadResult> {
     return this.request<BatchUploadResult>('/batch/upload', {
       method: 'POST',
-      body: JSON.stringify({ batch_data: batchData }),
+      body: JSON.stringify({ batch_data: batchData, overwrite }),
     })
   }
 
@@ -321,6 +321,7 @@ export interface BatchUploadResult {
   upload_id: string
   domains_created: number
   terms_created: number
+  terms_updated: number
   domains_skipped: number
   processing_summary: string[]
 }

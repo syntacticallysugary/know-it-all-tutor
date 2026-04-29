@@ -367,18 +367,19 @@ def handle_process_batch_upload(event: Dict[str, Any], user_id: str) -> Dict[str
             })
         
         batch_data = body['batch_data']
-        
+        overwrite = bool(body.get('overwrite', False))
+
         # Re-validate the batch data
         validation_result = validate_batch_structure(batch_data)
         if not validation_result['valid']:
             return create_validation_error_response(validation_result['errors'])
-        
+
         domain_validation = validate_domains_and_terms(batch_data.get('domains', []))
         if not domain_validation['valid']:
             return create_validation_error_response(domain_validation['errors'])
-        
+
         # Process the batch upload in a transaction
-        result = process_batch_upload_transaction(batch_data, user_id)
+        result = process_batch_upload_transaction(batch_data, user_id, overwrite=overwrite)
         
         if not result['success']:
             # Record failed upload in history
@@ -410,6 +411,7 @@ def handle_process_batch_upload(event: Dict[str, Any], user_id: str) -> Dict[str
             'upload_id': upload_record['id'],
             'domains_created': result['domains_created'],
             'terms_created': result['terms_created'],
+            'terms_updated': result['terms_updated'],
             'domains_skipped': result['domains_skipped'],
             'processing_summary': result['summary']
         }
@@ -424,7 +426,7 @@ def handle_process_batch_upload(event: Dict[str, Any], user_id: str) -> Dict[str
         return handle_error(e)
 
 
-def process_batch_upload_transaction(batch_data: Dict[str, Any], user_id: str) -> Dict[str, Any]:
+def process_batch_upload_transaction(batch_data: Dict[str, Any], user_id: str, overwrite: bool = False) -> Dict[str, Any]:
     """
     Process batch upload using DB Proxy
     Note: DB Proxy doesn't support explicit transactions, so each operation is atomic.
@@ -433,6 +435,7 @@ def process_batch_upload_transaction(batch_data: Dict[str, Any], user_id: str) -
     try:
         domains_created = 0
         terms_created = 0
+        terms_updated = 0
         domains_skipped = 0
         processing_summary = []
         failed_domains = []
@@ -523,11 +526,28 @@ def process_batch_upload_transaction(batch_data: Dict[str, Any], user_id: str) -
                         term_name = term_data['term'].strip()
                         term_definition = term_data['definition'].strip()
                         
-                        # Skip if term already exists in domain
+                        # Overwrite or skip if term already exists in domain
                         if term_name.lower() in existing_term_names:
-                            terms_skipped += 1
+                            if overwrite:
+                                term_payload = {'term': term_name, 'definition': term_definition}
+                                for field in ['difficulty', 'module', 'examples', 'code_example',
+                                              'category', 'short_reference']:
+                                    if field in term_data:
+                                        term_payload[field] = term_data[field]
+                                db_proxy.execute_query(
+                                    """
+                                    UPDATE tree_nodes
+                                    SET data = %s::jsonb, updated_at = CURRENT_TIMESTAMP
+                                    WHERE parent_id = %s AND node_type = 'term'
+                                    AND lower(data->>'term') = lower(%s)
+                                    """,
+                                    params=[json.dumps(term_payload), domain_id, term_name]
+                                )
+                                terms_updated += 1
+                            else:
+                                terms_skipped += 1
                             continue
-                        
+
                         # Validate term data
                         if not term_name or len(term_name) < 2:
                             raise ValueError(f"Invalid term name: '{term_name}' in domain '{domain_name}'")
@@ -582,11 +602,17 @@ def process_batch_upload_transaction(batch_data: Dict[str, Any], user_id: str) -
                 )
                 
                 # Create summary message
-                if domain_id in [d['id'] for d in existing_domain] if existing_domain else []:
-                    processing_summary.append(
-                        f"Merged into existing domain '{domain_name}': "
-                        f"{domain_terms_created} new terms added, {terms_skipped} duplicates skipped"
-                    )
+                if existing_domain and len(existing_domain) > 0:
+                    if overwrite:
+                        processing_summary.append(
+                            f"Updated existing domain '{domain_name}': "
+                            f"{terms_updated} terms overwritten, {domain_terms_created} new terms added"
+                        )
+                    else:
+                        processing_summary.append(
+                            f"Merged into existing domain '{domain_name}': "
+                            f"{domain_terms_created} new terms added, {terms_skipped} duplicates skipped"
+                        )
                 else:
                     processing_summary.append(f"Created domain '{domain_name}' with {domain_terms_created} terms")
                 
@@ -608,6 +634,7 @@ def process_batch_upload_transaction(batch_data: Dict[str, Any], user_id: str) -
             'success': True,
             'domains_created': domains_created,
             'terms_created': terms_created,
+            'terms_updated': terms_updated,
             'domains_skipped': domains_skipped,
             'failed_domains': failed_domains,
             'summary': processing_summary,

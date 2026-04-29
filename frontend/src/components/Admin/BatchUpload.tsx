@@ -13,6 +13,7 @@ interface UploadState {
   uploadResults: BatchUploadResult | null
   error: string | null
   isProcessing: boolean
+  overwrite: boolean
 }
 
 const BatchUpload: React.FC = () => {
@@ -22,7 +23,8 @@ const BatchUpload: React.FC = () => {
     validationResults: null,
     uploadResults: null,
     error: null,
-    isProcessing: false
+    isProcessing: false,
+    overwrite: false,
   })
 
   const handleFileSelect = async (file: File) => {
@@ -69,7 +71,8 @@ const BatchUpload: React.FC = () => {
       validationResults: null,
       uploadResults: null,
       error: null,
-      isProcessing: false
+      isProcessing: false,
+      overwrite: false,
     })
   }
 
@@ -82,7 +85,7 @@ const BatchUpload: React.FC = () => {
       const text = await state.file.text()
       const jsonData = JSON.parse(text)
       
-      const uploadResults = await apiClient.processBatchUpload(jsonData)
+      const uploadResults = await apiClient.processBatchUpload(jsonData, state.overwrite)
       
       setState(prev => ({
         ...prev,
@@ -117,7 +120,8 @@ const BatchUpload: React.FC = () => {
       validationResults: null,
       uploadResults: null,
       error: null,
-      isProcessing: false
+      isProcessing: false,
+      overwrite: false,
     })
   }
 
@@ -214,6 +218,8 @@ const BatchUpload: React.FC = () => {
               onProceed={handleProceedWithUpload}
               onCancel={handleCancelValidation}
               isProcessing={state.isProcessing}
+              overwrite={state.overwrite}
+              onOverwriteChange={(v) => setState(prev => ({ ...prev, overwrite: v }))}
             />
           </div>
         )}
@@ -233,13 +239,24 @@ const BatchUpload: React.FC = () => {
             <CheckCircleIcon className="mx-auto h-12 w-12 text-green-500" />
             <h3 className="mt-4 text-lg font-medium text-gray-900">Upload Complete!</h3>
             <div className="mt-4 space-y-2">
-              <p className="text-sm text-gray-600">
-                Successfully created <strong>{state.uploadResults.domains_created}</strong> domains 
-                and <strong>{state.uploadResults.terms_created}</strong> terms.
-              </p>
-              {state.uploadResults.domains_skipped > 0 && (
+              {state.uploadResults.domains_created > 0 && (
+                <p className="text-sm text-gray-600">
+                  Created <strong>{state.uploadResults.domains_created}</strong> new domain{state.uploadResults.domains_created !== 1 ? 's' : ''}.
+                </p>
+              )}
+              {state.uploadResults.terms_created > 0 && (
+                <p className="text-sm text-gray-600">
+                  Added <strong>{state.uploadResults.terms_created}</strong> new term{state.uploadResults.terms_created !== 1 ? 's' : ''}.
+                </p>
+              )}
+              {state.uploadResults.terms_updated > 0 && (
+                <p className="text-sm text-blue-600">
+                  Updated <strong>{state.uploadResults.terms_updated}</strong> existing term{state.uploadResults.terms_updated !== 1 ? 's' : ''}.
+                </p>
+              )}
+              {state.uploadResults.domains_skipped > 0 && !state.overwrite && (
                 <p className="text-sm text-yellow-600">
-                  Skipped <strong>{state.uploadResults.domains_skipped}</strong> existing domains.
+                  Skipped <strong>{state.uploadResults.domains_skipped}</strong> existing domain{state.uploadResults.domains_skipped !== 1 ? 's' : ''} (no overwrite).
                 </p>
               )}
             </div>

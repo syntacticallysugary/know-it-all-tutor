@@ -7,13 +7,17 @@ interface ValidationResultsProps {
   onProceed: () => void
   onCancel: () => void
   isProcessing?: boolean
+  overwrite?: boolean
+  onOverwriteChange?: (value: boolean) => void
 }
 
 const ValidationResults: React.FC<ValidationResultsProps> = ({
   results,
   onProceed,
   onCancel,
-  isProcessing = false
+  isProcessing = false,
+  overwrite = false,
+  onOverwriteChange,
 }) => {
   return (
     <div className="space-y-6">
@@ -80,21 +84,42 @@ const ValidationResults: React.FC<ValidationResultsProps> = ({
       {results.existing_duplicates.length > 0 && (
         <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
           <div className="flex">
-            <InformationCircleIcon className="h-5 w-5 text-blue-400" />
-            <div className="ml-3">
+            <InformationCircleIcon className="h-5 w-5 text-blue-400 flex-shrink-0 mt-0.5" />
+            <div className="ml-3 w-full">
               <h4 className="text-sm font-medium text-blue-800">Existing Domains</h4>
               <p className="mt-1 text-sm text-blue-700">
-                The following domains already exist and will be skipped:
+                The following {results.existing_duplicates.length} domain{results.existing_duplicates.length !== 1 ? 's' : ''} already exist:
               </p>
               <div className="mt-2">
                 <ul className="text-sm text-blue-700 space-y-1">
                   {results.existing_duplicates.map((domain, index) => (
                     <li key={index} className="flex items-center">
-                      <span className="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>
+                      <span className="w-2 h-2 bg-blue-400 rounded-full mr-2 flex-shrink-0"></span>
                       {domain}
                     </li>
                   ))}
                 </ul>
+              </div>
+
+              {/* Overwrite toggle */}
+              <div className="mt-4 pt-3 border-t border-blue-200">
+                <label className="flex items-start gap-3 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={overwrite}
+                    onChange={(e) => onOverwriteChange?.(e.target.checked)}
+                    disabled={isProcessing}
+                    className="mt-0.5 h-4 w-4 rounded border-blue-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50"
+                  />
+                  <span className="text-sm text-blue-800">
+                    <span className="font-medium">Overwrite existing terms</span>
+                    <span className="block text-blue-600 font-normal">
+                      {overwrite
+                        ? 'Existing term definitions will be replaced. New terms will be added.'
+                        : 'Existing terms will be skipped. Only new terms will be added.'}
+                    </span>
+                  </span>
+                </label>
               </div>
             </div>
           </div>
@@ -124,7 +149,9 @@ const ValidationResults: React.FC<ValidationResultsProps> = ({
               Processing...
             </>
           ) : (
-            'Proceed with Upload'
+            overwrite && results.existing_duplicates.length > 0
+              ? 'Proceed with Overwrite'
+              : 'Proceed with Upload'
           )}
         </button>
       </div>

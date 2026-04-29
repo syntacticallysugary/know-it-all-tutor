@@ -9,6 +9,7 @@ import ProtectedRoute from './components/Auth/ProtectedRoute'
 import LandingPage from './pages/LandingPage'
 import Dashboard from './pages/Dashboard'
 import DomainLibrary from './pages/DomainLibrary'
+import DomainDetails from './pages/DomainDetails'
 import CreateDomain from './pages/CreateDomain'
 import QuizInterface from './pages/QuizInterface'
 import AdminPanel from './pages/AdminPanel'
@@ -36,6 +37,7 @@ function App() {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="domains" element={<DomainLibrary />} />
             <Route path="domains/create" element={<CreateDomain />} />
+            <Route path="domains/detail/:subject" element={<DomainDetails />} />
             <Route path="domains/:domainId/edit" element={<CreateDomain />} />
             <Route path="quiz/:domainId" element={<QuizInterface />} />
             <Route path="profile" element={<Profile />} />
