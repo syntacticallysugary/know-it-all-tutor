@@ -37,10 +37,7 @@ Each stack is independently deployable (within dependency constraints), making i
 
 ### Backend: Lambda Functions
 
-All business logic runs in Python 3.11 Lambda functions sharing a common Lambda Layer (`infrastructure/lambda_layer/python/`) that provides:
-- `db_proxy_client.py` — DB Proxy pattern (all DB access goes through a proxy Lambda)
-- `auth_utils.py` — Cognito JWT validation helpers
-- `response_utils.py` — Standardized API response formatting
+All business logic runs in Python 3.11 Lambda functions sharing a common Lambda Layer (`infrastructure/lambda_layer/python/`). See the shared module table below.
 
 Active Lambda functions (`src/lambda_functions/`):
 
@@ -62,20 +59,31 @@ Active Lambda functions (`src/lambda_functions/`):
 
 The **DB Proxy pattern** deserves mention: rather than giving every Lambda VPC access and a DB connection pool, all database calls route through a single `db_proxy` Lambda. This keeps the architecture simple and avoids connection exhaustion.
 
+The Lambda Layer (`infrastructure/lambda_layer/python/`) provides shared code to all functions:
+
+| Module | Purpose |
+|--------|---------|
+| `db_proxy_client.py` | DB Proxy invocation client |
+| `auth_utils.py` | Cognito JWT validation |
+| `authorization_utils.py` | Route-level authorization enforcement |
+| `response_utils.py` | Standardized API response formatting |
+| `security_middleware.py` | Input sanitization and rate-limit headers |
+| `security_monitoring.py` | Security event logging |
+| `secrets_client.py` | Secrets Manager access |
+| `config.py` | Environment-aware configuration |
+| `database.py` | Connection helpers (used by db_proxy) |
+
 ### ML: Semantic Answer Evaluation
 
-The answer evaluator uses a custom fine-tuned DistilBERT sentence transformer, optimized to ONNX format for Lambda deployment:
+The answer evaluator uses a cross-encoder model fine-tuned from NLI → STSB, exported to int8-quantized ONNX for Lambda deployment:
 
-- **Model:** Fine-tuned sentence-transformers model → converted to ONNX
-- **Runtime:** `onnxruntime` + `transformers` (no PyTorch) → ~795MB Docker image
-- **Deployment:** Docker Lambda (`lambda/answer-evaluator/`) with the model embedded
-- **Result:** Semantic similarity scoring that recognizes synonyms and paraphrases — "rapid" matches "fast" matches "quick"
+- **Model:** Cross-encoder (NLI pre-trained → STSB fine-tuned), int8 quantized ONNX (~79 MB)
+- **Runtime:** `onnxruntime` + `tokenizers` (no PyTorch, no `transformers`) → ~456MB Docker image
+- **Deployment:** Docker Lambda (`lambda/answer-evaluator/`) with the model baked in
+- **Scoring:** sigmoid(logit) → min-max normalized over an empirical calibration range; pass threshold 0.50
+- **Result:** Semantic similarity scoring that recognizes synonyms and paraphrases — "rapid" matches "fast" matches "quick". Supports single-pair and batch evaluation.
 
-The ONNX conversion reduced the container size by ~60% vs PyTorch and eliminated a heavy dependency.
-
-Local model files:
-- `final_similarity_model/` — original PyTorch checkpoint (reference/retraining)
-- `final_similarity_model_onnx/` — deployed ONNX version (tracked via Git LFS)
+Dropping PyTorch and `transformers` kept the container well under the 10 GB Lambda image limit and cut cold-start time significantly.
 
 ### Frontend
 
@@ -96,18 +104,18 @@ PostgreSQL on Amazon RDS (single-instance, not Aurora Serverless — cost-optimi
 
 ## CI/CD
 
-Push to `main` → GitHub Actions runs → CDK deploys (~5 minutes end-to-end).
-
 ```
-.github/workflows/github-ci-cd.yml   ← active workflow
+.github/workflows/github-ci-cd.yml   ← security scans + unit tests (on push/PR)
 .github/workflows/rollback.yml       ← manual rollback trigger
 ```
 
-Pipeline stages:
+GitHub Actions pipeline stages (runs on every push to `main` and on PRs):
 1. **Security scans** — Bandit (SAST), Checkov (IaC), TruffleHog (secrets), pip-audit (dependencies)
 2. **Unit tests** — pytest with Moto (AWS mocking, no real AWS calls)
-3. **CDK deploy** — `cdk deploy --all --require-approval never`
-4. **Frontend build + deploy** — `npm run build` → S3 sync → CloudFront invalidation
+
+CDK deployment is triggered separately via a self-hosted Gitea CI pipeline, which handles:
+- `cdk deploy --all --require-approval never`
+- `npm run build` → S3 sync → CloudFront invalidation
 
 Tests use [Moto](https://github.com/getmoto/moto) for AWS mocking rather than LocalStack — faster, no Docker required in CI, and runs in-process.
 
@@ -151,8 +159,8 @@ docs/                           # Technical documentation
 
 ```bash
 # Clone and set up Python environment
-git clone git@github.com:huschlej111/ai-tutor-system.git
-cd ai-tutor-system
+git clone git@github.com:syntacticallysugary/know-it-all-tutor.git
+cd know-it-all-tutor
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 
@@ -175,11 +183,11 @@ sudo -u postgres psql -f scripts/sql/setup-ci-testdb.sql
 
 # 3. Apply schema + migrations
 psql postgresql://testuser:testpassword@localhost/tutor_system_test \
-     -f src/lambda_functions/migration_runner/migrations/schema_v2.sql
+     -f database/migrations/schema_v2.sql
 psql postgresql://testuser:testpassword@localhost/tutor_system_test \
-     -f src/lambda_functions/migration_runner/migrations/003_add_public_domains.sql
+     -f database/migrations/003_add_public_domains.sql
 psql postgresql://testuser:testpassword@localhost/tutor_system_test \
-     -f src/lambda_functions/migration_runner/migrations/004_update_quiz_sessions_schema.sql
+     -f database/migrations/004_update_quiz_sessions_schema.sql
 
 # 4. Seed your Cognito user into the local DB (fetches your sub from AWS automatically)
 ./scripts/seed-local-dev.sh
@@ -211,7 +219,7 @@ The `template.yaml` at the project root mirrors the CDK backend stack routes.
 - `response_utils.py` sets CORS to `http://localhost:5173`
 
 > **Note:** The ML answer evaluator (`POST /quiz/evaluate`) is omitted from the
-> local template — it requires a 795 MB Docker image. The rest of the quiz flow
+> local template — it requires a ~456MB Docker image. The rest of the quiz flow
 > (start, question, answer) works without it.
 
 #### Running tests only
@@ -225,11 +233,8 @@ pytest tests/ -v --ignore=tests/test_localstack_integration.py
 
 ```bash
 source venv/bin/activate
-cd infrastructure
 cdk deploy --all
 ```
-
-Or just push to `main` — GitHub Actions handles it.
 
 ---
 
@@ -239,7 +244,7 @@ Or just push to `main` — GitHub Actions handles it.
 VPC-attached Lambdas have cold start overhead and each needs a connection pool slot. The proxy pattern centralizes DB access, keeps non-DB Lambdas outside the VPC (faster cold starts), and prevents connection exhaustion.
 
 **Why ONNX instead of PyTorch for the ML model?**
-PyTorch adds ~1.5GB to a Lambda container. The ONNX runtime with `transformers` handles inference at ~795MB — still large, but within Lambda limits and significantly cheaper in both image storage and cold start time.
+PyTorch adds ~1.5GB to a Lambda container. Using `onnxruntime` + `tokenizers` (no `transformers`) keeps the image at ~456MB — well under Lambda's 10 GB limit and meaningfully cheaper in both ECR storage and cold-start time.
 
 **Why 6 CDK stacks instead of one?**
 Separation of concerns in deployment. Network and database changes are rare and risky — having them in separate stacks means a backend code change doesn't trigger a network stack update. It also enables faster targeted deploys (`cdk deploy BackendStack-dev`).
@@ -294,6 +299,8 @@ Full system specs live in `.kiro/specs/`:
 - `tutor-system/design.md` — system architecture
 - `tutor-system/datamodel.md` — database schema and query patterns
 - `ci-cd/` — CI/CD pipeline design
+- `quiz-engine-deployment/` — ML inference deployment design
+- `student-teacher/` — multi-role user model design
 
 ---
 
