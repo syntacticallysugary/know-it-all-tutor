@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { Tab } from '@headlessui/react'
-import { CloudArrowUpIcon, ClockIcon } from '@heroicons/react/24/outline'
+import { CloudArrowUpIcon, ClockIcon, UserGroupIcon } from '@heroicons/react/24/outline'
 import BatchUpload from '../components/Admin/BatchUpload'
 import UploadHistory from '../components/Admin/UploadHistory'
+import PendingUsers from '../components/Admin/PendingUsers'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -13,15 +14,20 @@ const AdminPanel = () => {
 
   const tabs = [
     {
+      name: 'Pending Registrations',
+      icon: UserGroupIcon,
+      component: PendingUsers,
+    },
+    {
       name: 'Batch Upload',
       icon: CloudArrowUpIcon,
-      component: BatchUpload
+      component: BatchUpload,
     },
     {
       name: 'Upload History',
       icon: ClockIcon,
-      component: UploadHistory
-    }
+      component: UploadHistory,
+    },
   ]
 
   return (
