@@ -21,6 +21,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSwitchToSignIn, onSignUpSucce
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [pendingApproval, setPendingApproval] = useState(false)
 
   const {
     register,
@@ -47,8 +48,11 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSwitchToSignIn, onSignUpSucce
       
       if (result.success) {
         if (result.requiresConfirmation) {
-          // Pass email as username for confirmation
           onSignUpSuccess(data.email)
+        } else {
+          // Auto-confirmed — account is pending admin approval
+          setError(null)
+          setPendingApproval(true)
         }
       } else {
         setError(result.error || 'Sign up failed')
@@ -57,6 +61,26 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSwitchToSignIn, onSignUpSucce
       console.error('Sign up error:', error)
       setError('Sign up failed. Please try again.')
     }
+  }
+
+  if (pendingApproval) {
+    return (
+      <div className="w-full max-w-md text-center">
+        <div className="text-5xl mb-4">✅</div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Registration received</h2>
+        <p className="text-gray-600 mb-6">
+          Your account has been created and is awaiting admin approval.
+          You will receive an email once your account is approved.
+        </p>
+        <button
+          type="button"
+          onClick={onSwitchToSignIn}
+          className="text-primary-600 hover:text-primary-500 font-medium text-sm"
+        >
+          Back to sign in
+        </button>
+      </div>
+    )
   }
 
   return (
