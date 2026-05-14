@@ -1,21 +1,28 @@
 import { NavLink } from 'react-router-dom'
-import { 
-  LayoutDashboard, 
-  BookOpen, 
-  Plus, 
+import {
+  LayoutDashboard,
+  BookOpen,
+  Plus,
   Settings,
   Shield
 } from 'lucide-react'
+import { useAuth } from '../../contexts/AuthContext'
 
-const navigation = [
+const baseNavigation = [
   { name: 'Dashboard', href: '/app/dashboard', icon: LayoutDashboard },
   { name: 'Domain Library', href: '/app/domains', icon: BookOpen },
   { name: 'Create Domain', href: '/app/domains/create', icon: Plus },
-  { name: 'Admin Panel', href: '/app/admin', icon: Shield },
   { name: 'Profile', href: '/app/profile', icon: Settings },
 ]
 
+const adminNavigation = { name: 'Admin Panel', href: '/app/admin', icon: Shield }
+
 const Sidebar = () => {
+  const { user } = useAuth()
+  const navigation = user?.isAdmin
+    ? [...baseNavigation, adminNavigation]
+    : baseNavigation
+
   return (
     <aside className="w-64 bg-white border-r border-gray-200 min-h-screen">
       <nav className="p-4 space-y-2">
