@@ -641,7 +641,7 @@ def handler(event, context):
                 LambdaConfig={
                     'PreSignUp': pre_signup_arn,
                     'PostConfirmation': post_confirmation_arn,
-                    'PreAuthentication': pre_authentication_arm,
+                    'PreAuthentication': pre_authentication_arn,
                 }
             )
             print(f"Updated User Pool {user_pool_id} with all Cognito triggers")
