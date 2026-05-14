@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { Hub } from 'aws-amplify/utils'
+import { fetchAuthSession } from 'aws-amplify/auth'
 import { AuthService } from '../services/auth'
 
 export interface User {
@@ -8,6 +9,7 @@ export interface User {
   email?: string
   given_name?: string
   family_name?: string
+  isAdmin: boolean
 }
 
 export interface AuthContextType {
@@ -45,10 +47,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const result = await AuthService.getCurrentUser()
       if (result.success && result.user) {
+        const session = await fetchAuthSession()
+        const payload = session.tokens?.idToken?.payload ?? {}
+        const groups: string[] = Array.isArray(payload['cognito:groups'])
+          ? (payload['cognito:groups'] as string[])
+          : []
         setUser({
           userId: result.user.userId,
           username: result.user.username,
           email: result.user.signInDetails?.loginId,
+          isAdmin: groups.includes('admin'),
         })
       } else {
         setUser(null)
