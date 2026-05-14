@@ -1,1 +1,132 @@
-IiIiQXV0aCBTdGFjayBmb3IgS25vdy1JdC1BbGwgVHV0b3IgU3lzdGVtCkNvbnRhaW5zIENvZ25pdG8gVXNlciBQb29sIGFuZCBQcmUtU2lnblVwIExhbWJkYSB0cmlnZ2VyCiIiIgoKZnJvbSBhd3NfY2RrIGltcG9ydCAoCiAgICBDZm5PdXRwdXQsCiAgICBEdXJhdGlvbiwKICAgIFJlbW92YWxQb2xpY3ksCiAgICBTdGFjaywKKQpmcm9tIGF3c19jZGsgaW1wb3J0ICgKICAgIGF3c19jb2duaXRvIGFzIGNvZ25pdG8sCikKZnJvbSBhd3NfY2RrIGltcG9ydCAoCiAgICBhd3NfaWFtIGFzIGlhbSwKKQpmcm9tIGF3c19jZGsgaW1wb3J0ICgKICAgIGF3c19sYW1iZGEgYXMgX2xhbWJkYSwKKQpmcm9tIGNvbnN0cnVjdHMgaW1wb3J0IENvbnN0cnVjdAoKCmNsYXNzIEF1dGhTdGFjayhTdGFjayk6CiAgICAiIiJBdXRoZW50aWNhdGlvbiBpbmZyYXN0cnVjdHVyZSBzdGFjayBjb250YWluaW5nIENvZ25pdG8gcmVzb3VyY2VzLgogICAgVGhpcyBzdGFjayBjaGFuZ2VzIG9jY2FzaW9uYWxseS4KICAgICIiIgoKICAgIGRlZiBfX2luaXRfXyhzZWxmLCBzY29wZTogQ29uc3RydWN0LCBjb25zdHJ1Y3RfaWQ6IHN0ciwgKiprd2FyZ3MpIC0+IE5vbmU6CiAgICAgICAgc3VwZXIoKS5fX2luaXRfXyhzY29wZSwgY29uc3RydWN0X2lkLCAqKmt3YXJncykKCiAgICAgICAgIyBDcmVhdGUgQ29nbml0byBVc2VyIFBvb2wKICAgICAgICBzZWxmLnVzZXJfcG9vbCA9IGNvZ25pdG8uVXNlclBvb2woCiAgICAgICAgICAgIHNlbGYsCiAgICAgICAgICAgICJBdXRoVXNlclBvb2wiLAogICAgICAgICAgICB1c2VyX3Bvb2xfbmFtZT0ia25vdy1pdC1hbGwtdHV0b3ItbXVsdGlzdGFjay1kZXYiLCAgIyBEaWZmZXJlbnQgbmFtZSBmb3IgdGVzdGluZwogICAgICAgICAgICAjIFVzZXJzIHNpZ24gaW4gd2l0aCBlbWFpbCwgbm90IHVzZXJuYW1lCiAgICAgICAgICAgIHNpZ25faW5fYWxpYXNlcz1jb2duaXRvLlNpZ25JbkFsaWFzZXMoZW1haWw9VHJ1ZSksCiAgICAgICAgICAgICMgUGFzc3dvcmQgcmVxdWlyZW1lbnRzCiAgICAgICAgICAgIHBhc3N3b3JkX3BvbGljeT1jb2duaXRvLlBhc3N3b3JkUG9saWN5KAogICAgICAgICAgICAgICAgbWluX2xlbmd0aD04LAogICAgICAgICAgICAgICAgcmVxdWlyZV9sb3dlcmNhc2U9VHJ1ZSwKICAgICAgICAgICAgICAgIHJlcXVpcmVfdXBwZXJjYXNlPVRydWUsCiAgICAgICAgICAgICAgICByZXF1aXJlX2RpZ2l0cz1UcnVlLAogICAgICAgICAgICAgICAgcmVxdWlyZV9zeW1ib2xzPVRydWUsCiAgICAgICAgICAgICksCiAgICAgICAgICAgICMgTk8gRU1BSUwgVkVSSUZJQ0FUSU9OIGZvciBkZXYgLSB1c2VycyBhcmUgaW1tZWRpYXRlbHkgY29uZmlybWVkCiAgICAgICAgICAgIGF1dG9fdmVyaWZ5PWNvZ25pdG8uQXV0b1ZlcmlmaWVkQXR0cnMoKSwgICMgRW1wdHkgPSBubyB2ZXJpZmljYXRpb24KICAgICAgICAgICAgIyBBbGxvdyB1c2VycyB0byBzaWduIHVwIHRoZW1zZWx2ZXMKICAgICAgICAgICAgc2VsZl9zaWduX3VwX2VuYWJsZWQ9VHJ1ZSwKICAgICAgICAgICAgIyBDdXN0b20gYXR0cmlidXRlcyBmb3IgYXBwcm92YWwgd29ya2Zsb3cKICAgICAgICAgICAgY3VzdG9tX2F0dHJpYnV0ZXM9ewogICAgICAgICAgICAgICAgInN0YXR1cyI6IGNvZ25pdG8uU3RyaW5nQXR0cmlidXRlKG11dGFibGU9VHJ1ZSwgbWluX2xlbj0wLCBtYXhfbGVuPTIwKSwKICAgICAgICAgICAgfSwKICAgICAgICAgICAgIyBDbGVhbiB1cCB3aGVuIHN0YWNrIGlzIGRlbGV0ZWQgKGRldiBlbnZpcm9ubWVudCkKICAgICAgICAgICAgcmVtb3ZhbF9wb2xpY3k9UmVtb3ZhbFBvbGljeS5ERVNUUk9ZLAogICAgICAgICkKCiAgICAgICAgIyBDcmVhdGUgVXNlciBQb29sIENsaWVudAogICAgICAgIHNlbGYudXNlcl9wb29sX2NsaWVudCA9IGNvZ25pdG8uVXNlclBvb2xDbGllbnQoCiAgICAgICAgICAgIHNlbGYsCiAgICAgICAgICAgICJBdXRoVXNlclBvb2xDbGllbnQiLAogICAgICAgICAgICB1c2VyX3Bvb2w9c2VsZi51c2VyX3Bvb2wsCiAgICAgICAgICAgIHVzZXJfcG9vbF9jbGllbnRfbmFtZT0ia25vdy1pdC1hbGwtdHV0b3Itd2ViLWNsaWVudC1tdWx0aXN0YWNrLWRldiIsCiAgICAgICAgICAgICMgQWxsb3cgdXNlcm5hbWUvcGFzc3dvcmQgYXV0aGVudGljYXRpb24KICAgICAgICAgICAgYXV0aF9mbG93cz1jb2duaXRvLkF1dGhGbG93KHVzZXJfcGFzc3dvcmQ9VHJ1ZSwgdXNlcl9zcnA9VHJ1ZSksCiAgICAgICAgICAgICMgVG9rZW4gdmFsaWRpdHkgcGVyaW9kcwogICAgICAgICAgICBhY2Nlc3NfdG9rZW5fdmFsaWRpdHk9RHVyYXRpb24uaG91cnMoMSksCiAgICAgICAgICAgIGlkX3Rva2VuX3ZhbGlkaXR5PUR1cmF0aW9uLmhvdXJzKDEpLAogICAgICAgICAgICByZWZyZXNoX3Rva2VuX3ZhbGlkaXR5PUR1cmF0aW9uLmRheXMoMzApLAogICAgICAgICAgICAjIERvbid0IGdlbmVyYXRlIGEgY2xpZW50IHNlY3JldCAoZm9yIHdlYiBhcHBzKQogICAgICAgICAgICBnZW5lcmF0ZV9zZWNyZXQ9RmFsc2UsCiAgICAgICAgKQoKICAgICAgICAjIENyZWF0ZSBQcmUtU2lnblVwIExhbWJkYSBUcmlnZ2VyIChhdXRvLWNvbmZpcm0gKyBub3RpZnkgYWRtaW4gdmlhIFNFUykKICAgICAgICBzZWxmLnByZV9zaWdudXBfbGFtYmRhID0gX2xhbWJkYS5GdW5jdGlvbigKICAgICAgICAgICAgc2VsZiwKICAgICAgICAgICAgIlByZVNpZ25VcFRyaWdnZXIiLAogICAgICAgICAgICBydW50aW1lPV9sYW1iZGEuUnVudGltZS5QWVRIT05fM18xMiwKICAgICAgICAgICAgaGFuZGxlcj0iaGFuZGxlci5sYW1iZGFfaGFuZGxlciIsCiAgICAgICAgICAgIGNvZGU9X2xhbWJkYS5Db2RlLmZyb21fYXNzZXQoIi4uL3NyYy9sYW1iZGFfZnVuY3Rpb25zL2NvZ25pdG9fcHJlX3NpZ251cCIpLAogICAgICAgICAgICB0aW1lb3V0PUR1cmF0aW9uLnNlY29uZHMoMTApLAogICAgICAgICAgICBtZW1vcnlfc2l6ZT0xMjgsCiAgICAgICAgICAgIGVudmlyb25tZW50PXsKICAgICAgICAgICAgICAgICJBRE1JTl9FTUFJTCI6ICJodXNjaGxlakBjb21jYXN0Lm5ldCIsCiAgICAgICAgICAgICAgICAiU0VTX0ZST01fRU1BSUwiOiAibm9yZXBseUBzeW50YWN0aWNhbGx5c3VnYXJ5LmRldiIsCiAgICAgICAgICAgICAgICAiQVBQX1VSTCI6ICJodHRwczovL2QzYXdsZ2J5MjQyOXdjLmNsb3VkZnJvbnQubmV0IiwKICAgICAgICAgICAgfSwKICAgICAgICAgICAgZGVzY3JpcHRpb249IkNvZ25pdG8gUHJlLVNpZ25VcCB0cmlnZ2VyIC0gYXV0by1jb25maXJtcyB1c2VycyBhbmQgbm90aWZpZXMgYWRtaW4iLAogICAgICAgICkKCiAgICAgICAgIyBBbGxvdyBwcmUtc2lnbnVwIExhbWJkYSB0byBzZW5kIGVtYWlsIHZpYSBTRVMKICAgICAgICBzZWxmLnByZV9zaWdudXBfbGFtYmRhLmFkZF90b19yb2xlX3BvbGljeSgKICAgICAgICAgICAgaWFtLlBvbGljeVN0YXRlbWVudCgKICAgICAgICAgICAgICAgIGFjdGlvbnM9WyJzZXM6U2VuZEVtYWlsIiwgInNlczpTZW5kUmF3RW1haWwiXSwKICAgICAgICAgICAgICAgIHJlc291cmNlcz1bIioiXSwKICAgICAgICAgICAgKQogICAgICAgICkKCiAgICAgICAgIyBHcmFudCBDb2duaXRvIHBlcm1pc3Npb24gdG8gaW52b2tlIHRoZSBMYW1iZGEKICAgICAgICBzZWxmLnByZV9zaWdudXBfbGFtYmRhLmFkZF9wZXJtaXNzaW9uKAogICAgICAgICAgICAiQ29nbml0b0ludm9rZSIsCiAgICAgICAgICAgIHByaW5jaXBhbD1pYW0uU2VydmljZVByaW5jaXBhbCgiY29nbml0by1pZHAuYW1hem9uYXdzLmNvbSIpLAogICAgICAgICAgICBzb3VyY2VfYXJuPXNlbGYudXNlcl9wb29sLnVzZXJfcG9vbF9hcm4sCiAgICAgICAgKQoKICAgICAgICAjIEFkZCB0cmlnZ2VyIHRvIFVzZXIgUG9vbAogICAgICAgIHNlbGYudXNlcl9wb29sLmFkZF90cmlnZ2VyKGNvZ25pdG8uVXNlclBvb2xPcGVyYXRpb24uUFJFX1NJR05fVVAsIHNlbGYucHJlX3NpZ251cF9sYW1iZGEpCgogICAgICAgICMgQ2xvdWRGb3JtYXRpb24gT3V0cHV0cwogICAgICAgIENmbk91dHB1dCgKICAgICAgICAgICAgc2VsZiwKICAgICAgICAgICAgIlVzZXJQb29sSWQiLAogICAgICAgICAgICB2YWx1ZT1zZWxmLnVzZXJfcG9vbC51c2VyX3Bvb2xfaWQsCiAgICAgICAgICAgIGRlc2NyaXB0aW9uPSJDb2duaXRvIFVzZXIgUG9vbCBJRCIsCiAgICAgICAgICAgIGV4cG9ydF9uYW1lPWYie2NvbnN0cnVjdF9pZH0tVXNlclBvb2xJZCIsCiAgICAgICAgKQoKICAgICAgICBDZm5PdXRwdXQoCiAgICAgICAgICAgIHNlbGYsCiAgICAgICAgICAgICJVc2VyUG9vbENsaWVudElkIiwKICAgICAgICAgICAgdmFsdWU9c2VsZi51c2VyX3Bvb2xfY2xpZW50LnVzZXJfcG9vbF9jbGllbnRfaWQsCiAgICAgICAgICAgIGRlc2NyaXB0aW9uPSJDb2duaXRvIFVzZXIgUG9vbCBDbGllbnQgSUQiLAogICAgICAgICAgICBleHBvcnRfbmFtZT1mIntjb25zdHJ1Y3RfaWR9LVVzZXJQb29sQ2xpZW50SWQiLAogICAgICAgICkKCiAgICAgICAgQ2ZuT3V0cHV0KAogICAgICAgICAgICBzZWxmLAogICAgICAgICAgICAiVXNlclBvb2xBcm4iLAogICAgICAgICAgICB2YWx1ZT1zZWxmLnVzZXJfcG9vbC51c2VyX3Bvb2xfYXJuLAogICAgICAgICAgICBkZXNjcmlwdGlvbj0iQ29nbml0byBVc2VyIFBvb2wgQVJOIiwKICAgICAgICAgICAgZXhwb3J0X25hbWU9ZiJ7Y29uc3RydWN0X2lkfS1Vc2VyUG9vbEFybiIsCiAgICAgICAgKQo=
+"""Auth Stack for Know-It-All Tutor System
+Contains Cognito User Pool and Pre-SignUp Lambda trigger
+"""
+
+from aws_cdk import (
+    CfnOutput,
+    Duration,
+    RemovalPolicy,
+    Stack,
+)
+from aws_cdk import (
+    aws_cognito as cognito,
+)
+from aws_cdk import (
+    aws_iam as iam,
+)
+from aws_cdk import (
+    aws_lambda as _lambda,
+)
+from constructs import Construct
+
+
+class AuthStack(Stack):
+    """Authentication infrastructure stack containing Cognito resources.
+    This stack changes occasionally.
+    """
+
+    def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
+        super().__init__(scope, construct_id, **kwargs)
+
+        # Create Cognito User Pool
+        self.user_pool = cognito.UserPool(
+            self,
+            "AuthUserPool",
+            user_pool_name="know-it-all-tutor-multistack-dev",  # Different name for testing
+            # Users sign in with email, not username
+            sign_in_aliases=cognito.SignInAliases(email=True),
+            # Password requirements
+            password_policy=cognito.PasswordPolicy(
+                min_length=8,
+                require_lowercase=True,
+                require_uppercase=True,
+                require_digits=True,
+                require_symbols=True,
+            ),
+            # NO EMAIL VERIFICATION for dev - users are immediately confirmed
+            auto_verify=cognito.AutoVerifiedAttrs(),  # Empty = no verification
+            # Allow users to sign up themselves
+            self_sign_up_enabled=True,
+            # Custom attributes for approval workflow
+            custom_attributes={
+                "status": cognito.StringAttribute(mutable=True, min_len=0, max_len=20),
+            },
+            # Clean up when stack is deleted (dev environment)
+            removal_policy=RemovalPolicy.DESTROY,
+        )
+
+        # Create User Pool Client
+        self.user_pool_client = cognito.UserPoolClient(
+            self,
+            "AuthUserPoolClient",
+            user_pool=self.user_pool,
+            user_pool_client_name="know-it-all-tutor-web-client-multistack-dev",
+            # Allow username/password authentication
+            auth_flows=cognito.AuthFlow(user_password=True, user_srp=True),
+            # Token validity periods
+            access_token_validity=Duration.hours(1),
+            id_token_validity=Duration.hours(1),
+            refresh_token_validity=Duration.days(30),
+            # Don't generate a client secret (for web apps)
+            generate_secret=False,
+        )
+
+        # Create Pre-SignUp Lambda Trigger (auto-confirm + notify admin via SES)
+        self.pre_signup_lambda = _lambda.Function(
+            self,
+            "PreSignUpTrigger",
+            runtime=_lambda.Runtime.PYTHON_3_12,
+            handler="handler.lambda_handler",
+            code=_lambda.Code.from_asset("../src/lambda_functions/cognito_pre_signup"),
+            timeout=Duration.seconds(10),
+            memory_size=128,
+            environment={
+                "ADMIN_EMAIL": "huschlej@comcast.net",
+                "SES_FROM_EMAIL": "noreply@syntacticallysugary.dev",
+                "APP_URL": "https://d3awlgby2429wc.cloudfront.net",
+            },
+            description="Cognito Pre-SignUp trigger - auto-confirms users and notifies admin",
+        )
+
+        # Allow pre-signup Lambda to send email via SES
+        self.pre_signup_lambda.add_to_role_policy(
+            iam.PolicyStatement(
+                actions=["ses:SendEmail", "ses:SendRawEmail"],
+                resources=["*"],
+            )
+        )
+
+        # Grant Cognito permission to invoke the Lambda
+        self.pre_signup_lambda.add_permission(
+            "CognitoInvoke",
+            principal=iam.ServicePrincipal("cognito-idp.amazonaws.com"),
+            source_arn=self.user_pool.user_pool_arn,
+        )
+
+        # Add trigger to User Pool
+        self.user_pool.add_trigger(cognito.UserPoolOperation.PRE_SIGN_UP, self.pre_signup_lambda)
+
+        # CloudFormation Outputs
+        CfnOutput(
+            self,
+            "UserPoolId",
+            value=self.user_pool.user_pool_id,
+            description="Cognito User Pool ID",
+            export_name=f"{construct_id}-UserPoolId",
+        )
+
+        CfnOutput(
+            self,
+            "UserPoolClientId",
+            value=self.user_pool_client.user_pool_client_id,
+            description="Cognito User Pool Client ID",
+            export_name=f"{construct_id}-UserPoolClientId",
+        )
+
+        CfnOutput(
+            self,
+            "UserPoolArn",
+            value=self.user_pool.user_pool_arn,
+            description="Cognito User Pool ARN",
+            export_name=f"{construct_id}-UserPoolArn",
+        )
