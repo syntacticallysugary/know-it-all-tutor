@@ -71,7 +71,7 @@ def handle_list_pending() -> dict[str, Any]:
         paginator = cognito_client.get_paginator("list_users")
         for page in paginator.paginate(UserPoolId=USER_POOL_ID):
             for user in page["Users"]:
-                attrs = {a["Name"]: a["Value"] for a in user["UserAttributes"]}
+                attrs = {a["Name"]: a["Value"] for a in user["Attributes"]}
                 if attrs.get("custom:status") != "pending":
                     continue
                 users.append(
