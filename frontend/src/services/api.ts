@@ -370,6 +370,25 @@ export interface PendingUser {
   created_at: string
 }
 
+// Domain generation job queue types
+export interface DomainGenJob {
+  id: number
+  topic: string
+  hints: string
+  total_terms: number
+  status: 'pending' | 'running' | 'complete' | 'failed'
+  output_path: string | null
+  error_message: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface CreateDomainGenJobRequest {
+  topic: string
+  hints?: string
+  total_terms?: number
+}
+
 class AdminAPIClient {
   private async getAuthHeaders(): Promise<HeadersInit> {
     return AuthService.getAuthHeaders()
@@ -402,6 +421,23 @@ class AdminAPIClient {
       method: 'POST',
       body: JSON.stringify({ reason: reason || '' }),
     })
+  }
+
+  async createDomainGenJob(req: CreateDomainGenJobRequest): Promise<DomainGenJob> {
+    return this.request<DomainGenJob>('/domains/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req),
+    })
+  }
+
+  async listDomainGenJobs(): Promise<DomainGenJob[]> {
+    const data = await this.request<{ jobs: DomainGenJob[] }>('/domains/generate')
+    return data.jobs
+  }
+
+  async getDomainGenJob(id: number): Promise<DomainGenJob> {
+    return this.request<DomainGenJob>(`/domains/generate/${id}`)
   }
 }
 

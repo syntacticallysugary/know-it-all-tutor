@@ -1,9 +1,20 @@
 import React, { useState } from 'react'
 import { Tab } from '@headlessui/react'
-import { CloudArrowUpIcon, ClockIcon, UserGroupIcon } from '@heroicons/react/24/outline'
+import {
+  CloudArrowUpIcon,
+  ClockIcon,
+  UserGroupIcon,
+  SparklesIcon,
+  QueueListIcon,
+  DocumentTextIcon,
+} from '@heroicons/react/24/outline'
 import BatchUpload from '../components/Admin/BatchUpload'
 import UploadHistory from '../components/Admin/UploadHistory'
 import PendingUsers from '../components/Admin/PendingUsers'
+import DomainGenDefine from '../components/Admin/DomainGenDefine'
+import DomainGenQueue from '../components/Admin/DomainGenQueue'
+import DomainGenReview from '../components/Admin/DomainGenReview'
+import { DomainGenJob } from '../services/api'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -11,23 +22,27 @@ function classNames(...classes: string[]) {
 
 const AdminPanel = () => {
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [latestJob, setLatestJob] = useState<DomainGenJob | null>(null)
+  const [reviewJob, setReviewJob] = useState<DomainGenJob | null>(null)
+
+  const handleJobCreated = (job: DomainGenJob) => {
+    setLatestJob(job)
+    // Jump to Queue tab so the user sees it immediately
+    setSelectedIndex(4)
+  }
+
+  const handleSelectReview = (job: DomainGenJob) => {
+    setReviewJob(job)
+    setSelectedIndex(5)
+  }
 
   const tabs = [
-    {
-      name: 'Pending Registrations',
-      icon: UserGroupIcon,
-      component: PendingUsers,
-    },
-    {
-      name: 'Batch Upload',
-      icon: CloudArrowUpIcon,
-      component: BatchUpload,
-    },
-    {
-      name: 'Upload History',
-      icon: ClockIcon,
-      component: UploadHistory,
-    },
+    { name: 'Pending Users',   icon: UserGroupIcon,      render: () => <PendingUsers /> },
+    { name: 'Batch Upload',    icon: CloudArrowUpIcon,   render: () => <BatchUpload /> },
+    { name: 'Upload History',  icon: ClockIcon,          render: () => <UploadHistory /> },
+    { name: 'Generate Domain', icon: SparklesIcon,       render: () => <DomainGenDefine onJobCreated={handleJobCreated} /> },
+    { name: 'Gen Queue',       icon: QueueListIcon,      render: () => <DomainGenQueue newJob={latestJob} onSelectJob={handleSelectReview} /> },
+    { name: 'Review',          icon: DocumentTextIcon,   render: () => <DomainGenReview job={reviewJob} /> },
   ]
 
   return (
@@ -35,19 +50,19 @@ const AdminPanel = () => {
       <div className="page-header">
         <h1 className="page-title">Admin Panel</h1>
         <p className="page-subtitle">
-          Manage batch uploads and system administration.
+          Manage batch uploads, system administration, and domain generation.
         </p>
       </div>
-      
+
       <div className="card p-0">
         <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-          <Tab.List className="flex space-x-1 rounded-t-xl bg-blue-900/20 p-1">
-            {tabs.map((tab, index) => (
+          <Tab.List className="flex flex-wrap gap-1 rounded-t-xl bg-blue-900/20 p-1">
+            {tabs.map(tab => (
               <Tab
                 key={tab.name}
                 className={({ selected }) =>
                   classNames(
-                    'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
+                    'rounded-lg py-2.5 px-3 text-sm font-medium leading-5',
                     'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
                     selected
                       ? 'bg-white text-blue-700 shadow'
@@ -55,20 +70,20 @@ const AdminPanel = () => {
                   )
                 }
               >
-                <div className="flex items-center justify-center space-x-2">
-                  <tab.icon className="h-5 w-5" />
+                <div className="flex items-center gap-1.5">
+                  <tab.icon className="h-4 w-4" />
                   <span>{tab.name}</span>
                 </div>
               </Tab>
             ))}
           </Tab.List>
           <Tab.Panels className="mt-0">
-            {tabs.map((tab, index) => (
+            {tabs.map((tab, i) => (
               <Tab.Panel
-                key={index}
+                key={i}
                 className="rounded-b-xl bg-white p-6 ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
               >
-                <tab.component />
+                {tab.render()}
               </Tab.Panel>
             ))}
           </Tab.Panels>

@@ -235,7 +235,25 @@ class BackendStack(Stack):
             description="Domain management operations"
         )
         self.db_proxy_lambda.grant_invoke(self.domain_lambda)
-        
+
+        # Create Domain Generation Job Queue Lambda
+        self.domain_gen_lambda = _lambda.Function(
+            self,
+            "DomainGenFunction",
+            runtime=_lambda.Runtime.PYTHON_3_12,
+            handler="handler.lambda_handler",
+            code=_lambda.Code.from_asset("../src/lambda_functions/domain_gen"),
+            timeout=Duration.seconds(30),
+            memory_size=256,
+            layers=[self.shared_layer],
+            environment={
+                "DB_PROXY_FUNCTION_NAME": self.db_proxy_lambda.function_name,
+                "AWS_CA_BUNDLE": "/etc/pki/tls/certs/ca-bundle.crt",
+            },
+            description="Domain generation job queue — create and poll async generation jobs",
+        )
+        self.db_proxy_lambda.grant_invoke(self.domain_gen_lambda)
+
         # Create Progress Tracking Lambda
         self.progress_lambda = _lambda.Function(
             self,
@@ -411,7 +429,28 @@ class BackendStack(Stack):
             authorizer=authorizer,
             authorization_type=apigateway.AuthorizationType.COGNITO
         )
-        
+
+        # Domain generation job queue routes (admin only)
+        generate_resource = domains_resource.add_resource("generate")
+        generate_resource.add_method(
+            "POST",
+            apigateway.LambdaIntegration(self.domain_gen_lambda),
+            authorizer=authorizer,
+            authorization_type=apigateway.AuthorizationType.COGNITO,
+        )
+        generate_resource.add_method(
+            "GET",
+            apigateway.LambdaIntegration(self.domain_gen_lambda),
+            authorizer=authorizer,
+            authorization_type=apigateway.AuthorizationType.COGNITO,
+        )
+        generate_resource.add_resource("{id}").add_method(
+            "GET",
+            apigateway.LambdaIntegration(self.domain_gen_lambda),
+            authorizer=authorizer,
+            authorization_type=apigateway.AuthorizationType.COGNITO,
+        )
+
         # Batch Upload routes (with authorization)
         batch_resource = self.api.root.add_resource("batch")
         batch_resource.add_resource("validate").add_method(

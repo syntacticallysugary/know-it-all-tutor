@@ -11,8 +11,8 @@ A serverless web application that transforms terminology-heavy subjects into int
 | Resource | URL |
 |----------|-----|
 | Frontend | https://d3awlgby2429wc.cloudfront.net |
-| API | https://3kuv3v3u89.execute-api.us-east-1.amazonaws.com/prod/ |
-| Cognito User Pool | `us-east-1_Bg1FA4097` |
+
+API endpoint and Cognito configuration are available from CloudFormation outputs after deployment.
 
 ---
 
@@ -25,7 +25,7 @@ The system uses AWS CDK with explicit dependency ordering across six stacks:
 ```
 NetworkStack     → VPC, subnets, security groups
 DatabaseStack    → RDS PostgreSQL, Secrets Manager, DB Proxy Lambda
-AuthStack        → Cognito User Pool, Pre-SignUp trigger
+AuthStack        → Cognito User Pool, Pre-SignUp trigger, custom approval attributes
 BackendStack     → API Gateway, Lambda functions, Lambda Layer
 FrontendStack    → S3 bucket, CloudFront distribution
 MonitoringStack  → CloudWatch dashboards, alarms, budget alerts
@@ -53,11 +53,29 @@ Active Lambda functions (`src/lambda_functions/`):
 | `migration_runner` | Schema migration execution |
 | `db_schema_migration` | CDK custom resource for automated migrations on deploy |
 | `secrets_rotation` | Automated DB credential rotation handler |
-| `cognito_pre_signup` | Pre-signup validation trigger |
-| `cognito_triggers` | General Cognito event handling |
+| `cognito_pre_signup` | Pre-signup trigger: validates registration and stamps pending-approval status |
+| `cognito_triggers` | Cognito event handlers including Pre-Authentication trigger that enforces the approval gate |
+| `user_management` | Admin review queue: list pending registrations, approve or deny with email notification |
 | `db_migration` | Database migration utilities |
 
 The **DB Proxy pattern** deserves mention: rather than giving every Lambda VPC access and a DB connection pool, all database calls route through a single `db_proxy` Lambda. This keeps the architecture simple and avoids connection exhaustion.
+
+### Registration & Approval Gate
+
+New user registrations are held in a pending state rather than granted immediate access. The flow:
+
+1. User registers → Pre-SignUp Lambda stamps a custom `approval_status` attribute on the Cognito user record.
+2. The account exists but cannot log in — a Pre-Authentication Lambda trigger checks the attribute and rejects unapproved users at login time.
+3. An admin reviews pending registrations via the admin API and approves or denies each one.
+4. Approval updates the Cognito attribute and sends an email notification via SES.
+
+Admin API routes (Cognito-authorized; admin group membership enforced inside the Lambda):
+
+| Method | Route | Purpose |
+|--------|-------|---------|
+| `GET` | `/admin/users/pending` | List users awaiting approval |
+| `POST` | `/admin/users/{username}/approve` | Approve a pending user |
+| `POST` | `/admin/users/{username}/deny` | Deny and remove a pending user |
 
 The Lambda Layer (`infrastructure/lambda_layer/python/`) provides shared code to all functions:
 
@@ -159,8 +177,8 @@ docs/                           # Technical documentation
 
 ```bash
 # Clone and set up Python environment
-git clone git@github.com:syntacticallysugary/know-it-all-tutor.git
-cd know-it-all-tutor
+git clone git@github.com:huschlej111/ai-tutor-system.git
+cd ai-tutor-system
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 

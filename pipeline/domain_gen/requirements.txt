@@ -1,0 +1,3 @@
+# No additional dependencies — search_web and scrape_page delegate to the
+# ske-search MCP server (http://localhost:8890/mcp) via standard requests.
+# requests and pydantic are already present in the project venv.
