@@ -68,11 +68,13 @@
 /* Base Styles */
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-900 font-sans;
+    @apply font-sans;
+    background-color: #0B0F1A;
+    color: #E2E8F0;
   }
 
   * {
-    @apply border-gray-200;
+    border-color: #1E2940;
   }
 }
 
@@ -84,20 +86,26 @@
   }
 
   .page-title {
-    @apply text-3xl font-bold text-gray-900 mb-2;
+    @apply text-3xl font-bold mb-2;
+    color: #F8FAFC;
   }
 
   .page-subtitle {
-    @apply text-lg text-gray-600;
+    @apply text-lg;
+    color: #94A3B8;
   }
 
   /* Cards */
   .card {
-    @apply bg-white rounded-lg shadow-sm border border-gray-200;
+    @apply rounded-lg shadow-sm border;
+    background-color: #111827;
+    border-color: #1E2940;
   }
 
   .card-elevated {
-    @apply bg-white rounded-lg shadow-md border border-gray-200;
+    @apply rounded-lg shadow-md border;
+    background-color: #111827;
+    border-color: #1E2940;
   }
 
   /* Buttons */
@@ -106,11 +114,23 @@
   }
 
   .btn-primary {
-    @apply bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+    @apply focus:ring-primary-400;
+    background-color: #60A5FA;
+    color: #0B0F1A;
+  }
+
+  .btn-primary:hover {
+    background-color: #3B82F6;
   }
 
   .btn-secondary {
-    @apply bg-white text-gray-700 border-gray-300 hover:bg-gray-50 focus:ring-primary-500;
+    @apply text-slate-200 border focus:ring-primary-400;
+    background-color: #1E2940;
+    border-color: #334155;
+  }
+
+  .btn-secondary:hover {
+    background-color: #263350;
   }
 
   .btn-success {
@@ -139,7 +159,14 @@
 
   /* Form Elements */
   .input {
-    @apply block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500;
+    @apply block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary-400 focus:border-primary-400;
+    background-color: #111827;
+    border: 1px solid #334155;
+    color: #E2E8F0;
+  }
+
+  .input::placeholder {
+    color: #64748B;
   }
 
   .input:focus {
@@ -147,7 +174,7 @@
   }
 
   .input-error {
-    @apply border-error-300 focus:ring-error-500 focus:border-error-500;
+    @apply border-error-500 focus:ring-error-500 focus:border-error-500;
   }
 
   /* Text Utilities */
@@ -167,7 +194,9 @@
 
   /* Loading States */
   .loading-spinner {
-    @apply animate-spin rounded-full border-2 border-gray-300 border-t-primary-600;
+    @apply animate-spin rounded-full border-2 border-t-primary-400;
+    border-color: #1E2940;
+    border-top-color: #60A5FA;
   }
 
   /* Status Badges */
@@ -176,23 +205,28 @@
   }
 
   .badge-success {
-    @apply bg-success-100 text-success-800;
+    background-color: #064e3b;
+    color: #6ee7b7;
   }
 
   .badge-warning {
-    @apply bg-warning-100 text-warning-800;
+    background-color: #78350f;
+    color: #fcd34d;
   }
 
   .badge-error {
-    @apply bg-error-100 text-error-800;
+    background-color: #7f1d1d;
+    color: #fca5a5;
   }
 
   .badge-info {
-    @apply bg-info-100 text-info-800;
+    background-color: #0c4a6e;
+    color: #7dd3fc;
   }
 
   .badge-gray {
-    @apply bg-gray-100 text-gray-800;
+    background-color: #1E2940;
+    color: #94A3B8;
   }
 }
 

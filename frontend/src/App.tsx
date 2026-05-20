@@ -21,7 +21,7 @@ import AuthPage from './pages/AuthPage'
 function App() {
   return (
     <AuthProvider>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen" style={{ backgroundColor: '#0B0F1A' }}>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
