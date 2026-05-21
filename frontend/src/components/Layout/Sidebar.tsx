@@ -24,7 +24,7 @@ const Sidebar = () => {
     : baseNavigation
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 min-h-screen">
+    <aside className="w-64 border-r min-h-screen" style={{ backgroundColor: '#111827', borderColor: '#1E2940' }}>
       <nav className="p-4 space-y-2">
         {navigation.map((item) => (
           <NavLink
@@ -33,10 +33,14 @@ const Sidebar = () => {
             className={({ isActive }) =>
               `flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-primary-100 text-primary-700'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                  ? 'text-primary-400'
+                  : 'hover:text-slate-100'
               }`
             }
+            style={({ isActive }) => ({
+              backgroundColor: isActive ? '#1E3A5F' : undefined,
+              color: isActive ? '#60A5FA' : '#94A3B8',
+            })}
           >
             <item.icon size={20} />
             <span>{item.name}</span>

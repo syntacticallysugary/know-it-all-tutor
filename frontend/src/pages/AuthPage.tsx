@@ -77,7 +77,7 @@ const AuthPage = () => {
           </div>
         </div>
         
-        <div className="bg-white p-8 rounded-lg shadow-md">
+        <div className="bg-white p-8 rounded-lg shadow-md border">
           {renderCurrentView()}
         </div>
       </div>

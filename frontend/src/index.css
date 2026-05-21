@@ -76,6 +76,11 @@
   * {
     border-color: #1E2940;
   }
+
+  input, textarea, select {
+    background-color: #111827;
+    color: #E2E8F0;
+  }
 }
 
 /* Component Styles */
@@ -236,3 +241,42 @@
     text-wrap: balance;
   }
 }
+
+/* ── Dark-theme remaps ────────────────────────────────────────────────────
+   Remap Tailwind light-mode utilities to dark equivalents app-wide.
+   Outside any @layer so these win the cascade over utility classes.
+ */
+
+/* Backgrounds */
+.bg-white       { background-color: #111827 !important; }
+.bg-gray-50     { background-color: #0B0F1A !important; }
+.bg-gray-100    { background-color: #1E2940 !important; }
+.bg-gray-200    { background-color: #263350 !important; }
+.bg-gray-400    { background-color: #475569 !important; }
+.bg-blue-50     { background-color: #0c4a6e !important; }
+.bg-green-50    { background-color: #064e3b !important; }
+.bg-yellow-50   { background-color: #78350f !important; }
+.bg-red-50      { background-color: #7f1d1d !important; }
+
+/* Borders */
+.border-gray-100,
+.border-gray-200  { border-color: #1E2940 !important; }
+.border-gray-300  { border-color: #334155 !important; }
+.border-green-200 { border-color: #065f46 !important; }
+.border-yellow-200 { border-color: #92400e !important; }
+.border-red-200   { border-color: #991b1b !important; }
+.border-blue-200  { border-color: #075985 !important; }
+
+/* Text */
+.text-gray-900  { color: #F8FAFC !important; }
+.text-gray-800  { color: #E2E8F0 !important; }
+.text-gray-700  { color: #CBD5E1 !important; }
+.text-gray-600  { color: #94A3B8 !important; }
+.text-gray-500  { color: #64748B !important; }
+.text-gray-400  { color: #475569 !important; }
+
+/* Hover states */
+.hover\:bg-gray-50:hover    { background-color: #131C2E !important; }
+.hover\:bg-gray-100:hover   { background-color: #1E2940 !important; }
+.hover\:text-gray-900:hover { color: #F8FAFC !important; }
+.hover\:text-gray-700:hover { color: #CBD5E1 !important; }
