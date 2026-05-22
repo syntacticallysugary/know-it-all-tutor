@@ -11,11 +11,63 @@ import requests
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-from .agent import SPARKY_BASE, SPARKY_MODEL, run_term_emission
-from .models import DomainDecomposition, Term, terms_to_upload_json
+from .agent import SPARKY_BASE, SPARKY_MODEL, run_term_emission, run_term_emission_emit_only
+from .models import DomainDecomposition, Subdomain, Term, terms_to_upload_json
 from .prompts import PROMPT_1_SYSTEM, format_prompt_1_user
+from .tools import scrape_page, search_web
 
 logger = logging.getLogger(__name__)
+
+_PRE_SCRAPE_MAX_CHARS = 40000
+
+
+def _pre_scrape_subdomain(subdomain: Subdomain) -> str:
+    """Fetch source content for a subdomain before running term emission.
+
+    Scrapes up to 5 authoritative sources and does up to 3 web searches,
+    combining results into a single context string. The generous cap (40K chars)
+    exploits the 130K context window available on thinker1 — more source material
+    means the model can extract more distinct terms per subdomain.
+
+    Args:
+        subdomain: Subdomain whose sources to fetch.
+
+    Returns:
+        Combined source text, capped at _PRE_SCRAPE_MAX_CHARS.
+    """
+    parts: list[str] = []
+    total = 0
+
+    for source in subdomain.authoritative_sources[:5]:
+        if total >= _PRE_SCRAPE_MAX_CHARS:
+            break
+        if source.startswith("http"):
+            try:
+                content = scrape_page(source, max_chars=8000)
+                parts.append(f"[{source}]\n{content}")
+                total += len(content)
+            except Exception as exc:
+                logger.warning(f"  pre-scrape failed for {source!r}: {exc}")
+
+    for query in subdomain.search_queries[:3]:
+        if total >= _PRE_SCRAPE_MAX_CHARS:
+            break
+        try:
+            results = search_web(query)
+            for r in results[:3]:
+                url = r.get("url") or r.get("link")
+                if url and total < _PRE_SCRAPE_MAX_CHARS:
+                    try:
+                        content = scrape_page(url, max_chars=4000)
+                        parts.append(f"[{url}]\n{content}")
+                        total += len(content)
+                    except Exception:
+                        pass
+        except Exception as exc:
+            logger.warning(f"  pre-search failed for {query!r}: {exc}")
+
+    combined = "\n\n---\n\n".join(parts)
+    return combined[:_PRE_SCRAPE_MAX_CHARS]
 
 
 def _call_text(messages: list[dict], base_url: str, model: str) -> str:
@@ -154,15 +206,19 @@ def run_pipeline(
     n = len(decomposition.subdomains)
     logger.info(f"Subdomains ({n}): {[s.name for s in decomposition.subdomains]}")
 
-    target_per = max(1, total_terms // n)
+    max_per = 20
     subdomain_terms: dict[str, list[Term]] = {}
 
     for i, subdomain in enumerate(decomposition.subdomains, 1):
-        logger.info(f"[{i}/{n}] {subdomain.name!r} — target {target_per} terms")
-        terms = run_term_emission(
+        logger.info(f"[{i}/{n}] {subdomain.name!r} — max {max_per} terms")
+        logger.info(f"  pre-scraping sources for {subdomain.name!r}...")
+        pre_context = _pre_scrape_subdomain(subdomain)
+        logger.info(f"  pre-scraped {len(pre_context)} chars")
+        terms = run_term_emission_emit_only(
             domain_name=topic,
             subdomain=subdomain,
-            target_count=target_per,
+            max_count=max_per,
+            pre_context=pre_context,
             base_url=base_url,
             model=model,
         )

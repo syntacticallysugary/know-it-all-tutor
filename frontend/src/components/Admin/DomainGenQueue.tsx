@@ -1,17 +1,27 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { QueueListIcon } from '@heroicons/react/24/outline'
-import { adminApiClient, DomainGenJob } from '../../services/api'
+import { apiClient } from '../../services/api'
+import type { DomainGenJob } from '../../services/api'
 
 interface Props {
   newJob: DomainGenJob | null
-  onSelectJob: (job: DomainGenJob) => void
+  onSelectJob: (jobId: string) => void
 }
 
 const STATUS_STYLES: Record<DomainGenJob['status'], string> = {
-  pending: 'bg-yellow-50 text-yellow-700 ring-yellow-200',
-  running: 'bg-blue-50 text-blue-700 ring-blue-200',
+  pending:  'bg-yellow-50 text-yellow-700 ring-yellow-200',
+  running:  'bg-blue-50 text-blue-700 ring-blue-200',
   complete: 'bg-green-50 text-green-700 ring-green-200',
-  failed: 'bg-red-50 text-red-700 ring-red-200',
+  failed:   'bg-red-50 text-red-700 ring-red-200',
+  approved: 'bg-teal-50 text-teal-700 ring-teal-200',
+}
+
+const STATUS_LABEL: Record<DomainGenJob['status'], string> = {
+  pending:  'Pending',
+  running:  'Running…',
+  complete: 'Complete',
+  failed:   'Failed',
+  approved: 'Saved',
 }
 
 function formatDate(iso: string): string {
@@ -28,7 +38,7 @@ const DomainGenQueue: React.FC<Props> = ({ newJob, onSelectJob }) => {
 
   const load = async () => {
     try {
-      setJobs(await adminApiClient.listDomainGenJobs())
+      setJobs(await apiClient.listDomainGenJobs())
       setError(null)
     } catch (e: any) {
       setError(e.message || 'Failed to load jobs.')
@@ -37,7 +47,6 @@ const DomainGenQueue: React.FC<Props> = ({ newJob, onSelectJob }) => {
     }
   }
 
-  // Merge a newly created job immediately so the user sees it without waiting
   useEffect(() => {
     if (!newJob) return
     setJobs(prev => {
@@ -46,7 +55,6 @@ const DomainGenQueue: React.FC<Props> = ({ newJob, onSelectJob }) => {
     })
   }, [newJob])
 
-  // Poll every 20 seconds while any job is pending or running
   useEffect(() => {
     load()
     pollRef.current = setInterval(() => {
@@ -91,7 +99,7 @@ const DomainGenQueue: React.FC<Props> = ({ newJob, onSelectJob }) => {
               <div className="min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">{job.topic}</p>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  #{job.id} · {job.total_terms} terms · {formatDate(job.created_at)}
+                  {job.total_terms} terms · {formatDate(job.created_at)}
                   {job.hints && <span className="ml-1 italic">"{job.hints}"</span>}
                 </p>
                 {job.status === 'failed' && job.error_message && (
@@ -100,14 +108,22 @@ const DomainGenQueue: React.FC<Props> = ({ newJob, onSelectJob }) => {
               </div>
               <div className="flex items-center gap-3 ml-4 shrink-0">
                 <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ${STATUS_STYLES[job.status]}`}>
-                  {job.status === 'running' ? 'Running…' : job.status.charAt(0).toUpperCase() + job.status.slice(1)}
+                  {STATUS_LABEL[job.status]}
                 </span>
                 {job.status === 'complete' && (
                   <button
-                    onClick={() => onSelectJob(job)}
+                    onClick={() => onSelectJob(job.id)}
                     className="text-xs text-primary-600 hover:text-primary-500 font-medium"
                   >
                     Review →
+                  </button>
+                )}
+                {job.status === 'approved' && (
+                  <button
+                    onClick={() => onSelectJob(job.id)}
+                    className="text-xs text-teal-600 hover:text-teal-500 font-medium"
+                  >
+                    View →
                   </button>
                 )}
               </div>

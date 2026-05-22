@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { SparklesIcon } from '@heroicons/react/24/outline'
-import { adminApiClient, DomainGenJob } from '../../services/api'
+import { apiClient } from '../../services/api'
+import type { DomainGenJob } from '../../services/api'
 
 interface Props {
   onJobCreated: (job: DomainGenJob) => void
@@ -24,12 +25,12 @@ const DomainGenDefine: React.FC<Props> = ({ onJobCreated }) => {
     }
     setSubmitting(true)
     try {
-      const job = await adminApiClient.createDomainGenJob({
+      const job = await apiClient.createDomainGenJob({
         topic: topic.trim(),
         hints: hints.trim() || undefined,
         total_terms: totalTerms,
       })
-      setSuccess(`Job #${job.id} queued for "${job.topic}". Switch to the Queue tab to monitor progress.`)
+      setSuccess(`Job queued for "${job.topic}". Switch to the Queue tab to monitor progress.`)
       onJobCreated(job)
       setTopic('')
       setHints('')
@@ -48,7 +49,7 @@ const DomainGenDefine: React.FC<Props> = ({ onJobCreated }) => {
         <h2 className="text-lg font-semibold text-gray-900">Generate Domain</h2>
       </div>
       <p className="text-sm text-gray-500 mb-6">
-        The local LAN worker will research and generate quiz terms overnight using web search and Qwen.
+        The LAN worker will research and generate quiz terms overnight using web search and Qwen.
       </p>
 
       {error && (
@@ -111,6 +112,10 @@ const DomainGenDefine: React.FC<Props> = ({ onJobCreated }) => {
         >
           {submitting ? 'Queuing…' : 'Queue Generation Job'}
         </button>
+
+        <p className="text-xs text-gray-400 text-center">
+          We may make high-quality generated domains available to all users.
+        </p>
       </form>
     </div>
   )

@@ -10,8 +10,13 @@ import urllib3
 import requests
 
 from .models import Subdomain, Term
-from .prompts import PROMPT_2_SYSTEM, format_prompt_2_user
-from .tools import TOOL_DEFINITIONS, scrape_page, search_web
+from .prompts import (
+    PROMPT_2_SYSTEM,
+    PROMPT_2_SYSTEM_EMIT_ONLY,
+    format_prompt_2_user,
+    format_prompt_2_user_emit_only,
+)
+from .tools import EMIT_ONLY_TOOL_DEFS, TOOL_DEFINITIONS, scrape_page, search_web
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -21,8 +26,16 @@ SPARKY_BASE = "https://192.168.1.105/lite/v1"
 SPARKY_MODEL = "thinker1"
 
 
-def _stream_call(messages: list[dict], base_url: str, model: str) -> dict:
+def _stream_call(
+    messages: list[dict],
+    base_url: str,
+    model: str,
+    tool_defs: list[dict] | None = None,
+) -> dict:
     """Make a streaming tool-calling request to Sparky.
+
+    Args:
+        tool_defs: Tool definitions to pass. Defaults to TOOL_DEFINITIONS.
 
     Returns:
         Dict with finish_reason and message keys.
@@ -30,9 +43,9 @@ def _stream_call(messages: list[dict], base_url: str, model: str) -> dict:
     payload = {
         "model": model,
         "messages": messages,
-        "tools": TOOL_DEFINITIONS,
+        "tools": tool_defs if tool_defs is not None else TOOL_DEFINITIONS,
         "tool_choice": "auto",
-        "max_tokens": 8192,
+        "max_tokens": 32768,
         "temperature": 0.3,
         "stream": True,
         "skip_rag": True,
@@ -99,14 +112,14 @@ def _stream_call(messages: list[dict], base_url: str, model: str) -> dict:
     }
 
 
-def _dispatch(name: str, args: dict, emitted: list[Term], target: int) -> str:
+def _dispatch(name: str, args: dict, emitted: list[Term], max_count: int) -> str:
     """Execute one tool call and return the result string.
 
     Args:
         name: Tool name.
         args: Parsed tool arguments.
         emitted: Running list of emitted terms — mutated in place by emit_term.
-        target: Target term count, included in emit_term feedback.
+        max_count: Maximum term count, included in emit_term feedback.
 
     Returns:
         Result string to pass back to the model.
@@ -122,8 +135,15 @@ def _dispatch(name: str, args: dict, emitted: list[Term], target: int) -> str:
         try:
             term = Term(**{k: v for k, v in args.items() if k in Term.model_fields})
             emitted.append(term)
-            logger.info(f"  → emitted [{len(emitted)}/{target}]: {term.term!r}")
-            return f"Recorded '{term.term}'. Total emitted: {len(emitted)}/{target}."
+            logger.info(f"  → emitted [{len(emitted)}/{max_count}]: {term.term!r}")
+            emitted_names = [t.term for t in emitted]
+            return (
+                f"Recorded '{term.term}'. "
+                f"Already emitted ({len(emitted)}/{max_count}): {emitted_names}. "
+                f"Do not re-emit any of these. "
+                f"Emit the next term if clearly domain-specific ones remain in the source; "
+                f"make no more emit_term calls if you have exhausted clearly appropriate terms."
+            )
         except Exception as exc:
             return f"emit_term validation error: {exc}"
 
@@ -185,11 +205,33 @@ def run_term_emission(
         for tc in msg.get("tool_calls") or []:
             if not (tc.get("id") and tc["function"].get("name")):
                 continue
-            try:
-                json.loads(tc["function"].get("arguments") or "{}")
+            raw_args = tc["function"].get("arguments") or "{}"
+            # The model sometimes appends a spurious trailing '}' from the outer
+            # tool call envelope. Strip extra trailing braces until it parses.
+            fixed_args = raw_args
+            for _ in range(5):
+                try:
+                    json.loads(fixed_args)
+                    break
+                except json.JSONDecodeError:
+                    if fixed_args.endswith("}"):
+                        fixed_args = fixed_args[:-1]
+                    else:
+                        fixed_args = None
+                        break
+            if fixed_args is not None:
+                if fixed_args != raw_args:
+                    logger.debug(
+                        f"  repaired trailing brace on {tc['function']['name']!r}: "
+                        f"{raw_args!r} → {fixed_args!r}"
+                    )
+                tc["function"]["arguments"] = fixed_args
                 valid_tool_calls.append(tc)
-            except json.JSONDecodeError:
-                logger.warning(f"  dropping tool call with unparseable arguments: {tc['function']['name']!r}")
+            else:
+                logger.warning(
+                    f"  dropping tool call with unparseable arguments: {tc['function']['name']!r} "
+                    f"| raw ({len(raw_args)} chars): {raw_args[:300]!r}"
+                )
         msg = {
             "role": "assistant",
             "content": msg.get("content"),
@@ -207,8 +249,10 @@ def run_term_emission(
         finish = result.get("finish_reason", "stop")
 
         if not tool_calls:
+            content_preview = (msg.get("content") or "")[:200]
             logger.info(
-                f"  Agent stopped (finish={finish}, turn={turn + 1}, emitted={len(emitted)})"
+                f"  Agent stopped (finish={finish}, turn={turn + 1}, emitted={len(emitted)}) "
+                f"content={content_preview!r}"
             )
             break
 
@@ -226,6 +270,132 @@ def run_term_emission(
             # Cap tool result size to prevent context window overflow
             if len(output) > 2000:
                 output = output[:2000] + "\n[truncated]"
+            tool_results.append({
+                "role": "tool",
+                "tool_call_id": tc["id"],
+                "content": output,
+            })
+        messages.extend(tool_results)
+
+    return emitted
+
+
+def run_term_emission_emit_only(
+    domain_name: str,
+    subdomain: Subdomain,
+    max_count: int,
+    pre_context: str,
+    base_url: str = SPARKY_BASE,
+    model: str = SPARKY_MODEL,
+    max_turns: int = 1,
+) -> list[Term]:
+    """Run term emission using only the emit_term tool (no search/scrape).
+
+    Source content is provided up-front via pre_context. The model reads it and
+    calls emit_term for each term it identifies. This avoids the multi-tool
+    coordination failures seen with the full agentic loop.
+
+    The model is instructed to stop naturally when it exhausts clearly
+    domain-specific terms rather than padding to reach max_count. max_count
+    is a ceiling, not a target.
+
+    Args:
+        domain_name: Parent domain name.
+        subdomain: Subdomain to extract terms from.
+        max_count: Maximum number of terms to emit (soft ceiling, not a target).
+        pre_context: Pre-fetched source text to extract terms from.
+        base_url: LLM API base URL.
+        model: Model identifier.
+        max_turns: Hard cap on agent loop iterations.
+
+    Returns:
+        List of emitted Terms.
+    """
+    emitted: list[Term] = []
+    messages: list[dict] = [
+        {"role": "system", "content": PROMPT_2_SYSTEM_EMIT_ONLY},
+        {
+            "role": "user",
+            "content": format_prompt_2_user_emit_only(
+                domain_name, subdomain, max_count, pre_context
+            ),
+        },
+    ]
+
+    for turn in range(max_turns):
+        if len(emitted) >= max_count:
+            logger.info(f"  Maximum {max_count} reached after {turn} turns.")
+            break
+
+        result = None
+        for attempt in range(3):
+            try:
+                result = _stream_call(messages, base_url, model, tool_defs=EMIT_ONLY_TOOL_DEFS)
+                break
+            except Exception as exc:
+                if attempt < 2:
+                    wait = 30 * (attempt + 1)
+                    logger.warning(
+                        f"  LLM call failed (attempt {attempt + 1}/3): {exc}. Retrying in {wait}s."
+                    )
+                    time.sleep(wait)
+                else:
+                    logger.warning(
+                        f"  LLM call failed at turn {turn + 1} after 3 attempts: {exc}. "
+                        f"Stopping with {len(emitted)} terms."
+                    )
+        if result is None:
+            break
+
+        msg = result["message"]
+        valid_tool_calls = []
+        for tc in msg.get("tool_calls") or []:
+            if not (tc.get("id") and tc["function"].get("name")):
+                continue
+            raw_args = tc["function"].get("arguments") or "{}"
+            fixed_args = raw_args
+            for _ in range(5):
+                try:
+                    json.loads(fixed_args)
+                    break
+                except json.JSONDecodeError:
+                    if fixed_args.endswith("}"):
+                        fixed_args = fixed_args[:-1]
+                    else:
+                        fixed_args = None
+                        break
+            if fixed_args is not None:
+                tc["function"]["arguments"] = fixed_args
+                valid_tool_calls.append(tc)
+            else:
+                logger.warning(
+                    f"  dropping unparseable emit_term call: {raw_args[:200]!r}"
+                )
+
+        msg = {
+            "role": "assistant",
+            "content": msg.get("content"),
+            "tool_calls": valid_tool_calls,
+        }
+        messages.append(msg)
+
+        finish = result.get("finish_reason", "stop")
+        if not valid_tool_calls:
+            content_preview = (msg.get("content") or "")[:200]
+            logger.info(
+                f"  Emit-only agent stopped (finish={finish}, turn={turn + 1}, "
+                f"emitted={len(emitted)}) content={content_preview!r}"
+            )
+            break
+
+        tool_results: list[dict] = []
+        for tc in valid_tool_calls:
+            name = tc["function"]["name"]
+            try:
+                args = json.loads(tc["function"]["arguments"])
+            except json.JSONDecodeError:
+                args = {}
+            output = _dispatch(name, args, emitted, max_count)
             tool_results.append({
                 "role": "tool",
                 "tool_call_id": tc["id"],

@@ -328,6 +328,28 @@ class APIClient {
   async getUploadHistory(): Promise<UploadHistoryItem[]> {
     return this.request<UploadHistoryItem[]>('/batch/history')
   }
+
+  // Domain generation job queue
+  async createDomainGenJob(req: CreateDomainGenJobRequest): Promise<DomainGenJob> {
+    return this.request<DomainGenJob>('/domains/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req),
+    })
+  }
+
+  async listDomainGenJobs(): Promise<DomainGenJob[]> {
+    const data = await this.request<{ jobs: DomainGenJob[] }>('/domains/generate')
+    return data.jobs
+  }
+
+  async getDomainGenJob(id: string): Promise<DomainGenJob> {
+    return this.request<DomainGenJob>(`/domains/generate/${id}`)
+  }
+
+  async approveDomainGenJob(id: string): Promise<ApproveJobResult> {
+    return this.request<ApproveJobResult>(`/domains/generate/${id}/approve`, { method: 'POST' })
+  }
 }
 
 export interface BatchValidationResult {
@@ -371,12 +393,28 @@ export interface PendingUser {
 }
 
 // Domain generation job queue types
+
+export interface DomainGenOutputTerm {
+  data: { term: string; definition: string; short_reference?: string }
+  metadata: Record<string, unknown>
+}
+
+export interface DomainGenOutputDomain {
+  data: { name: string; description: string }
+  terms: DomainGenOutputTerm[]
+}
+
+export interface DomainGenOutput {
+  domains: DomainGenOutputDomain[]
+}
+
 export interface DomainGenJob {
-  id: number
+  id: string
   topic: string
   hints: string
   total_terms: number
-  status: 'pending' | 'running' | 'complete' | 'failed'
+  status: 'pending' | 'running' | 'complete' | 'failed' | 'approved'
+  output_json: DomainGenOutput | null
   output_path: string | null
   error_message: string | null
   created_at: string
@@ -387,6 +425,12 @@ export interface CreateDomainGenJobRequest {
   topic: string
   hints?: string
   total_terms?: number
+}
+
+export interface ApproveJobResult {
+  message: string
+  domains_saved: number
+  terms_saved: number
 }
 
 class AdminAPIClient {
@@ -421,23 +465,6 @@ class AdminAPIClient {
       method: 'POST',
       body: JSON.stringify({ reason: reason || '' }),
     })
-  }
-
-  async createDomainGenJob(req: CreateDomainGenJobRequest): Promise<DomainGenJob> {
-    return this.request<DomainGenJob>('/domains/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(req),
-    })
-  }
-
-  async listDomainGenJobs(): Promise<DomainGenJob[]> {
-    const data = await this.request<{ jobs: DomainGenJob[] }>('/domains/generate')
-    return data.jobs
-  }
-
-  async getDomainGenJob(id: number): Promise<DomainGenJob> {
-    return this.request<DomainGenJob>(`/domains/generate/${id}`)
   }
 }
 

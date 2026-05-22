@@ -88,10 +88,11 @@ def _db(fn_name: str, query: str, params: list | None = None, return_dict: bool 
 
 
 def _claim_job(fn_name: str) -> dict | None:
-    """Atomically claim one pending job, returning its row or None.
+    """Claim one pending job using an OCC-safe conditional update.
 
-    Uses a CTE to find and update in a single statement so concurrent
-    workers don't double-claim (safe even if only one worker runs).
+    Compatible with Aurora DSQL (no FOR UPDATE / SKIP LOCKED).
+    Retries up to 3 times on concurrent conflict; in practice only
+    one poll worker runs so conflicts are rare.
 
     Args:
         fn_name: DB proxy Lambda function name.
@@ -99,34 +100,51 @@ def _claim_job(fn_name: str) -> dict | None:
     Returns:
         Job row dict or None if no pending job exists.
     """
-    rows = _db(
-        fn_name,
-        """
-        UPDATE domain_gen_jobs
-        SET status = 'running', updated_at = NOW()
-        WHERE id = (
-            SELECT id FROM domain_gen_jobs
+    for attempt in range(3):
+        candidate = _db(
+            fn_name,
+            """
+            SELECT id, topic, hints, total_terms
+            FROM domain_gen_jobs
             WHERE status = 'pending'
             ORDER BY created_at
             LIMIT 1
-            FOR UPDATE SKIP LOCKED
+            """,
         )
-        RETURNING id, topic, hints, total_terms
-        """,
-    )
-    return rows[0] if rows else None
+        if not candidate:
+            return None
+        job_id = candidate[0]["id"]
+        claimed = _db(
+            fn_name,
+            """
+            UPDATE domain_gen_jobs
+            SET status = 'running', updated_at = NOW()
+            WHERE id = %s AND status = 'pending'
+            RETURNING id, topic, hints, total_terms
+            """,
+            params=[job_id],
+        )
+        if claimed:
+            return claimed[0]
+        if attempt < 2:
+            time.sleep(0.5 * (attempt + 1))
+    return None
 
 
-def _complete_job(fn_name: str, job_id: int, output_path: str) -> None:
-    """Mark a job complete with its output path."""
+def _complete_job(fn_name: str, job_id: str, output_json: dict, output_path: str) -> None:
+    """Mark a job complete, storing result JSON in DB and local path for admin."""
     _db(
         fn_name,
-        "UPDATE domain_gen_jobs SET status='complete', output_path=%s, updated_at=NOW() WHERE id=%s",
-        params=[output_path, job_id],
+        """
+        UPDATE domain_gen_jobs
+        SET status = 'complete', output_json = %s, output_path = %s, updated_at = NOW()
+        WHERE id = %s
+        """,
+        params=[json.dumps(output_json), output_path, job_id],
     )
 
 
-def _fail_job(fn_name: str, job_id: int, error: str) -> None:
+def _fail_job(fn_name: str, job_id: str, error: str) -> None:
     """Mark a job failed with an error message."""
     _db(
         fn_name,
@@ -166,7 +184,7 @@ def _process_job(job: dict, base_url: str, model: str, fn_name: str) -> None:
 
         total = sum(len(d["terms"]) for d in upload_json["domains"])
         logger.info(f"Job {job_id}: complete — {total} terms written to {output_path}")
-        _complete_job(fn_name, job_id, output_path)
+        _complete_job(fn_name, job_id, upload_json, output_path)
 
     except Exception as exc:
         logger.error(f"Job {job_id}: failed — {exc}")

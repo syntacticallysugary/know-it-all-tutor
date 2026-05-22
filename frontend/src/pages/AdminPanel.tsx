@@ -1,20 +1,13 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Tab } from '@headlessui/react'
 import {
   CloudArrowUpIcon,
   ClockIcon,
   UserGroupIcon,
-  SparklesIcon,
-  QueueListIcon,
-  DocumentTextIcon,
 } from '@heroicons/react/24/outline'
 import BatchUpload from '../components/Admin/BatchUpload'
 import UploadHistory from '../components/Admin/UploadHistory'
 import PendingUsers from '../components/Admin/PendingUsers'
-import DomainGenDefine from '../components/Admin/DomainGenDefine'
-import DomainGenQueue from '../components/Admin/DomainGenQueue'
-import DomainGenReview from '../components/Admin/DomainGenReview'
-import { DomainGenJob } from '../services/api'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -22,27 +15,11 @@ function classNames(...classes: string[]) {
 
 const AdminPanel = () => {
   const [selectedIndex, setSelectedIndex] = useState(0)
-  const [latestJob, setLatestJob] = useState<DomainGenJob | null>(null)
-  const [reviewJob, setReviewJob] = useState<DomainGenJob | null>(null)
-
-  const handleJobCreated = (job: DomainGenJob) => {
-    setLatestJob(job)
-    // Jump to Queue tab so the user sees it immediately
-    setSelectedIndex(4)
-  }
-
-  const handleSelectReview = (job: DomainGenJob) => {
-    setReviewJob(job)
-    setSelectedIndex(5)
-  }
 
   const tabs = [
-    { name: 'Pending Users',   icon: UserGroupIcon,      render: () => <PendingUsers /> },
-    { name: 'Batch Upload',    icon: CloudArrowUpIcon,   render: () => <BatchUpload /> },
-    { name: 'Upload History',  icon: ClockIcon,          render: () => <UploadHistory /> },
-    { name: 'Generate Domain', icon: SparklesIcon,       render: () => <DomainGenDefine onJobCreated={handleJobCreated} /> },
-    { name: 'Gen Queue',       icon: QueueListIcon,      render: () => <DomainGenQueue newJob={latestJob} onSelectJob={handleSelectReview} /> },
-    { name: 'Review',          icon: DocumentTextIcon,   render: () => <DomainGenReview job={reviewJob} /> },
+    { name: 'Pending Users',  icon: UserGroupIcon,    render: () => <PendingUsers /> },
+    { name: 'Batch Upload',   icon: CloudArrowUpIcon, render: () => <BatchUpload /> },
+    { name: 'Upload History', icon: ClockIcon,        render: () => <UploadHistory /> },
   ]
 
   return (

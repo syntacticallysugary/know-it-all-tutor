@@ -13,6 +13,7 @@ import DomainDetails from './pages/DomainDetails'
 import CreateDomain from './pages/CreateDomain'
 import QuizInterface from './pages/QuizInterface'
 import AdminPanel from './pages/AdminPanel'
+import GenerateDomain from './pages/GenerateDomain'
 import Profile from './pages/Profile'
 
 // Auth Components
@@ -41,6 +42,7 @@ function App() {
             <Route path="domains/:domainId/edit" element={<CreateDomain />} />
             <Route path="quiz/:domainId" element={<QuizInterface />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="generate" element={<GenerateDomain />} />
             <Route path="admin" element={<AdminPanel />} />
           </Route>
           

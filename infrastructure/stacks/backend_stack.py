@@ -444,8 +444,15 @@ class BackendStack(Stack):
             authorizer=authorizer,
             authorization_type=apigateway.AuthorizationType.COGNITO,
         )
-        generate_resource.add_resource("{id}").add_method(
+        generate_id_resource = generate_resource.add_resource("{id}")
+        generate_id_resource.add_method(
             "GET",
+            apigateway.LambdaIntegration(self.domain_gen_lambda),
+            authorizer=authorizer,
+            authorization_type=apigateway.AuthorizationType.COGNITO,
+        )
+        generate_id_resource.add_resource("approve").add_method(
+            "POST",
             apigateway.LambdaIntegration(self.domain_gen_lambda),
             authorizer=authorizer,
             authorization_type=apigateway.AuthorizationType.COGNITO,

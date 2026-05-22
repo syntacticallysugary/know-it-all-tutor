@@ -4,15 +4,17 @@ import {
   BookOpen,
   Plus,
   Settings,
-  Shield
+  Shield,
+  Sparkles,
 } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 
 const baseNavigation = [
-  { name: 'Dashboard', href: '/app/dashboard', icon: LayoutDashboard },
-  { name: 'Domain Library', href: '/app/domains', icon: BookOpen },
-  { name: 'Create Domain', href: '/app/domains/create', icon: Plus },
-  { name: 'Profile', href: '/app/profile', icon: Settings },
+  { name: 'Dashboard',       href: '/app/dashboard', icon: LayoutDashboard },
+  { name: 'Domain Library',  href: '/app/domains',   icon: BookOpen },
+  { name: 'Create Domain',   href: '/app/domains/create', icon: Plus },
+  { name: 'Generate Domain', href: '/app/generate',  icon: Sparkles },
+  { name: 'Profile',         href: '/app/profile',   icon: Settings },
 ]
 
 const adminNavigation = { name: 'Admin Panel', href: '/app/admin', icon: Shield }

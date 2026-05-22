@@ -26,6 +26,10 @@ Rules:
 - Each subdomain is a cohesive concept cluster, not alphabetical grouping
 - authoritative_sources may be URLs, book titles, standards bodies, or
   institutional references — whatever is canonical for this domain
+- For URLs: link to the most specific subsection page available, not a chapter
+  index or table of contents. For example, prefer
+  "https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html" over
+  "https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html"
 - If no authoritative source is known with confidence, omit it rather than guess
 - search_queries should be targeted enough to find definitions and explanations,
   not overviews or introductory surveys\
@@ -114,8 +118,8 @@ Additional definition rules:
   - No circular definitions (defining a term using itself)
   - No marketing language ("powerful", "robust", "seamless")
   - No vague filler ("This is an important concept in...")
-  - Intermediate audience — knowledgeable in the domain broadly, may not know
-    this specific term
+  - Audience is a technical student with general technical knowledge, may not
+    know this specific term
 
 ━━━ GRAMMATICAL REQUIREMENTS ━━━
 
@@ -155,8 +159,7 @@ Prefer terms that are:
 For broadly general terms (e.g. "array", "variable", "loop"), include them
 only if the domain gives them a meaningfully distinct meaning, behavior, or
 constraint compared to the general programming/academic sense. When in
-doubt, include the term but ensure the definition highlights what is
-domain-specific about it.
+doubt, exclude the term.
 
 ━━━ SOURCE RULES ━━━
 
@@ -168,23 +171,39 @@ domain-specific about it.
     and note the uncertainty in the definition
   - Never invent an example — if you cannot confirm it from a source, omit it
 
+━━━ OUTPUT RULE ━━━
+
+  emit_term IS YOUR ONLY OUTPUT MECHANISM.
+
+  Do NOT write prose summaries, markdown documents, or research notes.
+  Do NOT write numbered lists of terms — "1. **term** – description" is
+  WRONG. Each item in any list you are tempted to write must instead be
+  a separate emit_term call.
+
+  Any text in your response content is invisible to the system. Only
+  emit_term calls are recorded. If you write a summary or list instead
+  of calling emit_term, the work is lost and cannot be recovered.
+
+  Do NOT emit terms from training memory alone. You must have read the
+  term's definition from a source in this conversation before emitting.
+  If you have not scraped or searched for a term yet, do that first.
+
 ━━━ PROCESS ━━━
 
-  1. Scrape the authoritative_sources provided to understand what terms exist
-     in this subdomain. Build your initial term list from what you find —
-     not from training memory.
-  2. Search for any gaps — terms the sources mention but do not fully cover.
-  3. For each term:
-     a. Find its definition in authoritative source material.
-     b. List every variant of the term (lowercase, plural, abbreviation,
-        stripped prefix).
-     c. Write the definition sentence by sentence, checking each sentence
-        for the term. Re-read the full definition and check again.
-     d. Write the short_reference.
-     e. Call emit_term once. Do not batch.
-  4. Continue until you reach the target count.
-  5. If reliable sources run out before the target count, stop and emit what
-     you have — do not pad with unverified terms to hit the number.\
+  Work in tight research-then-emit cycles. Do not batch all research first.
+
+  1. Scrape one authoritative source.
+  2. Identify a term from what you read.
+  3. Write its definition and short_reference (in your reasoning/thinking).
+  4. Call emit_term immediately — do not wait until you have found all terms.
+  5. After emit_term returns, search or scrape for the next term.
+  6. Repeat until the target count is reached.
+
+  If you can identify a term from what you have already read, call emit_term
+  now rather than doing another search first.
+
+  If reliable sources run out before the target count, stop and emit what
+  you have — do not pad with unverified terms to hit the number.\
 """
 
 
@@ -196,6 +215,104 @@ def format_prompt_1_user(topic: str, hints: str = "") -> str:
         f"/no_think\n\n"
         f"Decompose this knowledge domain into 4-7 subdomains: {topic}\n\n"
         f"User hints: {hints or 'none'}"
+    )
+
+
+PROMPT_2_SYSTEM_EMIT_ONLY = """\
+You are a term extractor for a quiz-based learning system. Source content from
+authoritative references is provided in the user message. Read it and call
+emit_term for every term you identify.
+
+━━━ DOMAIN SPECIFICITY ━━━
+
+The learner is a technical student who already has general technical knowledge.
+Do NOT include terms they would already know from that background.
+
+For example: "subnet mask", "TCP handshake", and "CIDR block" are good
+networking terms — a technical student does not automatically know them.
+But "data type", "variable", "function", "loop", and "integer" are NOT good
+terms for any programming domain — any technical student already knows these.
+
+Apply the same standard to THIS domain: only include terms the student would
+need to specifically learn about THIS technology. Skip anything they would
+bring in from general technical knowledge. When in doubt, exclude the term.
+
+EMIT_TERM FIELDS:
+
+  term          — exact canonical name from the source
+  definition    — 2-4 sentences; see DEFINITION RULES below
+  short_reference — 1-2 sentence student answer; see SHORT_REFERENCE RULES below
+  difficulty    — "beginner" | "intermediate" | "advanced" | "unverified"
+  category      — conceptual grouping within the subdomain
+  example       — concise illustration (code snippet, formula, scenario); omit if none fits
+  source        — URL or title the definition was drawn from
+
+━━━ DEFINITION RULES ━━━
+
+THE MOST IMPORTANT RULE: The definition must not name the term being defined —
+in any form, in any sentence.
+
+Before writing each definition, list every form the term can appear in:
+  - Full term, lowercase and plural
+  - Abbreviation if any
+  - Strippable prefix (e.g. "Amazon S3" → also "S3")
+
+Write the definition sentence by sentence. For each sentence ask: does this
+sentence contain the term in any form? If yes, rewrite. Then re-read the full
+definition and check again.
+
+Common opening rewrites:
+  "A loss function is..."          → "Measures..." or "The metric that..."
+  "X is a serverless service..."   → "A serverless service..."
+
+Additional rules:
+  - Written from the provided source material — not from training memory
+  - No circular definitions
+  - No marketing language ("powerful", "robust", "seamless")
+  - No vague filler ("This is an important concept in...")
+  - First character uppercase; ends with terminal punctuation
+
+━━━ SHORT_REFERENCE RULES ━━━
+
+1-2 sentences written as a direct student answer to "What is {term}?"
+Must not start with the term name. Must be accurate and specific.
+
+━━━ OUTPUT RULE ━━━
+
+emit_term IS YOUR ONLY OUTPUT MECHANISM.
+Do NOT write prose, numbered lists, or summaries. Call emit_term once per term.
+Any text in your response content is invisible — only emit_term calls are recorded.\
+"""
+
+
+def format_prompt_2_user_emit_only(
+    domain_name: str, subdomain: object, target_count: int, pre_context: str
+) -> str:
+    """Build the Prompt 2 user message for emit-only mode (no search/scrape tools).
+
+    Args:
+        domain_name: Parent domain name.
+        subdomain: Subdomain model.
+        target_count: Number of terms to emit.
+        pre_context: Pre-fetched source content to read from.
+    """
+    return (
+        f"Extract and emit terms for this subdomain.\n\n"
+        f"Domain: {domain_name}\n"
+        f"Subdomain: {subdomain.name}\n"
+        f"Description: {subdomain.description}\n"
+        f"Maximum term count: {target_count} — emit as many as you find that clearly "
+        f"belong to this domain. Stop when you have exhausted clearly domain-specific "
+        f"terms; do not pad to reach the maximum.\n\n"
+        f"Domain specificity: the learner is a technical student with general technical "
+        f"knowledge. Only include terms they would need to specifically learn about "
+        f"{domain_name} — skip anything they would already know from general technical "
+        f"background (e.g. 'variable', 'function', 'data type', 'loop').\n\n"
+        f"Source content (read this and call emit_term for each term you identify):\n"
+        f"{'─' * 60}\n"
+        f"{pre_context}\n"
+        f"{'─' * 60}\n\n"
+        f"Call emit_term for each term. Do not write summaries or lists."
     )
 
 
@@ -212,11 +329,14 @@ def format_prompt_2_user(domain_name: str, subdomain: object, target_count: int)
     queries = "\n".join(f"  - {q}" for q in subdomain.search_queries) or "  (none provided)"
 
     return (
-        f"Research and emit terms for this subdomain.\n\n"
+        f"Research and emit {target_count} terms for this subdomain using emit_term.\n\n"
         f"Domain: {domain_name}\n"
         f"Subdomain: {subdomain.name}\n"
         f"Description: {subdomain.description}\n"
         f"Target term count: {target_count}\n\n"
+        f"Your first action must be scrape_page or search_web — NOT a text response.\n"
+        f"After reading any source, call emit_term for each term you identify before "
+        f"moving on to the next search. Do not list terms in text.\n\n"
         f"Domain specificity requirement: every term must be specific to "
         f"{domain_name}, or have semantics / behavior in {domain_name} that "
         f"meaningfully differ from how the concept appears elsewhere. "

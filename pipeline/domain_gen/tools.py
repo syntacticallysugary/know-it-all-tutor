@@ -191,6 +191,32 @@ def scrape_page(url: str, max_chars: int = 3000) -> str:
         return f"Error fetching {url}: {exc}"
 
 
+EMIT_ONLY_TOOL_DEFS: list[dict] = [
+    {
+        "type": "function",
+        "function": {
+            "name": "emit_term",
+            "description": "Record one completed term. Call once per term — do not batch.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "term": {"type": "string"},
+                    "definition": {"type": "string"},
+                    "short_reference": {"type": "string"},
+                    "difficulty": {
+                        "type": "string",
+                        "enum": ["beginner", "intermediate", "advanced", "unverified"],
+                    },
+                    "category": {"type": "string"},
+                    "example": {"type": "string"},
+                    "source": {"type": "string"},
+                },
+                "required": ["term", "definition", "short_reference", "difficulty", "category"],
+            },
+        },
+    },
+]
+
 TOOL_DEFINITIONS: list[dict] = [
     {
         "type": "function",
