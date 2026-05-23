@@ -66,58 +66,53 @@ def get_applied_migrations() -> set:
         return set()
 
 def apply_migration(version: str, name: str, sql_content: str) -> Dict:
-    """Apply a single migration and record it"""
+    """Apply a single migration and record it."""
     start_time = time.time()
     checksum = calculate_checksum(sql_content)
-    
+
     try:
         print(f"Applying migration {version}: {name}")
-        
-        # Execute the migration SQL
-        execute_query(sql_content)
-        
+
+        # DSQL requires one DDL statement per transaction.
+        # Split on ';' and execute each non-empty, non-comment-only statement individually.
+        for raw in sql_content.split(';'):
+            stmt = raw.strip()
+            if not stmt:
+                continue
+            meaningful = '\n'.join(
+                line for line in stmt.splitlines()
+                if line.strip() and not line.strip().startswith('--')
+            ).strip()
+            if not meaningful:
+                continue
+            execute_query(stmt)
+
         execution_time = int((time.time() - start_time) * 1000)
-        
-        # Record successful migration
-        record_query = """
-            INSERT INTO schema_migrations (version, name, checksum, execution_time_ms, success)
-            VALUES (%s, %s, %s, %s, true)
-            ON CONFLICT (version) DO NOTHING;
-        """
-        execute_query(record_query, (version, name, checksum, execution_time))
-        
-        print(f"✓ Migration {version} applied successfully in {execution_time}ms")
-        
-        return {
-            'version': version,
-            'name': name,
-            'success': True,
-            'execution_time_ms': execution_time
-        }
-        
+
+        execute_query(
+            "INSERT INTO schema_migrations (version, name, checksum, execution_time_ms, success)"
+            " VALUES (%s, %s, %s, %s, true) ON CONFLICT (version) DO NOTHING",
+            (version, name, checksum, execution_time),
+        )
+
+        print(f"✓ Migration {version} applied in {execution_time}ms")
+        return {'version': version, 'name': name, 'success': True, 'execution_time_ms': execution_time}
+
     except Exception as e:
         execution_time = int((time.time() - start_time) * 1000)
         error_msg = str(e)
-        
         print(f"✗ Migration {version} failed: {error_msg}")
-        
-        # Try to record failed migration (table might not exist yet)
+
         try:
-            record_query = """
-                INSERT INTO schema_migrations (version, name, checksum, execution_time_ms, success)
-                VALUES (%s, %s, %s, %s, false);
-            """
-            execute_query(record_query, (version, name, checksum, execution_time))
-        except:
-            pass  # Can't record failure if table doesn't exist
-        
-        return {
-            'version': version,
-            'name': name,
-            'success': False,
-            'error': error_msg,
-            'execution_time_ms': execution_time
-        }
+            execute_query(
+                "INSERT INTO schema_migrations (version, name, checksum, execution_time_ms, success)"
+                " VALUES (%s, %s, %s, %s, false)",
+                (version, name, checksum, execution_time),
+            )
+        except Exception:
+            pass
+
+        return {'version': version, 'name': name, 'success': False, 'error': error_msg, 'execution_time_ms': execution_time}
 
 def lambda_handler(event, context):
     """

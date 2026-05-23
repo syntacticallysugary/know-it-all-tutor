@@ -11,7 +11,6 @@ from aws_cdk import (
     Stack,
     aws_lambda as _lambda,
     aws_apigateway as apigateway,
-    aws_ec2 as ec2,
     aws_iam as iam,
     aws_ecr_assets as ecr_assets,
     custom_resources as cr,
@@ -76,12 +75,10 @@ class BackendStack(Stack):
         
         # Store auth_stack reference
         self.auth_stack = auth_stack
-        
+
         # Import resources from other stacks
-        self.vpc = network_stack.vpc
-        self.lambda_security_group = network_stack.lambda_security_group
-        self.database = database_stack.database
-        self.db_credentials = database_stack.db_credentials
+        self.cluster_endpoint = database_stack.cluster_endpoint
+        self.cluster_arn = database_stack.cluster_arn
         self.user_pool = auth_stack.user_pool
         self.user_pool_client = auth_stack.user_pool_client
         
@@ -94,7 +91,7 @@ class BackendStack(Stack):
             description="Shared utilities for authentication and security"
         )
         
-        # Create DB Proxy Lambda (inside VPC)
+        # Create DB Proxy Lambda (no VPC — DSQL is accessed over HTTPS)
         self.db_proxy_lambda = _lambda.Function(
             self,
             "DBProxyFunction",
@@ -104,19 +101,16 @@ class BackendStack(Stack):
             timeout=Duration.seconds(30),
             memory_size=256,
             layers=[self.shared_layer],
-            vpc=self.vpc,
-            vpc_subnets=ec2.SubnetSelection(
-                subnet_type=ec2.SubnetType.PRIVATE_ISOLATED
-            ),
-            security_groups=[self.lambda_security_group],
             environment={
-                "DB_HOST": self.database.db_instance_endpoint_address,
-                "DB_PORT": "5432",
-                "DB_NAME": "tutor_system",
-                "DB_USER": self.db_credentials.secret_value_from_json("username").unsafe_unwrap(),
-                "DB_PASSWORD": self.db_credentials.secret_value_from_json("password").unsafe_unwrap(),
+                "DSQL_ENDPOINT": self.cluster_endpoint,
             },
-            description="Database proxy Lambda - handles all DB operations from VPC"
+            description="Database proxy Lambda - handles all DB operations via DSQL"
+        )
+        self.db_proxy_lambda.add_to_role_policy(
+            iam.PolicyStatement(
+                actions=["dsql:DbConnectAdmin"],
+                resources=[self.cluster_arn],
+            )
         )
         
         # Create Migration Runner Lambda (inside VPC)
@@ -129,20 +123,17 @@ class BackendStack(Stack):
             timeout=Duration.seconds(300),  # 5 minutes for migrations
             memory_size=512,
             layers=[self.shared_layer],
-            vpc=self.vpc,
-            vpc_subnets=ec2.SubnetSelection(
-                subnet_type=ec2.SubnetType.PRIVATE_ISOLATED
-            ),
-            security_groups=[self.lambda_security_group],
             environment={
-                "DB_HOST": self.database.db_instance_endpoint_address,
-                "DB_PORT": "5432",
-                "DB_NAME": "tutor_system",
-                "DB_USER": self.db_credentials.secret_value_from_json("username").unsafe_unwrap(),
-                "DB_PASSWORD": self.db_credentials.secret_value_from_json("password").unsafe_unwrap(),
-                "MIGRATIONS_DIR": "/var/task/migrations"
+                "DSQL_ENDPOINT": self.cluster_endpoint,
+                "MIGRATIONS_DIR": "/var/task/migrations",
             },
             description="Database migration runner - applies schema migrations"
+        )
+        self.migration_runner_lambda.add_to_role_policy(
+            iam.PolicyStatement(
+                actions=["dsql:DbConnectAdmin"],
+                resources=[self.cluster_arn],
+            )
         )
         
         # Run migrations on deployment using Custom Resource

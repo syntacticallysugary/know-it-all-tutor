@@ -1,16 +1,15 @@
--- Migration tracking table
--- This must be the first migration (000_)
--- Tracks which migrations have been applied to the database
+-- Migration tracking table; must run before any other migration.
+-- UUID primary key (DSQL has no sequences/SERIAL).
 
 CREATE TABLE IF NOT EXISTS schema_migrations (
-    id SERIAL PRIMARY KEY,
-    version VARCHAR(255) NOT NULL UNIQUE,
-    name VARCHAR(255) NOT NULL,
-    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    checksum VARCHAR(64),
+    id              UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+    version         VARCHAR(255) NOT NULL UNIQUE,
+    name            VARCHAR(255) NOT NULL,
+    applied_at      TIMESTAMPTZ  DEFAULT NOW(),
+    checksum        VARCHAR(64),
     execution_time_ms INTEGER,
-    success BOOLEAN DEFAULT true
+    success         BOOLEAN      DEFAULT true
 );
 
-CREATE INDEX idx_schema_migrations_version ON schema_migrations(version);
-CREATE INDEX idx_schema_migrations_applied_at ON schema_migrations(applied_at DESC);
+CREATE INDEX idx_schema_migrations_version    ON schema_migrations (version);
+CREATE INDEX idx_schema_migrations_applied_at ON schema_migrations (applied_at DESC);

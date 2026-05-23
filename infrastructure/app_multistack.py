@@ -38,15 +38,13 @@ network_stack = NetworkStack(
     description="Network infrastructure for Tutor System - Dev"
 )
 
-# 2. Database Stack (depends on Network)
+# 2. Database Stack (no VPC dependency — DSQL is serverless)
 database_stack = DatabaseStack(
     app,
     "DatabaseStack-dev",
-    network_stack=network_stack,
     env=env_config,
     description="Database infrastructure for Tutor System - Dev"
 )
-database_stack.add_dependency(network_stack)
 
 # 3. Auth Stack (independent)
 auth_stack = AuthStack(
