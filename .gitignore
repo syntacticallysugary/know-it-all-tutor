@@ -334,3 +334,5 @@ ml_model_layer.zip
 layer/
 lambda-model-separation
 refactor_tests.py
+
+*.onnx
