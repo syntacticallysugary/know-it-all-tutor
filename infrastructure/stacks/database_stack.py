@@ -6,6 +6,7 @@ import aws_cdk as cdk
 from aws_cdk import (
     Stack,
     aws_dsql as dsql,
+    aws_ssm as ssm,
     CfnOutput,
     RemovalPolicy,
 )
@@ -28,9 +29,19 @@ class DatabaseStack(Stack):
             deletion_protection_enabled=False,  # dev environment
         )
 
-        # Expose endpoint and ARN for BackendStack
         self.cluster_endpoint = self.cluster.attr_endpoint
         self.cluster_arn = self.cluster.attr_resource_arn
+
+        # Publish endpoint to SSM so BackendStack can resolve it without
+        # a CloudFormation Fn::ImportValue dependency (avoids export locks
+        # if the database layer ever needs to change again).
+        ssm.StringParameter(
+            self,
+            "DSQLEndpointParam",
+            parameter_name="/tutor-system/dev/dsql-endpoint",
+            string_value=self.cluster_endpoint,
+            description="Aurora DSQL cluster endpoint",
+        )
 
         CfnOutput(
             self,
@@ -46,4 +57,18 @@ class DatabaseStack(Stack):
             value=self.cluster_arn,
             description="Aurora DSQL cluster ARN",
             export_name=f"{construct_id}-DSQLClusterArn",
+        )
+
+        # ── Expand-Contract migration placeholder ──────────────────────────
+        # The previously deployed BackendStack imports this exact export name
+        # (auto-generated from the old RDS DatabaseInstance resource).
+        # Keeping it here prevents CloudFormation from treating it as a removal
+        # while BackendStack is still deployed with the old template.
+        # Remove this output once BackendStack has been redeployed without the
+        # Fn::ImportValue reference (i.e. after this Phase 1 deploy succeeds).
+        CfnOutput(
+            self,
+            "LegacyRDSEndpointPlaceholder",
+            value=self.cluster_endpoint,
+            export_name="ExportsOutputFnGetAttTutorDatabaseC3C89480EndpointAddressB4536218",
         )

@@ -12,6 +12,7 @@ from aws_cdk import (
     aws_lambda as _lambda,
     aws_apigateway as apigateway,
     aws_iam as iam,
+    aws_ssm as ssm,
     aws_ecr_assets as ecr_assets,
     custom_resources as cr,
     Duration,
@@ -63,24 +64,27 @@ class BackendStack(Stack):
     """
     
     def __init__(
-        self, 
-        scope: Construct, 
+        self,
+        scope: Construct,
         construct_id: str,
-        network_stack,
-        database_stack,
         auth_stack,
         **kwargs
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
-        
-        # Store auth_stack reference
-        self.auth_stack = auth_stack
 
-        # Import resources from other stacks
-        self.cluster_endpoint = database_stack.cluster_endpoint
-        self.cluster_arn = database_stack.cluster_arn
+        self.auth_stack = auth_stack
         self.user_pool = auth_stack.user_pool
         self.user_pool_client = auth_stack.user_pool_client
+
+        # Resolve DSQL endpoint via SSM dynamic reference — no Fn::ImportValue.
+        # DatabaseStack writes this parameter; deploy order is enforced by
+        # add_dependency() in app_multistack.py rather than a CDK cross-stack ref.
+        self.cluster_endpoint = ssm.StringParameter.value_for_string_parameter(
+            self, "/tutor-system/dev/dsql-endpoint"
+        )
+        # Wildcard ARN — grants DbConnectAdmin on all DSQL clusters in this
+        # account/region. Tighten to a specific cluster ARN once stable.
+        self.cluster_arn = f"arn:aws:dsql:{self.region}:{self.account}:cluster/*"
         
         # Create Lambda Layer for shared utilities
         self.shared_layer = _lambda.LayerVersion(

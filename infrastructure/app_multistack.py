@@ -54,12 +54,13 @@ auth_stack = AuthStack(
     description="Authentication infrastructure for Tutor System - Dev"
 )
 
-# 4. Backend Stack (depends on Network, Database, Auth)
+# 4. Backend Stack (depends on Database, Auth)
+# database_stack is not passed directly — DSQL endpoint is resolved via SSM
+# to avoid a CloudFormation Fn::ImportValue dependency. Deploy order is
+# enforced by add_dependency() below.
 backend_stack = BackendStack(
     app,
     "BackendStack-dev",
-    network_stack=network_stack,
-    database_stack=database_stack,
     auth_stack=auth_stack,
     env=env_config,
     description="Backend infrastructure for Tutor System - Dev"
