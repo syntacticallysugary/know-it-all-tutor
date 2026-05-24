@@ -60,15 +60,15 @@ class DatabaseStack(Stack):
         )
 
         # ── Expand-Contract migration placeholder ──────────────────────────
-        # The previously deployed BackendStack imports this exact export name
-        # (auto-generated from the old RDS DatabaseInstance resource).
-        # Keeping it here prevents CloudFormation from treating it as a removal
-        # while BackendStack is still deployed with the old template.
-        # Remove this output once BackendStack has been redeployed without the
-        # Fn::ImportValue reference (i.e. after this Phase 1 deploy succeeds).
+        # The construct ID must match the old CDK-auto-generated logical ID exactly.
+        # CloudFormation computes diffs by logical ID: if the logical ID changes,
+        # it treats this as delete-old + add-new, and the delete is blocked while
+        # BackendStack still imports the export. Matching the logical ID makes
+        # CloudFormation see it as an in-place value update — no removal, no lock.
+        # Remove after Phase 1 deploys and BackendStack stops importing this export.
         CfnOutput(
             self,
-            "LegacyRDSEndpointPlaceholder",
+            "ExportsOutputFnGetAttTutorDatabaseC3C89480EndpointAddressB4536218",
             value=self.cluster_endpoint,
             export_name="ExportsOutputFnGetAttTutorDatabaseC3C89480EndpointAddressB4536218",
         )
