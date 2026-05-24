@@ -67,11 +67,25 @@ class DatabaseStack(Stack):
         # update instead of delete-old + add-new — which would be blocked while
         # BackendStack still imports the export.
         # Remove after Phase 1 deploys and BackendStack stops importing this export.
-        _legacy_id = "ExportsOutputFnGetAttTutorDatabaseC3C89480EndpointAddressB4536218"
-        _placeholder = CfnOutput(
+        _legacy_endpoint_id = "ExportsOutputFnGetAttTutorDatabaseC3C89480EndpointAddressB4536218"
+        _endpoint_placeholder = CfnOutput(
             self,
             "LegacyRDSEndpointPlaceholder",
             value=self.cluster_endpoint,
-            export_name=_legacy_id,
+            export_name=_legacy_endpoint_id,
         )
-        _placeholder.override_logical_id(_legacy_id)
+        _endpoint_placeholder.override_logical_id(_legacy_endpoint_id)
+
+        # Second auto-generated export: BackendStack imported the DB credentials
+        # secret ARN via Ref. DSQL uses IAM auth — no credentials secret exists —
+        # so we export a sentinel string. BackendStack's new template does not
+        # reference this export; the Fn::ImportValue disappears after BackendStack
+        # redeploys. Remove this placeholder in Phase 2 alongside the one above.
+        _legacy_creds_id = "ExportsOutputRefDBCredentialsCBF39AE96FE42413"
+        _creds_placeholder = CfnOutput(
+            self,
+            "LegacyDBCredentialsPlaceholder",
+            value="MIGRATED-TO-DSQL-IAM-AUTH",
+            export_name=_legacy_creds_id,
+        )
+        _creds_placeholder.override_logical_id(_legacy_creds_id)
