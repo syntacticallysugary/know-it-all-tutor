@@ -250,9 +250,12 @@ jobs:
           # in the new templates, so CDK will try to remove the auto-generated exports
           # from NetworkStack — but the currently deployed stacks still import them.
           # Deploying the consumers first breaks the import dependency cleanly.
+          # --exclusively prevents CDK from also deploying transitive dependencies,
+          # which would pull in NetworkStack before BackendStack drops its imports.
           cdk deploy DatabaseStack-dev AuthStack-dev BackendStack-dev FrontendStack-dev MonitoringStack-dev \
-            --app "python3 app_multistack.py" --require-approval never
-          # Now nothing imports NetworkStack's old CDK-managed exports; it can update safely.
+            --app "python3 app_multistack.py" --require-approval never --exclusively
+          # Now BackendStack and DatabaseStack no longer import NetworkStack's old
+          # CDK-managed exports, so NetworkStack can update safely.
           cdk deploy NetworkStack-dev --app "python3 app_multistack.py" --require-approval never
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
