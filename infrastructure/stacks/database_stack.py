@@ -60,15 +60,18 @@ class DatabaseStack(Stack):
         )
 
         # ── Expand-Contract migration placeholder ──────────────────────────
-        # The construct ID must match the old CDK-auto-generated logical ID exactly.
-        # CloudFormation computes diffs by logical ID: if the logical ID changes,
-        # it treats this as delete-old + add-new, and the delete is blocked while
-        # BackendStack still imports the export. Matching the logical ID makes
-        # CloudFormation see it as an in-place value update — no removal, no lock.
+        # CloudFormation diffs by logical ID, not construct ID. CDK's uniqueness
+        # algorithm can produce a logical ID that differs from the construct ID,
+        # so we use override_logical_id() to force the exact string into the
+        # synthesized template. This makes CloudFormation see an in-place value
+        # update instead of delete-old + add-new — which would be blocked while
+        # BackendStack still imports the export.
         # Remove after Phase 1 deploys and BackendStack stops importing this export.
-        CfnOutput(
+        _legacy_id = "ExportsOutputFnGetAttTutorDatabaseC3C89480EndpointAddressB4536218"
+        _placeholder = CfnOutput(
             self,
-            "ExportsOutputFnGetAttTutorDatabaseC3C89480EndpointAddressB4536218",
+            "LegacyRDSEndpointPlaceholder",
             value=self.cluster_endpoint,
-            export_name="ExportsOutputFnGetAttTutorDatabaseC3C89480EndpointAddressB4536218",
+            export_name=_legacy_id,
         )
+        _placeholder.override_logical_id(_legacy_id)
