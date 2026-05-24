@@ -72,7 +72,7 @@ class DatabaseStack(Stack):
             self,
             "LegacyRDSEndpointPlaceholder",
             value=self.cluster_endpoint,
-            export_name=_legacy_endpoint_id,
+            export_name=f"{construct_id}:{_legacy_endpoint_id}",
         )
         _endpoint_placeholder.override_logical_id(_legacy_endpoint_id)
 
