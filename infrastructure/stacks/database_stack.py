@@ -59,3 +59,16 @@ class DatabaseStack(Stack):
             export_name=f"{construct_id}-DSQLClusterArn",
         )
 
+        # ── Expand-Contract migration placeholder ──────────────────────────
+        # The previously deployed BackendStack imports this exact export name
+        # (auto-generated from the old RDS DatabaseInstance resource).
+        # Keeping it here prevents CloudFormation from treating it as a removal
+        # while BackendStack is still deployed with the old template.
+        # Remove this output once BackendStack has been redeployed without the
+        # Fn::ImportValue reference (i.e. after this Phase 1 deploy succeeds).
+        CfnOutput(
+            self,
+            "LegacyRDSEndpointPlaceholder",
+            value=self.cluster_endpoint,
+            export_name="ExportsOutputFnGetAttTutorDatabaseC3C89480EndpointAddressB4536218",
+        )
