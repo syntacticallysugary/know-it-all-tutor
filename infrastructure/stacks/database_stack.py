@@ -78,14 +78,19 @@ class DatabaseStack(Stack):
 
         # Second auto-generated export: BackendStack imported the DB credentials
         # secret ARN via Ref. DSQL uses IAM auth — no credentials secret exists —
-        # so we export a sentinel string. BackendStack's new template does not
-        # reference this export; the Fn::ImportValue disappears after BackendStack
-        # redeploys. Remove this placeholder in Phase 2 alongside the one above.
+        # so we repurpose the export to carry the DSQL endpoint (any token works).
+        # BackendStack's new template does not reference this export; the
+        # Fn::ImportValue disappears after BackendStack redeploys.
+        # Remove this placeholder in Phase 2 alongside the one above.
+        # Export.Name must match the deployed value exactly (stack-name prefix
+        # is included) so CloudFormation sees an in-place value update, not
+        # delete-old-export + add-new-export.
         _legacy_creds_id = "ExportsOutputRefDBCredentialsCBF39AE96FE42413"
+        _legacy_creds_export_name = f"{construct_id}:{_legacy_creds_id}"
         _creds_placeholder = CfnOutput(
             self,
             "LegacyDBCredentialsPlaceholder",
-            value="MIGRATED-TO-DSQL-IAM-AUTH",
-            export_name=_legacy_creds_id,
+            value=self.cluster_endpoint,
+            export_name=_legacy_creds_export_name,
         )
         _creds_placeholder.override_logical_id(_legacy_creds_id)
