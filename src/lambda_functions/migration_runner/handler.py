@@ -5,6 +5,7 @@ Automatically applies pending migrations during deployment
 """
 import json
 import os
+import re
 import hashlib
 import time
 from typing import List, Dict, Tuple
@@ -74,18 +75,13 @@ def apply_migration(version: str, name: str, sql_content: str) -> Dict:
         print(f"Applying migration {version}: {name}")
 
         # DSQL requires one DDL statement per transaction.
-        # Split on ';' and execute each non-empty, non-comment-only statement individually.
-        for raw in sql_content.split(';'):
-            stmt = raw.strip()
-            if not stmt:
-                continue
-            meaningful = '\n'.join(
-                line for line in stmt.splitlines()
-                if line.strip() and not line.strip().startswith('--')
-            ).strip()
-            if not meaningful:
-                continue
-            execute_query(stmt)
+        # Strip single-line comments first so semicolons inside comments
+        # don't produce spurious split fragments, then execute each statement.
+        stripped = re.sub(r'--[^\n]*', '', sql_content)
+        for stmt in stripped.split(';'):
+            stmt = stmt.strip()
+            if stmt:
+                execute_query(stmt)
 
         execution_time = int((time.time() - start_time) * 1000)
 
