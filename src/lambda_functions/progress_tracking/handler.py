@@ -37,14 +37,16 @@ def lambda_handler(event, context):
         if not auth_result['valid']:
             return create_error_response(401, 'Unauthorized - No user identity found')
         cognito_sub = auth_result['user_id']
-        
+        logger.info(f"Looking up user by cognito_sub: {cognito_sub!r}")
+
         # Get user_id from database
         user_result = db_proxy.execute_query(
             "SELECT id FROM users WHERE cognito_sub = %s",
             params=[cognito_sub],
             return_dict=True
         )
-        
+        logger.info(f"User lookup result: {user_result!r}")
+
         if not user_result or len(user_result) == 0:
             return create_error_response(404, 'User not found')
         
