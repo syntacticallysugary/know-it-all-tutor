@@ -11,5 +11,5 @@ CREATE TABLE IF NOT EXISTS schema_migrations (
     success         BOOLEAN      DEFAULT true
 );
 
-CREATE INDEX ASYNC idx_schema_migrations_version    ON schema_migrations (version);
-CREATE INDEX ASYNC idx_schema_migrations_applied_at ON schema_migrations (applied_at);
+CREATE INDEX ASYNC IF NOT EXISTS idx_schema_migrations_version    ON schema_migrations (version);
+CREATE INDEX ASYNC IF NOT EXISTS idx_schema_migrations_applied_at ON schema_migrations (applied_at);
