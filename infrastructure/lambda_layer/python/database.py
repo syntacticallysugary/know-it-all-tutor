@@ -38,9 +38,9 @@ def _dsql_connection() -> psycopg.Connection:
 
     client = boto3.client("dsql", region_name=region)
     token = client.generate_db_connect_admin_auth_token(
-        hostname=endpoint,
-        region=region,
-        expires_in=900,
+        Hostname=endpoint,
+        Region=region,
+        ExpiresIn=900,
     )
 
     conn = psycopg.connect(
