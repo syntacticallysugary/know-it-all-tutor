@@ -75,7 +75,7 @@ def handle_get_dashboard(user_id):
             FROM tree_nodes d
             LEFT JOIN tree_nodes t ON t.parent_id = d.id AND t.node_type = 'term'
             WHERE d.user_id = %s AND d.node_type = 'domain'
-            GROUP BY d.id, d.data, d.created_at
+            GROUP BY d.id, d.data::text, d.created_at
             ORDER BY d.created_at DESC
             """,
             params=[user_id],

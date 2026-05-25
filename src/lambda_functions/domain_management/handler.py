@@ -162,7 +162,7 @@ def handle_get_domains(user_id):
             FROM tree_nodes d
             LEFT JOIN tree_nodes t ON t.parent_id = d.id AND t.node_type = 'term'
             WHERE (d.user_id = %s OR d.is_public = true) AND d.node_type = 'domain'
-            GROUP BY d.id, d.data, d.metadata, d.created_at, d.updated_at
+            GROUP BY d.id, d.data::text, d.metadata::text, d.created_at, d.updated_at
             ORDER BY d.created_at DESC
             """,
             params=[user_id],
@@ -210,7 +210,7 @@ def handle_get_domain(event, user_id):
             FROM tree_nodes d
             LEFT JOIN tree_nodes t ON t.parent_id = d.id AND t.node_type = 'term'
             WHERE d.id = %s AND (d.user_id = %s OR d.is_public = true) AND d.node_type = 'domain'
-            GROUP BY d.id, d.data, d.metadata, d.created_at, d.updated_at
+            GROUP BY d.id, d.data::text, d.metadata::text, d.created_at, d.updated_at
             """,
             params=[domain_id, user_id],
             return_dict=True
