@@ -59,38 +59,3 @@ class DatabaseStack(Stack):
             export_name=f"{construct_id}-DSQLClusterArn",
         )
 
-        # ── Expand-Contract migration placeholder ──────────────────────────
-        # CloudFormation diffs by logical ID, not construct ID. CDK's uniqueness
-        # algorithm can produce a logical ID that differs from the construct ID,
-        # so we use override_logical_id() to force the exact string into the
-        # synthesized template. This makes CloudFormation see an in-place value
-        # update instead of delete-old + add-new — which would be blocked while
-        # BackendStack still imports the export.
-        # Remove after Phase 1 deploys and BackendStack stops importing this export.
-        _legacy_endpoint_id = "ExportsOutputFnGetAttTutorDatabaseC3C89480EndpointAddressB4536218"
-        _endpoint_placeholder = CfnOutput(
-            self,
-            "LegacyRDSEndpointPlaceholder",
-            value=self.cluster_endpoint,
-            export_name=f"{construct_id}:{_legacy_endpoint_id}",
-        )
-        _endpoint_placeholder.override_logical_id(_legacy_endpoint_id)
-
-        # Second auto-generated export: BackendStack imported the DB credentials
-        # secret ARN via Ref. DSQL uses IAM auth — no credentials secret exists —
-        # so we repurpose the export to carry the DSQL endpoint (any token works).
-        # BackendStack's new template does not reference this export; the
-        # Fn::ImportValue disappears after BackendStack redeploys.
-        # Remove this placeholder in Phase 2 alongside the one above.
-        # Export.Name must match the deployed value exactly (stack-name prefix
-        # is included) so CloudFormation sees an in-place value update, not
-        # delete-old-export + add-new-export.
-        _legacy_creds_id = "ExportsOutputRefDBCredentialsCBF39AE96FE42413"
-        _legacy_creds_export_name = f"{construct_id}:{_legacy_creds_id}"
-        _creds_placeholder = CfnOutput(
-            self,
-            "LegacyDBCredentialsPlaceholder",
-            value=self.cluster_endpoint,
-            export_name=_legacy_creds_export_name,
-        )
-        _creds_placeholder.override_logical_id(_legacy_creds_id)

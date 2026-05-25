@@ -12,7 +12,6 @@ from aws_cdk import (
     aws_lambda as _lambda,
     aws_apigateway as apigateway,
     aws_iam as iam,
-    aws_ssm as ssm,
     aws_ecr_assets as ecr_assets,
     custom_resources as cr,
     Duration,
@@ -76,12 +75,6 @@ class BackendStack(Stack):
         self.user_pool = auth_stack.user_pool
         self.user_pool_client = auth_stack.user_pool_client
 
-        # Resolve DSQL endpoint via SSM dynamic reference — no Fn::ImportValue.
-        # DatabaseStack writes this parameter; deploy order is enforced by
-        # add_dependency() in app_multistack.py rather than a CDK cross-stack ref.
-        self.cluster_endpoint = ssm.StringParameter.value_for_string_parameter(
-            self, "/tutor-system/dev/dsql-endpoint"
-        )
         # Wildcard ARN — grants DbConnectAdmin on all DSQL clusters in this
         # account/region. Tighten to a specific cluster ARN once stable.
         self.cluster_arn = f"arn:aws:dsql:{self.region}:{self.account}:cluster/*"
@@ -105,15 +98,19 @@ class BackendStack(Stack):
             timeout=Duration.seconds(30),
             memory_size=256,
             layers=[self.shared_layer],
-            environment={
-                "DSQL_ENDPOINT": self.cluster_endpoint,
-            },
+            environment={},
             description="Database proxy Lambda - handles all DB operations via DSQL"
         )
         self.db_proxy_lambda.add_to_role_policy(
             iam.PolicyStatement(
                 actions=["dsql:DbConnectAdmin"],
                 resources=[self.cluster_arn],
+            )
+        )
+        self.db_proxy_lambda.add_to_role_policy(
+            iam.PolicyStatement(
+                actions=["ssm:GetParameter"],
+                resources=[f"arn:aws:ssm:{self.region}:{self.account}:parameter/tutor-system/dev/dsql-endpoint"],
             )
         )
         
@@ -128,7 +125,6 @@ class BackendStack(Stack):
             memory_size=512,
             layers=[self.shared_layer],
             environment={
-                "DSQL_ENDPOINT": self.cluster_endpoint,
                 "MIGRATIONS_DIR": "/var/task/migrations",
             },
             description="Database migration runner - applies schema migrations"
@@ -139,39 +135,12 @@ class BackendStack(Stack):
                 resources=[self.cluster_arn],
             )
         )
-        
-        # Run migrations on deployment using Custom Resource
-        migration_trigger = cr.AwsCustomResource(
-            self,
-            "MigrationTrigger",
-            on_create=cr.AwsSdkCall(
-                service="Lambda",
-                action="invoke",
-                parameters={
-                    "FunctionName": self.migration_runner_lambda.function_name,
-                    "Payload": json.dumps({"action": "migrate"})
-                },
-                physical_resource_id=cr.PhysicalResourceId.of("MigrationTrigger")
-            ),
-            on_update=cr.AwsSdkCall(
-                service="Lambda",
-                action="invoke",
-                parameters={
-                    "FunctionName": self.migration_runner_lambda.function_name,
-                    "Payload": json.dumps({"action": "migrate"})
-                },
-                physical_resource_id=cr.PhysicalResourceId.of("MigrationTrigger")
-            ),
-            policy=cr.AwsCustomResourcePolicy.from_statements([
-                iam.PolicyStatement(
-                    actions=["lambda:InvokeFunction"],
-                    resources=[self.migration_runner_lambda.function_arn]
-                )
-            ])
+        self.migration_runner_lambda.add_to_role_policy(
+            iam.PolicyStatement(
+                actions=["ssm:GetParameter"],
+                resources=[f"arn:aws:ssm:{self.region}:{self.account}:parameter/tutor-system/dev/dsql-endpoint"],
+            )
         )
-        
-        # Ensure migrations run before other Lambdas are created
-        migration_trigger.node.add_dependency(self.migration_runner_lambda)
         
         # Create Auth Lambda (outside VPC)
         self.auth_lambda = _lambda.Function(

@@ -13,10 +13,27 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+_dsql_endpoint: str | None = None
+
+
+def _get_dsql_endpoint() -> str:
+    """Return the DSQL cluster endpoint, reading from SSM on first call."""
+    global _dsql_endpoint
+    if _dsql_endpoint is None:
+        env_val = os.environ.get("DSQL_ENDPOINT")
+        if env_val:
+            _dsql_endpoint = env_val
+        else:
+            ssm = boto3.client("ssm", region_name=os.environ.get("AWS_REGION", "us-east-1"))
+            _dsql_endpoint = ssm.get_parameter(
+                Name="/tutor-system/dev/dsql-endpoint"
+            )["Parameter"]["Value"]
+    return _dsql_endpoint
+
 
 def _dsql_connection() -> psycopg.Connection:
     """Open a new DSQL connection authenticated via IAM token."""
-    endpoint = os.environ["DSQL_ENDPOINT"]
+    endpoint = _get_dsql_endpoint()
     region = os.environ.get("AWS_REGION", "us-east-1")
 
     client = boto3.client("dsql", region_name=region)

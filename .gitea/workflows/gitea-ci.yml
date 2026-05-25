@@ -244,18 +244,27 @@ jobs:
       - name: Deploy all stacks
         run: |
           cd infrastructure
-          # Deploy all stacks except NetworkStack first.
-          # BackendStack and DatabaseStack previously imported VPC/subnet/SG exports
-          # from NetworkStack via CDK cross-stack references. Those imports are gone
-          # in the new templates, so CDK will try to remove the auto-generated exports
-          # from NetworkStack — but the currently deployed stacks still import them.
-          # Deploying the consumers first breaks the import dependency cleanly.
-          # --exclusively prevents CDK from also deploying transitive dependencies,
-          # which would pull in NetworkStack before BackendStack drops its imports.
-          cdk deploy DatabaseStack-dev AuthStack-dev BackendStack-dev FrontendStack-dev MonitoringStack-dev \
+          # The currently-deployed BackendStack imports two legacy RDS exports from
+          # DatabaseStack (endpoint + credentials) via Fn::ImportValue. CloudFormation
+          # blocks any change to those exports while any stack imports them.
+          # Deploy AuthStack and BackendStack first: the new BackendStack template has
+          # no Fn::ImportValue on DatabaseStack (endpoint is read from SSM at Lambda
+          # runtime instead), so deploying it unblocks DatabaseStack. BackendStack's
+          # new template also drops the VPC/subnet/SG imports from NetworkStack.
+          # --exclusively prevents CDK from auto-pulling transitive dependencies.
+          cdk deploy AuthStack-dev \
             --app "python3 app_multistack.py" --require-approval never --exclusively
-          # Now BackendStack and DatabaseStack no longer import NetworkStack's old
-          # CDK-managed exports, so NetworkStack can update safely.
+          cdk deploy BackendStack-dev \
+            --app "python3 app_multistack.py" --require-approval never --exclusively
+          # DatabaseStack is now unblocked — no deployed stack imports its legacy
+          # RDS exports. This creates/updates the DSQL cluster and writes the real
+          # endpoint to SSM (/tutor-system/dev/dsql-endpoint).
+          cdk deploy DatabaseStack-dev \
+            --app "python3 app_multistack.py" --require-approval never --exclusively
+          # FrontendStack and MonitoringStack depend only on BackendStack (already up).
+          cdk deploy FrontendStack-dev MonitoringStack-dev \
+            --app "python3 app_multistack.py" --require-approval never --exclusively
+          # NetworkStack last — BackendStack no longer imports its VPC/subnet/SG exports.
           cdk deploy NetworkStack-dev --app "python3 app_multistack.py" --require-approval never
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
