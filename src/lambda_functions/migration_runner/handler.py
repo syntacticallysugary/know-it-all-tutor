@@ -87,7 +87,10 @@ def apply_migration(version: str, name: str, sql_content: str) -> Dict:
 
         execute_query(
             "INSERT INTO schema_migrations (version, name, checksum, execution_time_ms, success)"
-            " VALUES (%s, %s, %s, %s, true) ON CONFLICT (version) DO NOTHING",
+            " VALUES (%s, %s, %s, %s, true)"
+            " ON CONFLICT (version) DO UPDATE SET success = true,"
+            " execution_time_ms = EXCLUDED.execution_time_ms,"
+            " checksum = EXCLUDED.checksum",
             (version, name, checksum, execution_time),
         )
 
