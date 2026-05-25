@@ -117,4 +117,4 @@ CREATE INDEX ASYNC idx_users_active      ON users (is_active);
 
 -- domain_gen_jobs indexes
 CREATE INDEX ASYNC idx_domain_gen_jobs_status ON domain_gen_jobs (status, created_at);
-CREATE INDEX ASYNC idx_domain_gen_jobs_user   ON domain_gen_jobs (user_id, created_at DESC);
+CREATE INDEX ASYNC idx_domain_gen_jobs_user   ON domain_gen_jobs (user_id, created_at);
