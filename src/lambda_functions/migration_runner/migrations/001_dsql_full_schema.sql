@@ -88,33 +88,33 @@ CREATE TABLE IF NOT EXISTS domain_gen_jobs (
 );
 
 -- tree_nodes indexes
-CREATE INDEX idx_tree_nodes_parent        ON tree_nodes (parent_id);
-CREATE INDEX idx_tree_nodes_user          ON tree_nodes (user_id);
-CREATE INDEX idx_tree_nodes_type          ON tree_nodes (node_type);
-CREATE INDEX idx_tree_nodes_user_type     ON tree_nodes (user_id, node_type);
-CREATE INDEX idx_tree_nodes_public        ON tree_nodes (is_public);
-CREATE INDEX idx_tree_nodes_domain_access ON tree_nodes (node_type, user_id, is_public);
+CREATE INDEX ASYNC idx_tree_nodes_parent        ON tree_nodes (parent_id);
+CREATE INDEX ASYNC idx_tree_nodes_user          ON tree_nodes (user_id);
+CREATE INDEX ASYNC idx_tree_nodes_type          ON tree_nodes (node_type);
+CREATE INDEX ASYNC idx_tree_nodes_user_type     ON tree_nodes (user_id, node_type);
+CREATE INDEX ASYNC idx_tree_nodes_public        ON tree_nodes (is_public);
+CREATE INDEX ASYNC idx_tree_nodes_domain_access ON tree_nodes (node_type, user_id, is_public);
 
 -- progress_records indexes
-CREATE INDEX idx_progress_user_term    ON progress_records (user_id, term_id);
-CREATE INDEX idx_progress_session      ON progress_records (session_id);
-CREATE INDEX idx_progress_user_created ON progress_records (user_id, created_at);
+CREATE INDEX ASYNC idx_progress_user_term    ON progress_records (user_id, term_id);
+CREATE INDEX ASYNC idx_progress_session      ON progress_records (session_id);
+CREATE INDEX ASYNC idx_progress_user_created ON progress_records (user_id, created_at);
 
 -- quiz_sessions indexes
-CREATE INDEX idx_quiz_sessions_user        ON quiz_sessions (user_id);
-CREATE INDEX idx_quiz_sessions_domain      ON quiz_sessions (domain_id);
-CREATE INDEX idx_quiz_sessions_status      ON quiz_sessions (status);
-CREATE INDEX idx_quiz_sessions_user_status ON quiz_sessions (user_id, status);
+CREATE INDEX ASYNC idx_quiz_sessions_user        ON quiz_sessions (user_id);
+CREATE INDEX ASYNC idx_quiz_sessions_domain      ON quiz_sessions (domain_id);
+CREATE INDEX ASYNC idx_quiz_sessions_status      ON quiz_sessions (status);
+CREATE INDEX ASYNC idx_quiz_sessions_user_status ON quiz_sessions (user_id, status);
 
 -- batch_uploads indexes
-CREATE INDEX idx_batch_uploads_admin  ON batch_uploads (admin_id);
-CREATE INDEX idx_batch_uploads_status ON batch_uploads (status);
+CREATE INDEX ASYNC idx_batch_uploads_admin  ON batch_uploads (admin_id);
+CREATE INDEX ASYNC idx_batch_uploads_status ON batch_uploads (status);
 
 -- users indexes
-CREATE INDEX idx_users_email       ON users (email);
-CREATE INDEX idx_users_cognito_sub ON users (cognito_sub);
-CREATE INDEX idx_users_active      ON users (is_active);
+CREATE INDEX ASYNC idx_users_email       ON users (email);
+CREATE INDEX ASYNC idx_users_cognito_sub ON users (cognito_sub);
+CREATE INDEX ASYNC idx_users_active      ON users (is_active);
 
 -- domain_gen_jobs indexes
-CREATE INDEX idx_domain_gen_jobs_status ON domain_gen_jobs (status, created_at);
-CREATE INDEX idx_domain_gen_jobs_user   ON domain_gen_jobs (user_id, created_at DESC);
+CREATE INDEX ASYNC idx_domain_gen_jobs_status ON domain_gen_jobs (status, created_at);
+CREATE INDEX ASYNC idx_domain_gen_jobs_user   ON domain_gen_jobs (user_id, created_at DESC);
