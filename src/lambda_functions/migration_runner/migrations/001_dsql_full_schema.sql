@@ -26,8 +26,8 @@ CREATE TABLE IF NOT EXISTS tree_nodes (
     parent_id   UUID,
     user_id     UUID        NOT NULL,
     node_type   VARCHAR(50) NOT NULL CHECK (node_type IN ('domain', 'category', 'term')),
-    data        JSONB       NOT NULL,
-    metadata    JSONB       DEFAULT '{}',
+    data        JSON       NOT NULL,
+    metadata    JSON       DEFAULT '{}',
     is_public   BOOLEAN     NOT NULL DEFAULT false,
     created_at  TIMESTAMPTZ DEFAULT NOW(),
     updated_at  TIMESTAMPTZ DEFAULT NOW()
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS quiz_sessions (
     started_at          TIMESTAMPTZ DEFAULT NOW(),
     completed_at        TIMESTAMPTZ,
     paused_at           TIMESTAMPTZ,
-    session_data        JSONB       DEFAULT '{}'
+    session_data        JSON       DEFAULT '{}'
 );
 
 CREATE TABLE IF NOT EXISTS progress_records (
@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS batch_uploads (
     uploaded_at   TIMESTAMPTZ DEFAULT NOW(),
     processed_at  TIMESTAMPTZ,
     error_message TEXT,
-    metadata      JSONB       DEFAULT '{}'
+    metadata      JSON       DEFAULT '{}'
 );
 
 CREATE TABLE IF NOT EXISTS domain_gen_jobs (
@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS domain_gen_jobs (
     hints         TEXT        NOT NULL DEFAULT '',
     total_terms   INTEGER     NOT NULL DEFAULT 50,
     status        TEXT        NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'running', 'complete', 'failed', 'approved')),
-    output_json   JSONB,
+    output_json   JSON,
     output_path   TEXT,
     error_message TEXT,
     created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
