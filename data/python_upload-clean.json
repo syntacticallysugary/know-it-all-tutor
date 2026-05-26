@@ -1,0 +1,1935 @@
+{
+  "domains": [
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Python \u2014 Collections",
+        "description": "Python's built-in collection types and the standard library collections module, including sequences, mappings, and sets.",
+        "subject": "python",
+        "difficulty": "intermediate",
+        "estimated_hours": 6,
+        "prerequisites": [
+          "Python basics",
+          "Variables and types"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "list.append()",
+            "definition": "A list method that adds a single element to the end of the list, modifying it in place. Unlike concatenation, this method does not create a new list \u2014 it mutates the existing one. It accepts exactly one argument and always runs in O(1) amortized time.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "collections",
+            "code_example": "my_list.append(item)",
+            "short_reference": "Adds an item to the end of a list and changes the original list directly, without making a new one. It's fast and only takes one item as input."
+          },
+          "metadata": {
+            "signature": "list.append(x)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "list.extend()",
+            "definition": "A list method that adds all elements from an iterable to the end of the list in place. It differs from append in that it unpacks the iterable rather than adding it as a single nested element. Equivalent to using the += operator with a list.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "collections",
+            "code_example": "my_list.extend(iterable)",
+            "short_reference": "It adds all items from an iterable to the list without nesting them, similar to using +=."
+          },
+          "metadata": {
+            "signature": "list.extend(iterable)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "list.pop()",
+            "definition": "A list method that removes and returns the element at a given index, defaulting to the last element when no index is specified. It mutates the list in place and raises IndexError if the list is empty or the index is out of range.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "collections",
+            "code_example": "item = my_list.pop(index=-1)",
+            "short_reference": "It removes and returns an element from the list, using the last one if no index is given. It changes the list directly and can cause an error if the list is empty or the index is wrong."
+          },
+          "metadata": {
+            "signature": "list.pop(index=-1)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "dict.get()",
+            "definition": "A dictionary method that returns the value associated with a key, or a default value if the key is not present \u2014 without raising a KeyError. The default argument itself defaults to None when not provided. This is the idiomatic way to safely access dictionary values when the key may be absent.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "collections",
+            "code_example": "value = my_dict.get(key, default=None)",
+            "short_reference": "It retrieves a value for a key in a dictionary, or gives a default (like None) if the key isn't there, without throwing an error."
+          },
+          "metadata": {
+            "signature": "dict.get(key, default=None)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "dict.items()",
+            "definition": "A dictionary method that returns a view object containing all key-value pairs as tuples. The view reflects live changes to the dictionary, making it suitable for iteration and membership tests. It is the standard way to iterate over both keys and values simultaneously.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "collections",
+            "code_example": "for key, value in my_dict.items(): ...",
+            "short_reference": "It returns key-value pairs as tuples that update if the dictionary changes, letting you loop through both keys and values together."
+          },
+          "metadata": {
+            "signature": "dict.items()",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "dict.setdefault()",
+            "definition": "A dictionary method that returns the value for a key if it exists; otherwise, inserts the key with a specified default value and returns that default. It is useful for initializing mutable values like lists in a dictionary without overwriting existing entries.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "category": "collections",
+            "code_example": "my_dict.setdefault(key, default_value)",
+            "short_reference": "It checks if a key exists in a dictionary and returns its value, or adds the key with a default value if it doesn't. This helps set up things like lists in a dictionary without replacing what's already there."
+          },
+          "metadata": {
+            "signature": "dict.setdefault(key, default=None)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "collections.defaultdict",
+            "definition": "A dict subclass from the collections module that automatically provides a default value for missing keys using a factory function supplied at construction time. When a key is accessed that does not exist, the factory is called with no arguments and its return value is inserted. This eliminates the need for explicit key existence checks when building dictionaries of lists, sets, or counters.",
+            "difficulty": "intermediate",
+            "module": "collections",
+            "category": "collections",
+            "code_example": "from collections import defaultdict\ngroup = defaultdict(list)",
+            "short_reference": "It automatically creates a default value for missing keys using a function you set up when you make the dictionary, so you don't have to check if a key exists first. This is useful for things like lists or counters where you want to avoid manual checks."
+          },
+          "metadata": {
+            "signature": "defaultdict(default_factory)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "collections.Counter",
+            "definition": "A dict subclass from the collections module designed for counting hashable objects. Elements are stored as dictionary keys and their counts as values; missing keys return zero rather than raising KeyError. It supports arithmetic operations such as addition, subtraction, and intersection between counters.",
+            "difficulty": "intermediate",
+            "module": "collections",
+            "category": "collections",
+            "code_example": "from collections import Counter\nword_counts = Counter(['apple', 'banana', 'apple'])",
+            "short_reference": "It's a dictionary-like tool that counts how often each item appears and lets you add or combine counts easily."
+          },
+          "metadata": {
+            "signature": "Counter([iterable_or_mapping])",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "collections.OrderedDict",
+            "definition": "A dict subclass that remembers the insertion order of keys \u2014 a feature now provided by all dictionaries in Python 3.7+. This class is still useful when order-sensitive operations like move_to_end() or equality checks that consider order are needed. It supports all standard dict operations.",
+            "difficulty": "intermediate",
+            "module": "collections",
+            "category": "collections",
+            "code_example": "from collections import OrderedDict\nod = OrderedDict()\nod.move_to_end(key)",
+            "short_reference": "It's a dictionary that keeps track of the order keys were added in, which is useful when you need to maintain or manipulate that order, like moving items around or checking if two ordered dictionaries are exactly the same."
+          },
+          "metadata": {
+            "signature": "OrderedDict()",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "collections.deque",
+            "definition": "A double-ended queue from the collections module that supports efficient O(1) append and pop operations from both ends. Unlike a list, this container does not provide O(1) random access by index. It is the standard container for implementing queues and sliding-window algorithms in Python.",
+            "difficulty": "intermediate",
+            "module": "collections",
+            "category": "collections",
+            "code_example": "from collections import deque\ndq = deque(maxlen=100)\ndq.appendleft(item)",
+            "short_reference": "It's a double-ended queue from Python's collections module that lets you add or remove items quickly from both ends, ideal for tasks like queues or sliding window algorithms."
+          },
+          "metadata": {
+            "signature": "deque([iterable[, maxlen]])",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "collections.namedtuple",
+            "definition": "A factory function in the collections module that creates tuple subclasses with named fields, enabling attribute-style access alongside index-based access. These tuples are immutable like regular tuples and carry zero per-instance overhead beyond a tuple. They are a lightweight way to represent simple data records without writing a full class.",
+            "difficulty": "intermediate",
+            "module": "collections",
+            "category": "collections",
+            "code_example": "from collections import namedtuple\nPoint = namedtuple('Point', ['x', 'y'])\np = Point(1, 2)\nprint(p.x)",
+            "short_reference": "It's a Python tool in the collections module that creates tuples with named fields, letting you access them by name or index, and it's lightweight and immutable."
+          },
+          "metadata": {
+            "signature": "namedtuple(typename, field_names)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "list comprehension",
+            "definition": "A concise Python syntax for constructing a new list by applying an expression to each element of an iterable, optionally filtered by a condition \u2014 all in a single expression. These are generally faster than equivalent for-loop constructions because the iteration happens in C-level CPython internals.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "collections",
+            "code_example": "squares = [x**2 for x in range(10) if x % 2 == 0]",
+            "short_reference": "It's a shorthand way to build a new list by processing each item in another list or sequence, maybe with a condition, and it's faster than loops because Python handles the looping efficiently under the hood."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "dict comprehension",
+            "definition": "A concise syntax for constructing a dictionary from an iterable by specifying key-value expressions within curly braces, optionally with a filtering condition. These are the idiomatic alternative to manually calling dict() with a list of tuples when both the key and value require transformation.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "category": "collections",
+            "code_example": "inverted = {v: k for k, v in original.items()}",
+            "short_reference": "It's a shorthand way to create a dictionary using curly braces with key-value expressions, like a faster alternative to using dict() with transformed tuples."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "set comprehension",
+            "definition": "A concise syntax for constructing a set from an iterable using curly-brace notation with an expression and optional filter. Because the result is a set, duplicate values are automatically discarded. It is the idiomatic way to deduplicate a sequence while applying a transformation in one step.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "category": "collections",
+            "code_example": "unique_lengths = {len(word) for word in words}",
+            "short_reference": "It's a shorthand to create a set with curly braces, letting you transform and filter items while automatically removing duplicates."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Python \u2014 Type System",
+        "description": "Python's type annotation syntax, the typing module, and tools for expressing and enforcing types at static analysis time.",
+        "subject": "python",
+        "difficulty": "intermediate",
+        "estimated_hours": 8,
+        "prerequisites": [
+          "Python basics",
+          "Object-oriented programming"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "type hints",
+            "definition": "Optional annotations in Python source code that declare the expected types of variables, function parameters, and return values using the syntax introduced in PEP 484. These annotations are not enforced at runtime by the interpreter; they are consumed by static analysis tools like mypy and IDEs to catch type errors before execution.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "category": "type-system",
+            "code_example": "def greet(name: str) -> str:\n    return f'Hello, {name}'",
+            "short_reference": "They're optional notes in Python code that suggest what types variables or functions should use, helping tools catch mistakes before running the program."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "typing.Optional",
+            "definition": "A generic type alias from the typing module that represents a value that may be either of a specified type or None. This type is exactly equivalent to Union[X, None]. It is the idiomatic annotation for function parameters or return values that are explicitly allowed to be absent.",
+            "difficulty": "intermediate",
+            "module": "typing",
+            "category": "type-system",
+            "code_example": "from typing import Optional\ndef find_user(user_id: int) -> Optional[str]: ...",
+            "short_reference": "It's a type that can be either a specific type or None, used when a value might be missing. It's like saying the value could be X or nothing at all."
+          },
+          "metadata": {
+            "signature": "Optional[X]",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "typing.Union",
+            "definition": "A generic type constructor from the typing module that expresses that a value may be one of several specified types. This type means the value is acceptable as type X or type Y. In Python 3.10+, the X | Y syntax is the preferred shorthand for the same concept.",
+            "difficulty": "intermediate",
+            "module": "typing",
+            "category": "type-system",
+            "code_example": "from typing import Union\ndef process(data: Union[str, bytes]) -> str: ...",
+            "short_reference": "It allows a value to be one of multiple types, like saying it could be X or Y, and in newer Python versions you can write X | Y instead of using Union."
+          },
+          "metadata": {
+            "signature": "Union[X, Y, ...]",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "typing.List",
+            "definition": "A generic alias from the typing module (deprecated since 3.9 in favor of the built-in list[X]) that annotates a list expected to contain elements of a specific type. It enables type checkers to verify that list operations are applied consistently, such as flagging attempts to append an integer to a list of strings.",
+            "difficulty": "intermediate",
+            "module": "typing",
+            "category": "type-system",
+            "code_example": "from typing import List\ndef sum_values(items: List[int]) -> int: ...",
+            "short_reference": "It's a way to specify the type of elements in a list, like making sure a list of strings only holds strings, and it's now replaced by list[X] in newer Python versions."
+          },
+          "metadata": {
+            "signature": "List[X]",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "typing.Dict",
+            "definition": "A generic alias from the typing module (deprecated since 3.9 in favor of dict[K, V]) that annotates a dictionary with specific key and value types. This is equivalent to dict[K, V] for static checking purposes and remains in the typing module for backward compatibility with Python 3.8.",
+            "difficulty": "intermediate",
+            "module": "typing",
+            "category": "type-system",
+            "code_example": "from typing import Dict\ndef word_count(text: str) -> Dict[str, int]: ...",
+            "short_reference": "It's a type hint for dictionaries that specifies key and value types, but it's outdated now and replaced by dict[K, V] in newer Python versions."
+          },
+          "metadata": {
+            "signature": "Dict[K, V]",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "typing.Callable",
+            "definition": "A generic type from the typing module used to annotate variables or parameters that hold callable objects, specifying the expected argument types and return type. This type describes a callable that takes two arguments and returns a value of the given type.",
+            "difficulty": "intermediate",
+            "module": "typing",
+            "category": "type-system",
+            "code_example": "from typing import Callable\ndef apply(func: Callable[[int], str], value: int) -> str:\n    return func(value)",
+            "short_reference": "It's a type used to describe functions or variables that take specific arguments and return a certain type, like telling Python what inputs and output a callable has."
+          },
+          "metadata": {
+            "signature": "Callable[[ArgTypes...], ReturnType]",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "typing.TypeVar",
+            "definition": "A special construct from the typing module that creates a type variable \u2014 a placeholder representing a type that is constrained but unspecified, enabling generic functions and classes. A type variable-annotated function can accept and return the same (but unknown-at-annotation-time) type, preserving type identity through the call.",
+            "difficulty": "advanced",
+            "module": "typing",
+            "category": "type-system",
+            "code_example": "from typing import TypeVar\nT = TypeVar('T')\ndef identity(x: T) -> T:\n    return x",
+            "short_reference": "It's a placeholder for a type in generics, letting functions work with any type while keeping the type consistent across calls."
+          },
+          "metadata": {
+            "signature": "TypeVar(name, *constraints)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "typing.Protocol",
+            "definition": "A base class from the typing module (PEP 544) for defining structural subtyping \u2014 duck-typing contracts that a class satisfies by having the required methods and attributes, without explicitly inheriting from this base class. This is Python's formalization of the duck-typing philosophy into the static type system.",
+            "difficulty": "advanced",
+            "module": "typing",
+            "category": "type-system",
+            "code_example": "from typing import Protocol\nclass Drawable(Protocol):\n    def draw(self) -> None: ...",
+            "short_reference": "It's a way to define type contracts based on having required methods and attributes, even if a class doesn't inherit from it, letting you use duck-typing in Python's type system."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "typing.TypedDict",
+            "definition": "A way to declare dictionaries with a fixed set of string keys and specific value types for each key, introduced in PEP 589. This enables type checkers to validate that dictionary access and assignment match the declared schema, bridging the gap between dicts and fully-typed data classes.",
+            "difficulty": "advanced",
+            "module": "typing",
+            "category": "type-system",
+            "code_example": "from typing import TypedDict\nclass Movie(TypedDict):\n    title: str\n    year: int",
+            "short_reference": "It's a tool to define dictionaries with specific string keys and their value types, helping type checkers validate the structure."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "dataclasses.field()",
+            "definition": "A function from the dataclasses module used inside a dataclass definition to customize the behavior of individual fields, such as providing default factory functions for mutable defaults, excluding fields from comparison, or marking fields as not included in the generated __init__. It is required when a field's default must be a mutable value like a list.",
+            "difficulty": "intermediate",
+            "module": "dataclasses",
+            "category": "type-system",
+            "code_example": "from dataclasses import dataclass, field\n@dataclass\nclass Inventory:\n    items: list = field(default_factory=list)",
+            "short_reference": "It's a tool in Python's dataclasses module that lets you adjust how fields work in a class, like setting a list as a default value without it being mutable or skipping it in some parts of the class setup."
+          },
+          "metadata": {
+            "signature": "field(*, default=MISSING, default_factory=MISSING, repr=True, hash=None, init=True, compare=True)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "ABC (Abstract Base Class)",
+            "definition": "A class that cannot be instantiated directly and defines an interface contract for its subclasses via abstract methods decorated with @abstractmethod. Provided by the abc module, these classes are used to enforce that subclasses implement specific methods, similar to interfaces in Java or C++. Attempting to instantiate a subclass that does not implement all abstract methods raises TypeError.",
+            "difficulty": "intermediate",
+            "module": "abc",
+            "category": "type-system",
+            "code_example": "from abc import ABC, abstractmethod\nclass Shape(ABC):\n    @abstractmethod\n    def area(self) -> float: ...",
+            "short_reference": "An ABC is a class you can't create directly that forces subclasses to define specific methods, throwing an error if they don't. It's like a blueprint that makes sure subclasses follow certain rules by requiring them to fill in missing pieces."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Enum",
+            "definition": "A base class from the enum module that creates symbolic name-to-value mappings, preventing the use of bare string or integer constants in code. Members are singleton instances of their class, support iteration, and can be compared by identity. The IntEnum and StrEnum subclasses allow members to also behave as plain int or str values respectively.",
+            "difficulty": "intermediate",
+            "module": "enum",
+            "category": "type-system",
+            "code_example": "from enum import Enum\nclass Color(Enum):\n    RED = 1\n    GREEN = 2\n    BLUE = 3",
+            "short_reference": "It's a class that creates named values instead of using raw strings or numbers, with each name linked to a unique value. Members can be iterated and compared by identity, and subclasses let them act like regular integers or strings."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Python \u2014 Control Flow",
+        "description": "Python's control flow keywords and constructs including conditionals, loops, exception handling, pattern matching, and comprehensions.",
+        "subject": "python",
+        "difficulty": "beginner",
+        "estimated_hours": 6,
+        "prerequisites": [
+          "Python basics"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "try / except / else / finally",
+            "definition": "Python's exception handling block structure: the protected block contains code that may raise an exception, the handler clause catches and handles specific exception types, the success clause runs only when no exception was raised in the protected block, and the cleanup clause always runs regardless of whether an exception occurred. The success clause is the idiomatic place for code that should only run on success \u2014 keeping it separate from the protected block reduces the risk of accidentally suppressing new exceptions.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "control-flow",
+            "code_example": "try:\n    result = risky_operation()\nexcept ValueError as e:\n    handle_error(e)\nelse:\n    use_result(result)\nfinally:\n    cleanup()",
+            "short_reference": "The try block runs code that might cause an error, except handles specific errors, else runs if there's no error, and finally always executes no matter what."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "raise",
+            "definition": "A Python statement that throws an exception, interrupting the current execution flow and propagating the exception up the call stack until a matching handler is found. Using without arguments inside a handler block re-throws the currently active exception, preserving the original traceback.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "control-flow",
+            "code_example": "raise ValueError('Invalid input')\n# or inside except:\nraise  # re-raise",
+            "short_reference": "It triggers an error to stop the current code and pass the error up to higher levels. If used without arguments in an except block, it reuses the same error."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "with statement",
+            "definition": "A Python compound statement that invokes the context manager protocol on an object, guaranteeing that setup (__enter__) and teardown (__exit__) are called regardless of whether the body raises an exception. It is the standard way to manage resources such as files, database connections, and locks without relying on the programmer to call cleanup code manually.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "control-flow",
+            "code_example": "with open('file.txt') as f:\n    data = f.read()",
+            "short_reference": "It's a way to automatically handle setup and cleanup of resources like files or connections, even if an error happens during use."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "yield",
+            "definition": "A keyword that turns a function into a generator, suspending the function's execution and returning a value to the caller each time it is reached. When the generator's __next__() is called again, execution resumes immediately after the yield point. This enables lazy evaluation \u2014 producing values on demand rather than computing and storing them all at once.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "category": "control-flow",
+            "code_example": "def count_up(n):\n    for i in range(n):\n        yield i",
+            "short_reference": "It's a keyword that lets functions act as generators, pausing and returning values each time they're called, so you can work with data one piece at a time instead of all at once."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "yield from",
+            "definition": "A Python expression (PEP 380) that delegates iteration to a sub-generator or iterable, transparently passing values and exceptions between the outer generator and the inner one. It is the correct way to compose generators \u2014 using a plain for loop with yield inside loses the ability to send values and propagate exceptions into the sub-generator.",
+            "difficulty": "advanced",
+            "module": "built-in",
+            "category": "control-flow",
+            "code_example": "def chain(*iterables):\n    for it in iterables:\n        yield from it",
+            "short_reference": "It's a way to pass values and errors between generators without using a loop, so you can combine them smoothly."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "match / case (structural pattern matching)",
+            "definition": "A compound statement introduced in Python 3.10 (PEP 634) that evaluates a subject expression against a series of patterns, executing the body of the first matching case. Unlike a simple switch/case, Python's match supports destructuring of sequences, mappings, and class instances directly in the pattern, as well as guard expressions using 'if'.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "category": "control-flow",
+            "code_example": "match command:\n    case 'quit':\n        quit()\n    case ('move', x, y):\n        move(x, y)\n    case _:\n        print('unknown')",
+            "short_reference": "It's a Python feature that checks different patterns against a value and runs code for the first match, letting you break down complex data like lists or objects directly in the patterns."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "generator expression",
+            "definition": "A lazy iterable created using parenthesis-enclosed comprehension syntax that yields values one at a time rather than constructing the entire sequence in memory. These are memory-efficient alternatives to list comprehensions when the result only needs to be iterated once, and they can be passed directly to functions that accept iterables.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "category": "control-flow",
+            "code_example": "total = sum(x**2 for x in range(1000))",
+            "short_reference": "They create values one at a time without building the whole list in memory, which saves space when you only need to loop through them once."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "walrus operator (:=)",
+            "definition": "An assignment expression introduced in Python 3.8 (PEP 572) that assigns a value to a variable as part of a larger expression, using the := syntax (nicknamed the walrus operator). It is most useful in while loops and comprehensions where a value needs to be both computed and tested in the same expression, avoiding a redundant separate assignment.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "category": "control-flow",
+            "code_example": "while chunk := f.read(8192):\n    process(chunk)",
+            "short_reference": "It's a Python 3.8 feature that lets you assign a value while using it in an expression, like in loops or list comprehensions, so you don't have to assign it separately."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "assert",
+            "definition": "A Python statement that evaluates a boolean expression and raises AssertionError (with an optional message) if the result is False. Assertions are intended for debugging invariants and developer sanity checks \u2014 they can be globally disabled at runtime with the -O (optimize) flag, so they must never be used to enforce application logic or user input validation.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "control-flow",
+            "code_example": "assert result >= 0, 'Result must be non-negative'",
+            "short_reference": "It checks a condition and raises an error if false, used for debugging rather than enforcing rules."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "pass",
+            "definition": "A Python statement that does nothing \u2014 it is a syntactic placeholder used wherever a statement is required by the grammar but no action is needed. Common uses include empty class or function bodies, minimal exception handlers that intentionally suppress an exception, and stubs during incremental development.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "control-flow",
+            "code_example": "class Placeholder:\n    pass",
+            "short_reference": "It's a Python command that does nothing, used as a placeholder when you need a statement but don't want any action."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "continue",
+            "definition": "A loop control statement that immediately skips the remainder of the current loop iteration and proceeds to the next one, evaluating the loop condition or advancing the iterator. It is used to express 'skip this item' logic more cleanly than wrapping the loop body in a nested if block.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "control-flow",
+            "code_example": "for item in data:\n    if not is_valid(item):\n        continue\n    process(item)",
+            "short_reference": "It skips the rest of the current loop and moves to the next iteration, making code cleaner than using nested if statements."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "break",
+            "definition": "A loop control statement that immediately exits the innermost enclosing for or while loop, skipping any remaining iterations. When a for/while loop has an else clause, it prevents the else clause from executing \u2014 the else only runs when the loop completes normally without being interrupted by it.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "control-flow",
+            "code_example": "for item in data:\n    if is_target(item):\n        found = item\n        break",
+            "short_reference": "It exits a loop early, skipping any remaining steps and stopping any else clause from running."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Python \u2014 I/O",
+        "description": "Python's file I/O, standard streams, pathlib, and serialization formats for reading, writing, and transforming data.",
+        "subject": "python",
+        "difficulty": "intermediate",
+        "estimated_hours": 6,
+        "prerequisites": [
+          "Python basics",
+          "Control flow"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "pathlib.Path",
+            "definition": "An object-oriented class from the pathlib module (Python 3.4+) that represents file locations as objects rather than strings, providing methods for location manipulation, file reading/writing, directory traversal, and existence checks. These operations are cross-platform by design, automatically using the correct separator for the host OS.",
+            "difficulty": "intermediate",
+            "module": "pathlib",
+            "category": "i/o",
+            "code_example": "from pathlib import Path\np = Path('data') / 'input.csv'\ntext = p.read_text(encoding='utf-8')",
+            "short_reference": "It's a Python class that handles file paths as objects instead of strings, offering tools to manipulate paths, check files, and work across different operating systems."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "json.dumps()",
+            "definition": "A function from the json module that serializes a Python object (dict, list, str, int, float, bool, or None) to a JSON-formatted string. Optional parameters control indentation for pretty-printing, key sorting, and custom handling of non-serializable types via the default argument.",
+            "difficulty": "beginner",
+            "module": "json",
+            "category": "i/o",
+            "code_example": "import json\ntext = json.dumps({'key': 'value'}, indent=2)",
+            "short_reference": "Converts Python objects into a JSON string, part of the json module, and can format the output with options like indentation."
+          },
+          "metadata": {
+            "signature": "json.dumps(obj, *, indent=None, sort_keys=False, default=None)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "json.loads()",
+            "definition": "A function from the json module that parses a JSON string and returns the equivalent Python object. It is the counterpart to json.dumps() and will raise json.JSONDecodeError if the input is not valid JSON. For reading JSON from a file, json.load() (which accepts a file-like object) is preferred.",
+            "difficulty": "beginner",
+            "module": "json",
+            "category": "i/o",
+            "code_example": "import json\ndata = json.loads('{\"key\": \"value\"}')",
+            "short_reference": "It converts a JSON string into a Python object and throws an error if the JSON is broken. Use json.load() for files instead of this one."
+          },
+          "metadata": {
+            "signature": "json.loads(s)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "csv.reader",
+            "definition": "A class from the csv module that wraps a file-like object and returns an iterator over rows, where each row is a list of strings parsed according to CSV dialect rules. It handles quoting, escaping, and delimiter variations automatically, making it more reliable than manually splitting lines on commas.",
+            "difficulty": "beginner",
+            "module": "csv",
+            "category": "i/o",
+            "code_example": "import csv\nwith open('data.csv') as f:\n    for row in csv.reader(f):\n        print(row)",
+            "short_reference": "It's a Python tool that reads CSV files and turns each line into a list of strings, handling quotes, commas, and other formatting automatically so you don't have to split lines manually."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "sys.stdin / sys.stdout / sys.stderr",
+            "definition": "File-like objects in the sys module representing standard input, standard output, and standard error streams respectively. They are the low-level I/O endpoints that print() and input() wrap. Replacing one of these with a different file-like object is a standard pattern for capturing or redirecting program output.",
+            "difficulty": "intermediate",
+            "module": "sys",
+            "category": "i/o",
+            "code_example": "import sys\nsys.stderr.write('Error: something went wrong\\n')",
+            "short_reference": "They're built-in file-like objects in Python's sys module for handling standard input, output, and error streams. You can swap them to redirect where a program's output goes."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "io.StringIO",
+            "definition": "An in-memory text stream from the io module that behaves exactly like a file opened for text I/O but operates on a string buffer rather than disk. It is the standard way to produce a file-like object from a string \u2014 useful for passing string data to APIs that expect file objects, and for capturing output in tests.",
+            "difficulty": "intermediate",
+            "module": "io",
+            "category": "i/o",
+            "code_example": "import io\nbuf = io.StringIO()\nbuf.write('hello')\nbuf.getvalue()  # 'hello'",
+            "short_reference": "It's a memory-based file-like object that lets you work with strings as if they were files, useful for passing string data to APIs or capturing output in tests without using actual disk files."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "pickle.dumps() / pickle.loads()",
+            "definition": "Functions from the pickle module that serialize Python objects to a binary byte string and deserialize them back. Pickle can handle nearly any Python object including custom class instances, which JSON cannot. However, unpickling data from an untrusted source is a known arbitrary code execution vector and must be avoided.",
+            "difficulty": "intermediate",
+            "module": "pickle",
+            "category": "i/o",
+            "code_example": "import pickle\nbytes_obj = pickle.dumps(my_object)\nmy_object = pickle.loads(bytes_obj)",
+            "short_reference": "They convert Python objects to bytes and back, handling custom classes but risky if unpickling untrusted data."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "os.path",
+            "definition": "A module providing functions for manipulating filesystem path strings in a platform-independent way, such as joining components (.join), splitting into directory and filename (.split), checking existence (.exists), and resolving to absolute paths. It is the older, string-based alternative to pathlib, still widely used in existing codebases.",
+            "difficulty": "beginner",
+            "module": "os.path",
+            "category": "i/o",
+            "code_example": "import os\nfull_path = os.path.join(base_dir, 'subdir', 'file.txt')",
+            "short_reference": "It's a Python module that handles file paths across different operating systems, letting you combine, split, check existence, and convert paths to absolute ones using string-based methods."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Python \u2014 Concurrency",
+        "description": "Python's threading, multiprocessing, and async/await primitives for writing concurrent and parallel programs.",
+        "subject": "python",
+        "difficulty": "advanced",
+        "estimated_hours": 12,
+        "prerequisites": [
+          "Python functions",
+          "Control flow",
+          "Python I/O"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "asyncio.run()",
+            "definition": "The top-level entry point for running an async coroutine from synchronous code, introduced in Python 3.7. It creates a new event loop, runs the given coroutine to completion, then closes the loop and returns the result. It cannot be called from within an already-running event loop, such as inside a Jupyter notebook.",
+            "difficulty": "intermediate",
+            "module": "asyncio",
+            "category": "concurrency",
+            "code_example": "import asyncio\nasync def main():\n    await asyncio.sleep(1)\nasyncio.run(main())",
+            "short_reference": "It's a tool to run async code in normal Python scripts by handling the event loop setup and cleanup automatically, but you can't use it if you're already inside a loop like a Jupyter notebook."
+          },
+          "metadata": {
+            "signature": "asyncio.run(coro)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "async / await",
+            "definition": "Keywords introduced in Python 3.5 (PEP 492) that define and consume coroutines \u2014 functions that can suspend execution and yield control back to the event loop while waiting for I/O or other non-blocking operations. The async keyword declares a coroutine function; the await keyword suspends the current coroutine until the awaitable completes. They require an event loop (typically asyncio) to orchestrate execution.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "category": "concurrency",
+            "code_example": "async def fetch(url: str) -> str:\n    async with aiohttp.ClientSession() as session:\n        async with session.get(url) as resp:\n            return await resp.text()",
+            "short_reference": "They let you write functions that pause and resume without blocking, using an event loop to handle waiting tasks."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "asyncio.gather()",
+            "definition": "An asyncio function that runs multiple awaitables concurrently and returns their results as a list in the same order they were passed. If any awaitable raises an exception and return_exceptions is False (the default), it cancels the remaining tasks and re-raises the first exception. It is the idiomatic way to fan out I/O-bound work across multiple async tasks.",
+            "difficulty": "intermediate",
+            "module": "asyncio",
+            "category": "concurrency",
+            "code_example": "results = await asyncio.gather(fetch(url1), fetch(url2), fetch(url3))",
+            "short_reference": "It runs multiple async tasks at once and returns their results in order, stopping if one fails unless you let it handle errors."
+          },
+          "metadata": {
+            "signature": "asyncio.gather(*awaitables, return_exceptions=False)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "threading.Thread",
+            "definition": "A class from the threading module that runs a callable in a separate OS thread. Threads share the same memory space, making communication easy but requiring synchronization. Due to Python's Global Interpreter Lock (GIL), multiple threads cannot execute Python bytecode simultaneously, limiting threading to I/O-bound workloads rather than CPU-bound parallelism.",
+            "difficulty": "intermediate",
+            "module": "threading",
+            "category": "concurrency",
+            "code_example": "import threading\nt = threading.Thread(target=my_func, args=(arg1,))\nt.start()\nt.join()",
+            "short_reference": "It's a class that runs code in a separate thread, shares memory but needs sync, and Python's GIL makes it good for I/O tasks."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "threading.Lock",
+            "definition": "A mutual exclusion primitive from the threading module that prevents more than one thread from executing a protected code section simultaneously. A thread acquires the lock with acquire() and releases it with release(); the with statement is the preferred pattern for ensuring release even if an exception occurs. Failing to release a lock causes a deadlock.",
+            "difficulty": "intermediate",
+            "module": "threading",
+            "category": "concurrency",
+            "code_example": "import threading\nlock = threading.Lock()\nwith lock:\n    shared_resource.modify()",
+            "short_reference": "It ensures only one thread can access a code block at a time by locking and unlocking with acquire() and release(), and using 'with' helps prevent forgetting to unlock."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "multiprocessing.Pool",
+            "definition": "A class from the multiprocessing module that manages a pool of worker processes for parallel CPU-bound work. This class.map() distributes an iterable across the workers and collects results, bypassing the GIL by running each worker in a separate Python process with its own memory space. Inter-process communication happens via serialized (pickled) data.",
+            "difficulty": "advanced",
+            "module": "multiprocessing",
+            "category": "concurrency",
+            "code_example": "from multiprocessing import Pool\nwith Pool(4) as p:\n    results = p.map(cpu_intensive_func, data_list)",
+            "short_reference": "It's a tool that creates multiple worker processes to handle CPU-heavy tasks at the same time, letting you run functions in parallel without the GIL slowing things down. It sends data to each worker by converting it into a format that can be shared between processes."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "concurrent.futures.ThreadPoolExecutor",
+            "definition": "A high-level thread pool from the concurrent.futures module that manages a pool of threads and exposes a Future-based interface for submitting callables. It provides a cleaner API than threading.Thread for running multiple I/O-bound tasks concurrently, and integrates with asyncio via loop.run_in_executor() for bridging sync blocking calls into async code.",
+            "difficulty": "intermediate",
+            "module": "concurrent.futures",
+            "category": "concurrency",
+            "code_example": "from concurrent.futures import ThreadPoolExecutor\nwith ThreadPoolExecutor(max_workers=10) as executor:\n    futures = [executor.submit(fetch, url) for url in urls]",
+            "short_reference": "It's a tool that runs multiple I/O tasks at once using a managed thread pool, simplifying concurrency compared to manual thread handling and working with async code through a bridge function."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "GIL (Global Interpreter Lock)",
+            "definition": "A mutex internal to CPython that ensures only one thread executes Python bytecode at a time, even on multi-core hardware. This lock simplifies CPython's memory management but prevents multi-threaded Python programs from achieving true CPU parallelism. It does not affect multiprocessing, and threads still provide parallelism for I/O-bound workloads because it is released during system calls.",
+            "difficulty": "advanced",
+            "module": "built-in",
+            "category": "concurrency",
+            "code_example": "# Workaround: use multiprocessing for CPU-bound tasks\nfrom multiprocessing import Pool",
+            "short_reference": "It's a lock in CPython that stops multiple threads from running Python code at the same time, so you can't get true parallel processing with threads. But it doesn't stop I/O tasks from working in parallel."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "asyncio.Queue",
+            "definition": "A FIFO queue from the asyncio module designed for use by coroutines, supporting await-based put() and get() operations that suspend the coroutine rather than blocking the thread. It is the standard mechanism for coordinating producer and consumer coroutines within an asyncio event loop without threads or locks.",
+            "difficulty": "advanced",
+            "module": "asyncio",
+            "category": "concurrency",
+            "code_example": "q = asyncio.Queue()\nawait q.put(item)\nitem = await q.get()",
+            "short_reference": "It's a queue in asyncio that lets coroutines add and retrieve items without blocking, using await so they can pause and resume."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Python \u2014 Introspection",
+        "description": "Python tools for examining objects, modules, and frames at runtime, including the inspect module, sys internals, and the ast module.",
+        "subject": "python",
+        "difficulty": "advanced",
+        "estimated_hours": 6,
+        "prerequisites": [
+          "Python basics",
+          "Object-oriented programming"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "inspect.signature()",
+            "definition": "A function from the inspect module that returns a Signature object representing the call signature of a callable \u2014 its parameters and annotations. It is the modern, recommended way to programmatically examine function arguments, replacing the older inspect.getfullargspec(). It works correctly on decorated functions that use functools.wraps.",
+            "difficulty": "advanced",
+            "module": "inspect",
+            "category": "introspection",
+            "code_example": "import inspect\nsig = inspect.signature(my_func)\nfor name, param in sig.parameters.items():\n    print(name, param.default)",
+            "short_reference": "It shows what arguments a function needs and their types, even if the function is decorated, and is the newer way to check this instead of older methods."
+          },
+          "metadata": {
+            "signature": "inspect.signature(callable)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "inspect.getsource()",
+            "definition": "A function from the inspect module that returns the source code of an object \u2014 function, class, or module \u2014 as a string. It is useful for debugging and tooling but requires the source file to be accessible on disk; it will fail on built-in functions or code defined in a REPL.",
+            "difficulty": "advanced",
+            "module": "inspect",
+            "category": "introspection",
+            "code_example": "import inspect\nprint(inspect.getsource(my_function))",
+            "short_reference": "It returns the source code of a function, class, or module as text, but only if the original file is available. It won\u2019t work for built-in functions or code written interactively in a REPL."
+          },
+          "metadata": {
+            "signature": "inspect.getsource(object)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "sys.modules",
+            "definition": "A dictionary in the sys module that maps module names to the module objects currently loaded in the interpreter. Querying is a fast way to check whether a module has been imported; manipulating it directly can be used to mock or replace modules during testing, though this should be done with care.",
+            "difficulty": "advanced",
+            "module": "sys",
+            "category": "introspection",
+            "code_example": "import sys\nif 'numpy' in sys.modules:\n    np = sys.modules['numpy']",
+            "short_reference": "It's a dictionary in the sys module that shows which modules are currently loaded in Python. You can use it to check if a module is imported quickly or even swap modules out during tests, but be careful with that."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "__dunder__ methods (special methods)",
+            "definition": "Methods with names surrounded by double underscores (e.g., __init__, __repr__, __len__) that Python calls implicitly in response to built-in operations. Implementing these methods on a class makes it behave like a built-in type \u2014 for example, __len__ makes len(obj) work, and __iter__ + __next__ make the object iterable. The complete set of these methods forms Python's data model.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "category": "introspection",
+            "code_example": "class MyList:\n    def __len__(self):\n        return len(self._data)\n    def __getitem__(self, index):\n        return self._data[index]",
+            "short_reference": "They're methods with double underscores that Python uses automatically for built-in operations like len() or iteration. By defining them, you can make your class behave like a built-in type in Python."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "ast.parse()",
+            "definition": "A function from the ast module that parses Python source code into an Abstract Syntax Tree (AST), a structured tree representation of the program's syntactic structure. The resulting AST can be walked, inspected, or modified before being compiled and executed, enabling tools like linters, code transformers, and static analyzers.",
+            "difficulty": "advanced",
+            "module": "ast",
+            "category": "introspection",
+            "code_example": "import ast\ntree = ast.parse('x = 1 + 2')\nprint(ast.dump(tree, indent=2))",
+            "short_reference": "It converts Python code into a structured tree showing how the code is built, which helps analyze or modify the code without running it."
+          },
+          "metadata": {
+            "signature": "ast.parse(source, filename='<unknown>', mode='exec')",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "__slots__",
+            "definition": "A class-level declaration that replaces the per-instance __dict__ with a fixed set of named attributes stored as compact C-level. Using reduces per-instance memory overhead (no dict overhead) and can improve attribute access speed, but prevents adding arbitrary attributes to instances. It is most beneficial for classes that create very large numbers of small objects.",
+            "difficulty": "advanced",
+            "module": "built-in",
+            "category": "introspection",
+            "code_example": "class Point:\n    __slots__ = ('x', 'y')\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y",
+            "short_reference": "It's a class-level feature that limits instance attributes to a fixed set, saving memory and speeding up access but stopping you from adding new attributes on the fly. It's useful when creating lots of small objects where memory matters."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "typing.get_type_hints()",
+            "definition": "A function from the typing module that evaluates and returns the type annotations for a callable or class as a dictionary, resolving forward references (string annotations) into their actual types. Unlike accessing __annotations__ directly, this function handles string annotations and properly evaluates them in the correct namespace.",
+            "difficulty": "advanced",
+            "module": "typing",
+            "category": "introspection",
+            "code_example": "import typing\nhints = typing.get_type_hints(my_function)\nprint(hints)",
+            "short_reference": "It's a function in the typing module that gets the actual types from a function or class's annotations, even if they're written as strings, and handles them properly in the right context."
+          },
+          "metadata": {
+            "signature": "typing.get_type_hints(obj)",
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Python \u2014 Functional",
+        "description": "Python's functional programming tools including itertools, functools utilities, closures, and higher-order function patterns.",
+        "subject": "python",
+        "difficulty": "intermediate",
+        "estimated_hours": 8,
+        "prerequisites": [
+          "Python functions",
+          "Built-in functions"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "itertools.chain()",
+            "definition": "A function from the itertools module that lazily concatenates multiple iterables, producing a single iterator that yields elements from the first iterable, then the second, and so on. It does not build an intermediate list, making it memory-efficient for combining large sequences. A related function accepts a single iterable of iterables for the same effect.",
+            "difficulty": "intermediate",
+            "module": "itertools",
+            "category": "functional",
+            "code_example": "from itertools import chain\nresult = list(chain([1, 2], [3, 4], [5]))",
+            "short_reference": "This keeps memory usage low when handling large sequences."
+          },
+          "metadata": {
+            "signature": "itertools.chain(*iterables)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "itertools.groupby()",
+            "definition": "A function from the itertools module that groups consecutive elements of an iterable by a key function, yielding (key, group_iterator) pairs. The input must be sorted on the same key for grouping to produce complete groups \u2014 unlike SQL's GROUP BY, this function only groups contiguous runs of equal keys.",
+            "difficulty": "intermediate",
+            "module": "itertools",
+            "category": "functional",
+            "code_example": "from itertools import groupby\nfor key, group in groupby(sorted_data, key=lambda x: x.category):\n    print(key, list(group))",
+            "short_reference": "It groups consecutive items by a key function, but only if the input is sorted first\u2014it doesn't combine all items with the same key, just those in a row."
+          },
+          "metadata": {
+            "signature": "itertools.groupby(iterable, key=None)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "itertools.islice()",
+            "definition": "A function from the itertools module that returns an iterator that yields selected elements from an iterable by position, similar to slicing a list but without materializing it. It is the standard way to take the first N elements from a potentially infinite or very large iterator without consuming it fully.",
+            "difficulty": "intermediate",
+            "module": "itertools",
+            "category": "functional",
+            "code_example": "from itertools import islice\nfirst_10 = list(islice(large_iterator, 10))",
+            "short_reference": "It's a function in the itertools module that lets you get elements from an iterable by their position, like slicing a list but without creating the whole list. It's useful for taking the first few elements from a large or infinite sequence without going through all of it."
+          },
+          "metadata": {
+            "signature": "itertools.islice(iterable, stop) or islice(iterable, start, stop[, step])",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "functools.reduce()",
+            "definition": "A function from the functools module that applies a binary function cumulatively to the elements of an iterable, reducing it to a single value. An optional initializer can be provided as the starting value. It is the Python equivalent of fold-left from functional languages; for readability, explicit loops or sum/max/min are preferred when they suffice.",
+            "difficulty": "intermediate",
+            "module": "functools",
+            "category": "functional",
+            "code_example": "from functools import reduce\nproduct = reduce(lambda acc, x: acc * x, [1, 2, 3, 4, 5], 1)",
+            "short_reference": "It applies a function to each element in an iterable step by step, combining them to produce a single final result."
+          },
+          "metadata": {
+            "signature": "functools.reduce(function, iterable[, initializer])",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "functools.partial()",
+            "definition": "A function from the functools module that creates a new callable with some arguments of an existing callable pre-filled, returning what is effectively a function with a reduced arity. This technique is useful for creating specialized versions of general functions, for use as callbacks, and for adapting function signatures to fit APIs that expect a specific number of arguments.",
+            "difficulty": "intermediate",
+            "module": "functools",
+            "category": "functional",
+            "code_example": "from functools import partial\ndouble = partial(lambda x, n: x * n, n=2)\nprint(double(5))  # 10",
+            "short_reference": "It lets you set some arguments of a function ahead of time so you can use the rest later without repeating them."
+          },
+          "metadata": {
+            "signature": "functools.partial(func, /, *args, **keywords)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "closure",
+            "definition": "A function object that retains a reference to variables from the enclosing lexical scope even after that scope has finished executing. In Python, these are formed when an inner function references a variable from its enclosing function. The captured variables live in a cell object attached to the enclosing function, not on the regular call stack.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "category": "functional",
+            "code_example": "def make_counter():\n    count = 0\n    def counter():\n        nonlocal count\n        count += 1\n        return count\n    return counter",
+            "short_reference": "It's when a function inside another function keeps using variables from the outer function even after the outer one finishes. In Python, those variables stay in a special storage area, not just the normal call stack."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "lambda",
+            "definition": "A keyword that creates an anonymous, single-expression function inline. These functions can take any number of arguments but their body is limited to a single expression whose value is implicitly returned. They are most useful as short callbacks and key functions, but complex logic should always be written as a named def function for clarity.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "functional",
+            "code_example": "sorted_items = sorted(data, key=lambda x: x.timestamp)",
+            "short_reference": "It's a shortcut to make a simple, nameless function that does one thing and returns the result automatically, often used for quick tasks like callbacks."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "itertools.product()",
+            "definition": "A function from the itertools module that computes all combinations of input iterables, equivalent to nested for-loops. It yields tuples representing every combination of one element from each input iterable. The optional repeat argument computes all combinations of an iterable with itself a given number of times.",
+            "difficulty": "intermediate",
+            "module": "itertools",
+            "category": "functional",
+            "code_example": "from itertools import product\nfor row, col in product(range(3), range(3)):\n    print(row, col)",
+            "short_reference": "It generates all possible combinations by taking one element from each input iterable, like nested loops, and can repeat an iterable a set number of times if needed."
+          },
+          "metadata": {
+            "signature": "itertools.product(*iterables, repeat=1)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "itertools.combinations()",
+            "definition": "A function from the itertools module that yields all r-length groupings of elements from an input iterable, without repetition and in lexicographic order. Unlike permutations, these groupings do not consider element order, so (1, 2) and (2, 1) are treated as the same grouping.",
+            "difficulty": "intermediate",
+            "module": "itertools",
+            "category": "functional",
+            "code_example": "from itertools import combinations\npairs = list(combinations([1, 2, 3, 4], 2))",
+            "short_reference": "It generates all possible groups of r items from an iterable without repeating elements or caring about their order, listing them in sorted sequence."
+          },
+          "metadata": {
+            "signature": "itertools.combinations(iterable, r)",
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Python \u2014 String Operations",
+        "description": "Python string methods, formatting, regular expressions, and text processing utilities.",
+        "subject": "python",
+        "difficulty": "beginner",
+        "estimated_hours": 6,
+        "prerequisites": [
+          "Python basics"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "str.format()",
+            "definition": "A string method that performs variable substitution and value formatting using replacement fields enclosed in curly braces within the template string. It supports positional arguments, named arguments, and a rich format specification mini-language for controlling width, precision, alignment, and number base. F-strings (f'...') are the modern preferred syntax for most use cases.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "string-ops",
+            "code_example": "'Hello, {name}! You are {age} years old.'.format(name='Alice', age=30)",
+            "short_reference": "It substitutes variables in a string using curly braces and lets you format how they appear, like width or decimals, using arguments and special codes."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "f-string (formatted string literal)",
+            "definition": "A string literal prefixed with f or F that allows embedding Python expressions directly inside curly braces, evaluated at runtime. Introduced in Python 3.6 (PEP 498), these are both more readable and generally faster than str.format() or % formatting. Python 3.12 extended them to allow nested expressions and multi-line spans.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "string-ops",
+            "code_example": "name = 'Alice'\nprint(f'Hello, {name!r}. Result: {2 + 2:.2f}')",
+            "short_reference": "An f-string is a Python string starting with 'f' or 'F' that lets you put expressions in curly braces, which get calculated when the string is created. It\u2019s faster and easier to read than older formatting methods, introduced in Python 3.6."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "str.split()",
+            "definition": "A string method that divides the string into a list of substrings by a specified separator. When called with no arguments, it divides on any whitespace and discards empty strings. The optional maxsplit parameter limits the number of divisions. str.rsplit() performs the same operation from the right end of the string.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "string-ops",
+            "code_example": "'one,two,three'.split(',')",
+            "short_reference": "It splits a string into smaller parts using a separator you pick, or splits on spaces if none is given, and can limit how many splits happen."
+          },
+          "metadata": {
+            "signature": "str.split(sep=None, maxsplit=-1)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "str.join()",
+            "definition": "A string method that concatenates an iterable of strings using the calling string as a separator between elements. It is significantly more efficient than concatenating strings with + in a loop because it pre-allocates the final string in a single memory allocation. An empty string separator ('') combines all elements with no delimiter.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "string-ops",
+            "code_example": "', '.join(['one', 'two', 'three'])  # 'one, two, three'",
+            "short_reference": "It combines elements from an iterable into one string using the calling string as a separator, and it\u2019s faster than adding strings in a loop because it prepares the memory all at once. If you use an empty string as the separator, it just puts the elements together without any spaces."
+          },
+          "metadata": {
+            "signature": "str.join(iterable)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "re.compile()",
+            "definition": "A function from the re module that transforms a regular expression pattern string into a compiled regex object, which can then be used for matching, searching, and substitution operations. Pre-compiling a pattern is the preferred approach when the same pattern is used multiple times, as it avoids recompilation overhead on each call.",
+            "difficulty": "intermediate",
+            "module": "re",
+            "category": "string-ops",
+            "code_example": "import re\npattern = re.compile(r'\\d{3}-\\d{4}')\nmatches = pattern.findall(text)",
+            "short_reference": "It's a function in Python's re module that turns a pattern into a reusable object for matching text, saving time when used repeatedly by avoiding redoing the setup each time."
+          },
+          "metadata": {
+            "signature": "re.compile(pattern, flags=0)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "re.search()",
+            "definition": "A function from the re module that scans through a string looking for the first location where the pattern matches, returning a Match object or None if no match is found. Unlike re.match(), this function is not anchored to the beginning of the string. The Match object provides the matched text and capturing group values.",
+            "difficulty": "intermediate",
+            "module": "re",
+            "category": "string-ops",
+            "code_example": "import re\nm = re.search(r'(\\w+)@(\\w+\\.\\w+)', email)\nif m:\n    print(m.group(1), m.group(2))",
+            "short_reference": "It's a Python function from the re module that finds the first match of a pattern in a string anywhere, not just the start, and returns details about the match or nothing if there's no match."
+          },
+          "metadata": {
+            "signature": "re.search(pattern, string, flags=0)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "re.sub()",
+            "definition": "A function from the re module that replaces all (or a limited count of) non-overlapping occurrences of a pattern in a string with a replacement string or the return value of a replacement function. It returns a new string; Python strings are immutable so the original is unchanged. Backreferences like \\1 in the replacement string refer to capturing groups.",
+            "difficulty": "intermediate",
+            "module": "re",
+            "category": "string-ops",
+            "code_example": "import re\ncleaned = re.sub(r'\\s+', ' ', text.strip())",
+            "short_reference": "It's a function from the re module that replaces text matching a pattern with new text or values from a function, using shortcuts like \\1 for previous matches. It makes a new string because original strings can't be changed."
+          },
+          "metadata": {
+            "signature": "re.sub(pattern, repl, string, count=0, flags=0)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "str.strip()",
+            "definition": "A string method that returns a copy of the string with leading and trailing whitespace (or specified characters) removed. The related methods lstrip() and rstrip() remove characters from only the left or right side respectively. Providing a chars argument removes any characters in that set from both ends, not a substring.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "string-ops",
+            "code_example": "'  hello world  '.strip()  # 'hello world'",
+            "short_reference": "It removes extra spaces or specific characters from the start and end of a string, giving you a new string without changing the original."
+          },
+          "metadata": {
+            "signature": "str.strip([chars])",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "str.encode() / bytes.decode()",
+            "definition": "Methods for converting between str (Unicode text) and bytes (raw binary data). The encode method converts text to bytes; the decode method converts bytes back to text. The encoding argument (default 'utf-8') specifies the codec. Mismatching encoding between writer and reader is the most common cause of UnicodeDecodeError.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "category": "string-ops",
+            "code_example": "b = 'hello'.encode('utf-8')  # b'hello'\ns = b.decode('utf-8')        # 'hello'",
+            "short_reference": "Converts text to bytes with str.encode() and bytes back to text with bytes.decode(), using an encoding (like UTF-8 by default). Mismatched encodings between writing and reading often cause errors."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Python \u2014 Numeric/Math",
+        "description": "Python's numeric types and math-related standard library modules including math, decimal, fractions, and statistics.",
+        "subject": "python",
+        "difficulty": "intermediate",
+        "estimated_hours": 5,
+        "prerequisites": [
+          "Python basics"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "math.floor() / math.ceil()",
+            "definition": "Two functions from the math module that return the largest integer less than or equal to a given number, or the smallest integer greater than or equal to a given number, respectively. Unlike int() which truncates toward zero, the downward-rounding function rounds toward negative infinity \u2014 important for negative numbers where int(-2.7) is -2 but that function returns -3.",
+            "difficulty": "beginner",
+            "module": "math",
+            "category": "numeric/math",
+            "code_example": "import math\nmath.floor(3.7)   # 3\nmath.ceil(3.2)    # 4\nmath.floor(-2.7)  # -3",
+            "short_reference": "math.floor() gives the biggest integer not bigger than a number, math.ceil() the smallest integer not smaller. Unlike int(), floor rounds down for negatives\u2014like -3 for -2.7 instead of -2."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "decimal.Decimal",
+            "definition": "A class from the decimal module that represents decimal floating-point numbers with configurable precision, avoiding the rounding errors inherent in binary floating-point arithmetic. It is essential for financial and monetary calculations where exact decimal representation matters. Arithmetic can be configured via the module's getcontext() to set precision and rounding mode.",
+            "difficulty": "intermediate",
+            "module": "decimal",
+            "category": "numeric/math",
+            "code_example": "from decimal import Decimal\nprice = Decimal('19.99')\ntax = Decimal('0.08')\ntotal = price * (1 + tax)",
+            "short_reference": "It's a Python class that handles decimal numbers with adjustable precision, avoiding binary rounding errors, especially useful for financial calculations needing exact values."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "fractions.Fraction",
+            "definition": "A class from the fractions module that represents rational numbers as exact numerator/denominator pairs with no floating-point rounding. It automatically reduces values to lowest terms and supports all standard arithmetic operations. Useful in scenarios where exact rational arithmetic matters, such as computing exact proportions or implementing algorithms that reason about fractions.",
+            "difficulty": "intermediate",
+            "module": "fractions",
+            "category": "numeric/math",
+            "code_example": "from fractions import Fraction\nresult = Fraction(1, 3) + Fraction(1, 6)  # Fraction(1, 2)",
+            "short_reference": "It's a class that handles exact fractions by storing numerators and denominators, simplifies them automatically, and does math without rounding errors, useful for precise calculations."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "statistics.mean() / statistics.median()",
+            "definition": "Functions from the statistics module that compute the arithmetic mean and median of a sequence of numeric data respectively. Unlike numpy equivalents, these operate on pure Python numbers, support Decimal and Fraction inputs exactly, and are available in the standard library without additional dependencies. A faster float-based mean variant is also available.",
+            "difficulty": "beginner",
+            "module": "statistics",
+            "category": "numeric/math",
+            "code_example": "import statistics\ndata = [1, 2, 3, 4, 5]\nprint(statistics.mean(data))    # 3\nprint(statistics.median(data))  # 3",
+            "short_reference": "Calculates the average (mean) and middle value (median) of numbers using standard Python without needing extra libraries, and handles precise decimal or fraction values."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "math.log()",
+            "definition": "A function from the math module that returns the natural logarithm (base e) of a number, or the logarithm to an optional base if a second argument is provided. For common logarithms, a dedicated function provides higher precision. Raises ValueError for non-positive inputs.",
+            "difficulty": "beginner",
+            "module": "math",
+            "category": "numeric/math",
+            "code_example": "import math\nmath.log(math.e)     # 1.0\nmath.log(100, 10)    # 2.0",
+            "short_reference": "It calculates the natural logarithm of a number, or logs with a specified base. It can't handle zero or negative inputs."
+          },
+          "metadata": {
+            "signature": "math.log(x[, base])",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "random.choice() / random.sample()",
+            "definition": "Functions from the random module for selecting elements from a sequence: one returns a single random element, while the other returns a list of k unique elements chosen without replacement. For cryptographically secure random choices, the secrets module should be used instead \u2014 the random module is based on the Mersenne Twister PRNG, which is predictable.",
+            "difficulty": "beginner",
+            "module": "random",
+            "category": "numeric/math",
+            "code_example": "import random\nrandom.choice(['a', 'b', 'c'])\nrandom.sample(range(100), k=5)",
+            "short_reference": "random.choice() picks one random item from a list, while random.sample() gets multiple unique items without repeating. Use secrets module for secure random picks instead of random."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "math.isnan() / math.isinf()",
+            "definition": "Functions from the math module that test whether a floating-point number is NaN (Not a Number) or positive/negative infinity. These checks are necessary because NaN is not equal to itself, making == comparisons unreliable. Infinity can arise from operations like 1.0 / 0.0 or overflow in large computations.",
+            "difficulty": "intermediate",
+            "module": "math",
+            "category": "numeric/math",
+            "code_example": "import math\nmath.isnan(float('nan'))   # True\nmath.isinf(float('inf'))   # True",
+            "short_reference": "They check if a number is NaN (which doesn't equal itself) or infinity, which can happen from division by zero or overflow."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Python \u2014 Memory",
+        "description": "Python's memory model, garbage collection, weak references, and tools for managing object lifetime and memory usage.",
+        "subject": "python",
+        "difficulty": "advanced",
+        "estimated_hours": 5,
+        "prerequisites": [
+          "Python basics",
+          "Object-oriented programming"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "reference counting",
+            "definition": "CPython's primary memory management mechanism, where every object carries an integer count of how many references point to it. When the count reaches zero, the object's memory is immediately reclaimed. This mechanism is deterministic \u2014 objects are freed as soon as the last reference drops \u2014 but it cannot collect reference cycles, which is why the cyclic garbage collector also exists.",
+            "difficulty": "advanced",
+            "module": "built-in",
+            "category": "memory",
+            "code_example": "import sys\nobj = object()\nsys.getrefcount(obj)  # typically returns 2 (one for obj, one for getrefcount's arg)",
+            "short_reference": "It's a memory management method where objects track how many references point to them, and when none remain, their memory is freed immediately. However, it can't handle circular references where objects depend on each other in a loop."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "gc module (garbage collector)",
+            "definition": "This module exposes Python's cyclic collection mechanism, which detects and frees groups of objects that are only reachable through reference cycles \u2014 a situation reference counting alone cannot handle. The mechanism uses a generational algorithm with three generations; generation 0 is collected most frequently. The collect() function triggers a manual collection and returns the number of objects freed.",
+            "difficulty": "advanced",
+            "module": "gc",
+            "category": "memory",
+            "code_example": "import gc\ngc.collect()  # force a full collection\ngc.disable() # disable automatic collection",
+            "short_reference": "It's a Python tool that finds and frees objects stuck in reference cycles using generations, with a manual option to trigger collection."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "weakref.ref()",
+            "definition": "A class from the weakref module that creates a reference to an object \u2014 a reference that does not increment the object's reference count and therefore does not prevent garbage collection. Calling the reference object returns the target if it is still alive, or None if it has been collected. Useful for caches, observer patterns, and parent-back-references in tree structures.",
+            "difficulty": "advanced",
+            "module": "weakref",
+            "category": "memory",
+            "code_example": "import weakref\nobj = SomeClass()\nref = weakref.ref(obj)\nif ref() is not None:\n    ref().do_something()",
+            "short_reference": "It creates a reference to an object that doesn't stop it from being garbage collected. When you check it later, it returns the object if it still exists or nothing if it's been removed."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "sys.getsizeof()",
+            "definition": "A function from the sys module that returns the size of an object in bytes, as reported by the object's __sizeof__ method plus garbage collector overhead. It measures only the direct size of the object, not the transitive size of objects it references \u2014 for full memory footprint, a recursive approach or a tool like pympler is needed.",
+            "difficulty": "intermediate",
+            "module": "sys",
+            "category": "memory",
+            "code_example": "import sys\nsys.getsizeof([])        # 56 (empty list)\nsys.getsizeof([1,2,3])   # 88 (three ints)",
+            "short_reference": "It's a function in the sys module that gives an object's size in bytes, including some extra overhead, but doesn't count the memory used by objects it points to."
+          },
+          "metadata": {
+            "signature": "sys.getsizeof(object[, default])",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "copy.copy() / copy.deepcopy()",
+            "definition": "Functions from the copy module that create object copies: the first produces a shallow copy (the outer container is new but nested objects are shared), while the second recursively copies all nested objects producing a fully independent clone. The second handles cycles and memoizes visited objects to avoid infinite recursion.",
+            "difficulty": "intermediate",
+            "module": "copy",
+            "category": "memory",
+            "code_example": "import copy\nshallow = copy.copy(original)\ndeep = copy.deepcopy(original)",
+            "short_reference": "copy.copy() makes a shallow copy where the outer container is new but inner objects are shared, while copy.deepcopy() creates a full copy of everything inside, even nested structures, so they're completely independent."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "del statement",
+            "definition": "A Python statement that removes a name binding from the current namespace (or removes an item from a collection), decrementing the reference count of the object the name pointed to. This does not immediately free the object's memory \u2014 it only removes the reference; the object is freed when its reference count reaches zero. Removing a name that does not exist raises NameError.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "memory",
+            "code_example": "del my_variable\ndel my_list[2]\ndel my_dict['key']",
+            "short_reference": "It removes a variable or item from a collection, lowering the reference count but not freeing memory immediately. Trying to delete a non-existent name causes an error."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Python \u2014 Iteration",
+        "description": "Python's iteration protocol, generators, and the itertools module for building and composing iterators.",
+        "subject": "python",
+        "difficulty": "intermediate",
+        "estimated_hours": 6,
+        "prerequisites": [
+          "Python basics",
+          "Control flow"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "iterator protocol",
+            "definition": "The contract that makes an object iterable in Python: such an object is an iterator if it implements both __iter__() (which returns self) and __next__() (which returns the next value or raises StopIteration). Implementing this protocol on a class makes it compatible with for loops, list(), zip(), and any other construct that consumes iterables.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "category": "iteration",
+            "code_example": "class Counter:\n    def __init__(self, n):\n        self.n = n\n        self.i = 0\n    def __iter__(self):\n        return self\n    def __next__(self):\n        if self.i >= self.n:\n            raise StopIteration\n        self.i += 1\n        return self.i",
+            "short_reference": "The iterator protocol in Python means an object has __iter__ and __next__ methods\u2014__iter__ returns the object itself and __next__ gives the next item or stops the loop."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "generator function",
+            "definition": "A function that contains at least one yield statement, causing it to return a generator object when called rather than executing immediately. The generator object is an iterator; each call to next() on it resumes the function from where it last yielded. are the most idiomatic way to write lazy iterators in Python.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "category": "iteration",
+            "code_example": "def fibonacci():\n    a, b = 0, 1\n    while True:\n        yield a\n        a, b = b, a + b",
+            "short_reference": "A function that uses yield to create an iterator, which resumes from where it left off each time next() is called, making it good for lazy processing in Python."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "StopIteration",
+            "definition": "A built-in exception that signals the end of iteration. An iterator's __next__() method raises when there are no more values to produce, which causes a for loop to terminate cleanly. Since Python 3.7, raising inside a generator function is converted to RuntimeError, preventing accidental suppression.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "category": "iteration",
+            "code_example": "it = iter([1, 2])\nnext(it)  # 1\nnext(it)  # 2\nnext(it)  # raises StopIteration",
+            "short_reference": "It's an exception that tells a loop to stop when there are no more items in an iterator. Newer Python versions use a different error for generators to prevent mistakes."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "itertools.count()",
+            "definition": "A function from the itertools module that produces an infinite iterator of evenly spaced values starting from a given start value with a given step. It is useful for generating unique IDs, numbering elements in a stream, or driving an infinite simulation loop where termination is controlled externally.",
+            "difficulty": "intermediate",
+            "module": "itertools",
+            "category": "iteration",
+            "code_example": "from itertools import count\nfor i, item in zip(count(1), data):\n    print(i, item)",
+            "short_reference": "It generates an endless sequence starting from a number you pick, adding a fixed step each time, often used for things like unique IDs or loops that run forever."
+          },
+          "metadata": {
+            "signature": "itertools.count(start=0, step=1)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "itertools.cycle()",
+            "definition": "A function from the itertools module that produces an infinite iterator that cycles through the elements of an iterable indefinitely. It stores a copy of the iterable's elements internally after the first pass. Commonly used to repeat a sequence of values or assign rotating labels to elements.",
+            "difficulty": "intermediate",
+            "module": "itertools",
+            "category": "iteration",
+            "code_example": "from itertools import cycle\ncolors = cycle(['red', 'green', 'blue'])\nfor item, color in zip(data, colors):\n    render(item, color)",
+            "short_reference": "It keeps looping through a sequence of items forever, so you can repeat them or assign them in a cycle."
+          },
+          "metadata": {
+            "signature": "itertools.cycle(iterable)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "itertools.tee()",
+            "definition": "A function from the itertools module that creates n independent iterators from a single iterable, allowing the same sequence to be iterated multiple times without materializing it into a list. The original iterable should not be used after calling tee(). Internal buffering means that if one iterator advances far ahead of the others, tee can consume significant memory.",
+            "difficulty": "advanced",
+            "module": "itertools",
+            "category": "iteration",
+            "code_example": "from itertools import tee\nit1, it2 = tee(original_iterator, 2)",
+            "short_reference": "It creates multiple separate iterators from one source so you can loop through it in different ways without making a list. The original iterable can't be used after that, and it might use a lot of memory if one iterator gets way ahead of the others."
+          },
+          "metadata": {
+            "signature": "itertools.tee(iterable, n=2)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "send() on generators",
+            "definition": "A method on generator objects that resumes execution and simultaneously sends a value into the generator, which becomes the result of the yield expression that paused it. Generators that use send() are called send-coroutines; they are the low-level mechanism behind Python's async/await system. The first call must use next() or send(None) to advance to the first yield.",
+            "difficulty": "advanced",
+            "module": "built-in",
+            "category": "iteration",
+            "code_example": "def accumulator():\n    total = 0\n    while True:\n        value = yield total\n        total += value\n\nacc = accumulator()\nnext(acc)      # prime the generator\nacc.send(10)   # yields 10\nacc.send(5)    # yields 15",
+            "short_reference": "It resumes a paused generator and sends a value into it, which becomes the result of the yield expression. It's the low-level way to interact with generators, used in Python's async/await system."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Python \u2014 Context Managers",
+        "description": "Python's context manager protocol, the with statement, and tools for writing and composing context managers.",
+        "subject": "python",
+        "difficulty": "intermediate",
+        "estimated_hours": 4,
+        "prerequisites": [
+          "Python basics",
+          "Object-oriented programming"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "__enter__ / __exit__",
+            "definition": "The two methods that define the context manager protocol in Python. The first method is called when execution enters the with block and can return a value bound to the as target; the second method is called on exit (normal or exceptional) and receives the exception type, value, and traceback. If the second method returns a truthy value, any exception that occurred is suppressed.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "category": "context-managers",
+            "code_example": "class ManagedResource:\n    def __enter__(self):\n        self.open()\n        return self\n    def __exit__(self, exc_type, exc_val, exc_tb):\n        self.close()\n        return False  # do not suppress exceptions",
+            "short_reference": "When using a with statement, __enter__ sets up the context and can return a value for the \"as\" target, while __exit__ handles cleanup and errors when exiting the block, stopping exceptions if it returns True."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "contextlib.suppress()",
+            "definition": "A context manager from the contextlib module that silently suppresses specified exception types within its block, making the intent explicit compared to writing try/except with pass. It accepts multiple exception types and is equivalent to a try/except that catches those types and does nothing, but communicates the suppression intent more directly.",
+            "difficulty": "intermediate",
+            "module": "contextlib",
+            "category": "context-managers",
+            "code_example": "from contextlib import suppress\nwith suppress(FileNotFoundError):\n    os.remove('temp_file.txt')",
+            "short_reference": "It's a context manager that lets you ignore specific exceptions without writing a try-except block, making it clear you're intentionally skipping error handling. It works for multiple exceptions and shows you're aware of the suppression."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "contextlib.ExitStack",
+            "definition": "A context manager from the contextlib module that manages a dynamic collection of context managers, entering them in order and exiting them in reverse order when it exits. It is the solution for managing a variable or unknown number of context managers \u2014 for example, opening a dynamic list of files all needing to be closed on exit.",
+            "difficulty": "advanced",
+            "module": "contextlib",
+            "category": "context-managers",
+            "code_example": "from contextlib import ExitStack\nwith ExitStack() as stack:\n    files = [stack.enter_context(open(name)) for name in filenames]",
+            "short_reference": "It's a tool that handles multiple tasks at once, entering them in order and exiting in reverse when done."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "contextlib.nullcontext()",
+            "definition": "A context manager from the contextlib module that does nothing on enter or exit, serving as a no-op placeholder. It is useful when a context manager is optional \u2014 code can conditionally pass either a real context manager or this no-op context manager to a with statement without needing an if/else structure outside the with block.",
+            "difficulty": "intermediate",
+            "module": "contextlib",
+            "category": "context-managers",
+            "code_example": "from contextlib import nullcontext\ncm = lock if need_lock else nullcontext()\nwith cm:\n    do_work()",
+            "short_reference": "It's a context manager that does nothing when used, letting you skip context setup or cleanup if you don't need it."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "contextlib.closing()",
+            "definition": "A context manager factory from the contextlib module that wraps any object with a close() method into a context manager, ensuring close() is called when the block exits. It is used for objects that implement close() but not the full __enter__/__exit__ protocol, such as legacy resource handlers.",
+            "difficulty": "intermediate",
+            "module": "contextlib",
+            "category": "context-managers",
+            "code_example": "from contextlib import closing\nimport urllib.request\nwith closing(urllib.request.urlopen(url)) as response:\n    data = response.read()",
+            "short_reference": "It wraps objects that have a close method so close is called automatically when you exit the block. It helps manage resources that don't fully follow the context manager protocol but still need cleanup."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Python \u2014 Packaging",
+        "description": "Python's module system, import machinery, package structure, virtual environments, and distribution tooling.",
+        "subject": "python",
+        "difficulty": "intermediate",
+        "estimated_hours": 6,
+        "prerequisites": [
+          "Python basics",
+          "Filesystem basics"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "__init__.py",
+            "definition": "A file that marks a directory as a Python package, allowing its modules to be imported using dot notation. In Python 3.3+ it is not strictly required for namespace packages, but it remains the convention for regular packages. Code placed in the file runs when the package is first imported and can be used to expose the package's public API.",
+            "difficulty": "beginner",
+            "module": "built-in",
+            "category": "packaging",
+            "code_example": "# mypackage/__init__.py\nfrom .utils import helper_function  # re-export",
+            "short_reference": "It marks a folder as a Python package so you can import its modules with dots, and runs code when the package is first used to set up what's available."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "virtual environment (venv)",
+            "definition": "An isolated Python installation that contains its own interpreter and site-packages directory, preventing dependency conflicts between projects. Created with python -m venv, it adds a Scripts (or bin) directory with activate scripts. Activating it makes its interpreter and pip the defaults for the shell session.",
+            "difficulty": "beginner",
+            "module": "venv",
+            "category": "packaging",
+            "code_example": "python -m venv .venv\nsource .venv/bin/activate\npip install requests",
+            "short_reference": "It's a separate Python setup with its own interpreter and packages to keep projects' dependencies from clashing. You make one using a command and switch to it with an activation script."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "pip",
+            "definition": "Python's standard package installer, used to install, upgrade, and remove packages from the Python Package Index (PyPI) and other sources. install -r requirements.txt installs all packages listed in a requirements file, making environment recreation reproducible. freeze outputs the current installed packages and versions in requirements.txt format.",
+            "difficulty": "beginner",
+            "module": "pip",
+            "category": "packaging",
+            "code_example": "pip install requests==2.31.0\npip freeze > requirements.txt",
+            "short_reference": "It's the tool you use to install or update Python packages, often from a list in a requirements file."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "pyproject.toml",
+            "definition": "A standard configuration file (PEP 517/518/621) that defines Python project metadata, build system requirements, and tool configuration in a single TOML file. It replaced setup.py and setup.cfg as the modern packaging standard and is used by build tools like setuptools, Poetry, and Hatch. The [project] table declares the package name, version, dependencies, and entry points.",
+            "difficulty": "intermediate",
+            "module": "packaging",
+            "category": "packaging",
+            "code_example": "[project]\nname = 'my-package'\nversion = '1.0.0'\ndependencies = ['requests>=2.28']",
+            "short_reference": "It's a modern config file for Python projects that manages dependencies and tools, replacing older setup files and used by builders like Poetry."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "importlib.import_module()",
+            "definition": "A function from the importlib module that imports a module by name at runtime, equivalent to using the import statement but with a dynamically determined module name string. It is the correct programmatic replacement for the older __import__() built-in when runtime imports are needed, such as in plugin systems.",
+            "difficulty": "intermediate",
+            "module": "importlib",
+            "category": "packaging",
+            "code_example": "import importlib\nmod = importlib.import_module('json')\ndata = mod.loads('{}')",
+            "short_reference": "It's a function that lets you import a module by name at runtime, like when you need to load plugins or modules you don't know about until later. It works like a regular import but lets you choose the module name as a string instead of hardcoding it."
+          },
+          "metadata": {
+            "signature": "importlib.import_module(name, package=None)",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "__all__",
+            "definition": "A module-level list variable that explicitly declares which names are considered public and exported when a consumer does 'from module import *'. If it is defined, only names listed in it are exported by star imports; if it is absent, names not starting with an underscore are exported. Defining it is a best practice for controlling a module's public API.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "category": "packaging",
+            "code_example": "# mymodule.py\n__all__ = ['public_func', 'PublicClass']",
+            "short_reference": "It's a list in a module that specifies which names are considered public when someone uses 'from module import *'. Defining it lets you control exactly what gets exported, which is a good way to manage the module's public API."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "relative imports",
+            "definition": "A Python import syntax that references modules within the same package using leading dots, where one dot means the current package and two dots mean the parent package. These are only valid within a package (not in top-level scripts) and make it easy to refactor package structure without updating full paths, though they make the code harder to run in isolation.",
+            "difficulty": "intermediate",
+            "module": "built-in",
+            "category": "packaging",
+            "code_example": "from . import sibling_module\nfrom ..utils import helper",
+            "short_reference": "It's a way to import modules within the same package using dots (like one for current or two for parent), helping refactor without changing paths but making standalone code harder to run."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    }
+  ]
+}

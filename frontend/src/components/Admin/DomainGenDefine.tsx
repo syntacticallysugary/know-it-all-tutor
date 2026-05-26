@@ -66,13 +66,13 @@ const DomainGenDefine: React.FC<Props> = ({ onJobCreated }) => {
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Topic <span className="text-red-500">*</span>
+            Technical Topic <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             value={topic}
             onChange={e => setTopic(e.target.value)}
-            placeholder="e.g. Rust Programming, Roman History, Networking"
+            placeholder="e.g. Rust Programming, Kubernetes, AWS Networking"
             className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
           />
         </div>
@@ -84,7 +84,7 @@ const DomainGenDefine: React.FC<Props> = ({ onJobCreated }) => {
           <textarea
             value={hints}
             onChange={e => setHints(e.target.value)}
-            placeholder="e.g. focus on the Republic era, emphasize ownership and lifetimes"
+            placeholder="e.g. emphasize ownership and lifetimes, focus on networking layer 3–4"
             rows={3}
             className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 resize-none"
           />

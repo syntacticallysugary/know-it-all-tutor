@@ -1,0 +1,1703 @@
+{
+  "domains": [
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "AI/ML \u2014 Architecture",
+        "description": "Covers the structural designs of neural networks and machine learning models, from foundational layers to modern transformer and generative architectures.",
+        "subject": "ai_ml",
+        "difficulty": "intermediate",
+        "estimated_hours": 12,
+        "prerequisites": [
+          "linear algebra",
+          "calculus basics",
+          "Python"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Neural Network",
+            "definition": "AA computational model composed of layers of interconnected nodes (neurons) that transform input data into output predictions. Each neuron applies a weighted sum of its inputs followed by a nonlinear activation function, allowing the network to learn complex mappings. By stacking multiple layers, can represent hierarchical features, making them powerful for tasks like image recognition, language modeling, and classification.",
+            "difficulty": "beginner",
+            "module": "deep-learning",
+            "category": "architecture",
+            "code_example": "import torch.nn as nn; model = nn.Sequential(nn.Linear(784, 256), nn.ReLU(), nn.Linear(256, 10))",
+            "short_reference": "A neural network is like a layered system of connected nodes that process data through weighted calculations and activation functions to recognize patterns and make predictions. It learns by adjusting these connections to handle complex tasks like recognizing images or understanding language."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Convolutional Neural Network (CNN)",
+            "definition": "A architecture designed for grid-structured data like images, using convolutional layers that apply learned filters across spatial dimensions. Unlike fully connected layers, convolutions share weights across positions, drastically reducing parameters while preserving spatial relationships. Foundational to computer vision tasks including image classification, object detection, and segmentation.",
+            "difficulty": "intermediate",
+            "module": "deep-learning",
+            "category": "architecture",
+            "code_example": "nn.Conv2d(in_channels=3, out_channels=64, kernel_size=3, padding=1)",
+            "short_reference": "It's a neural network for images that uses convolutional layers with shared weights to reduce parameters and keep spatial info important for tasks like image classification."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Recurrent Neural Network (RNN)",
+            "definition": "An architecture designed for sequential data, where each step's output feeds back as input to the next step, maintaining a hidden state across the sequence. This recurrence allows modeling temporal dependencies in time-series, text, and speech data. However, vanilla variants suffer from vanishing gradients over long sequences, which led to the development of LSTM and GRU variants.",
+            "difficulty": "intermediate",
+            "module": "deep-learning",
+            "category": "architecture",
+            "code_example": "nn.RNN(input_size=128, hidden_size=256, num_layers=2, batch_first=True)",
+            "short_reference": "It's a neural network that processes data step-by-step, remembering past inputs through hidden states to handle sequences like text or time-series, but it can lose track of long-term patterns."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Transformer",
+            "definition": "The architecture that relies entirely on attention mechanisms rather than recurrence or convolution to model relationships between elements of a sequence. Introduced in 'Attention Is All You Need' (2017), all positions in a sequence are processed in parallel, enabling efficient training on long sequences. They are the foundation of virtually all large language models (LLMs) and state-of-the-art NLP systems.",
+            "difficulty": "intermediate",
+            "module": "deep-learning",
+            "category": "architecture",
+            "code_example": "nn.Transformer(d_model=512, nhead=8, num_encoder_layers=6, num_decoder_layers=6)",
+            "short_reference": "This parallel processing makes it efficient and serves as the foundation for almost all large language models."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Attention Mechanism",
+            "definition": "The mechanism that allows a model to dynamically weight the relevance of different input positions when producing each output element. Given queries, keys, and values, attention computes a weighted sum of values where weights come from the similarity between each query and all keys. This enables the model to 'focus' on the most relevant parts of the input, replacing the fixed-size bottleneck of RNN encoder-decoder architectures.",
+            "difficulty": "intermediate",
+            "module": "deep-learning",
+            "category": "architecture",
+            "code_example": "Attention(Q, K, V) = softmax(QK^T / sqrt(d_k)) * V",
+            "short_reference": "It helps the model focus on important input parts by using queries, keys, and values to calculate their importance, allowing it to adaptively highlight relevant sections instead of being limited by fixed structures."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Multi-Head Attention",
+            "definition": "Multiple attention operations run in parallel, each with independently learned projection matrices for queries, keys, and values. The outputs of these 'heads' are concatenated and linearly projected, allowing the model to jointly attend to information from different representation subspaces at different positions. This is a core component of the transformer architecture and enables richer contextual representations than a single attention head.",
+            "difficulty": "intermediate",
+            "module": "deep-learning",
+            "category": "architecture",
+            "code_example": "MultiHead(Q,K,V) = Concat(head_1,...,head_h)W^O  where head_i = Attention(QW_i^Q, KW_i^K, VW_i^V)",
+            "short_reference": "The model combines these outputs to attend to different representation subspaces simultaneously for richer context."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Encoder-Decoder Architecture",
+            "definition": "An model maps an input sequence to a fixed-size intermediate representation (encoding) and then decodes it into an output sequence, enabling sequence-to-sequence tasks like translation or summarization. The encoder compresses input context and the decoder generates output tokens autoregressively, attending to the encoded representation at each step. While originally built with recurrent networks, modern models use transformer blocks for both components.",
+            "difficulty": "intermediate",
+            "module": "deep-learning",
+            "category": "architecture",
+            "code_example": "from transformers import T5ForConditionalGeneration; model = T5ForConditionalGeneration.from_pretrained('t5-base')",
+            "short_reference": "It takes an input like a sentence, turns it into a compact summary, and then builds an output step by step using that summary, often for tasks like translating languages or summarizing text."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Residual Connection",
+            "definition": "A connection (skip connection) adds the input of a layer directly to its output, so the layer learns a residual function rather than the full transformation. Introduced in ResNet, this pattern allows gradients to flow directly through the network during backpropagation, enabling training of very deep networks without severe degradation. Standard in transformers, where each sub-layer output is computed as LayerNorm(x + Sublayer(x)).",
+            "difficulty": "intermediate",
+            "module": "deep-learning",
+            "category": "architecture",
+            "code_example": "output = layer_norm(x + sublayer(x))  # standard transformer residual block",
+            "short_reference": "Adds input to output of a layer so the network learns the difference instead of the whole change, helping train deep models by easing gradient flow."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Embedding Layer",
+            "definition": "A layer maps discrete tokens (words, categories) to dense continuous vectors in a lower-dimensional space, allowing the model to learn meaningful representations. Unlike one-hot encoding, embeddings capture semantic relationships \u2014 similar tokens end up close in embedding space. In transformer models, input token embeddings are summed with positional encodings before being passed through attention layers.",
+            "difficulty": "beginner",
+            "module": "deep-learning",
+            "category": "architecture",
+            "code_example": "nn.Embedding(num_embeddings=50000, embedding_dim=512)",
+            "short_reference": "It converts words or categories into numerical vectors that capture meaning, so similar items have similar vectors. In transformers, these vectors get combined with position info before processing."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Positional Encoding",
+            "definition": "Because transformers process all tokens in parallel without recurrence, an explicit way is needed to represent token order. The encodings inject sequence position information into the token embeddings, using either fixed sinusoidal functions or learned position embeddings. Without them, a transformer would treat 'the dog bit the man' identically regardless of word order.",
+            "difficulty": "intermediate",
+            "module": "deep-learning",
+            "category": "architecture",
+            "code_example": "PE(pos, 2i) = sin(pos/10000^(2i/d_model));  PE(pos, 2i+1) = cos(pos/10000^(2i/d_model))",
+            "short_reference": "This is done by injecting sequence position information into the token embeddings."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Vision Transformer (ViT)",
+            "definition": "Applies the transformer architecture to images by splitting an image into fixed-size patches, linearly embedding each patch, and processing the sequence of patch embeddings with standard transformer encoder blocks. This approach discards convolutions entirely, demonstrating that attention-based models can match or exceed CNNs on image tasks when trained on sufficient data. Foundational to modern multimodal and vision-language models.",
+            "difficulty": "advanced",
+            "module": "deep-learning",
+            "category": "architecture",
+            "code_example": "from transformers import ViTModel; model = ViTModel.from_pretrained('google/vit-base-patch16-224')",
+            "short_reference": "It's a model that uses transformer networks to process images by breaking them into patches and applying attention instead of convolutional layers, showing attention can match CNNs on image tasks with enough data and enabling multimodal learning."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Generative Adversarial Network (GAN)",
+            "definition": "A system consists of two competing neural networks: a generator that produces synthetic data samples and a discriminator that tries to distinguish real from generated samples. They are trained jointly in a minimax game \u2014 the generator improves by fooling the discriminator, while the discriminator improves by catching fakes. Produce high-fidelity synthetic images and were the dominant generative architecture before diffusion models.",
+            "difficulty": "advanced",
+            "module": "deep-learning",
+            "category": "architecture",
+            "code_example": "min_G max_D E[log D(x)] + E[log(1 - D(G(z)))]",
+            "short_reference": "It's a system where two neural networks compete: one creates fake data to trick the other, which tries to tell real from fake, with both getting better through this rivalry."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Diffusion Model",
+            "definition": "A model learns to generate data by reversing a gradual noising process: during training, noise is incrementally added to data, and the model learns to denoise each step. At inference, the model starts from pure noise and iteratively removes noise to produce a coherent sample. Underlie state-of-the-art image generation systems like Stable Diffusion and DALL-E 3.",
+            "difficulty": "advanced",
+            "module": "deep-learning",
+            "category": "architecture",
+            "code_example": "from diffusers import StableDiffusionPipeline; pipe = StableDiffusionPipeline.from_pretrained('runwayml/stable-diffusion-v1-5')",
+            "short_reference": "It's a model that starts with random noise and gradually removes it step by step to create data, learning from how noise was added during training."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Variational Autoencoder (VAE)",
+            "definition": "A generative model that encodes input data into a probability distribution in latent space (rather than a fixed point) and decodes samples from that distribution back into data space. The training objective combines a reconstruction loss with a KL divergence term that regularizes the latent space to be continuous and well-structured. Enable controlled generation and smooth interpolation in latent space.",
+            "difficulty": "advanced",
+            "module": "deep-learning",
+            "category": "architecture",
+            "code_example": "Loss = reconstruction_loss + beta * KL(q(z|x) || p(z))",
+            "short_reference": "The training combines reconstruction loss with a KL divergence term to keep the latent space continuous, enabling smooth interpolation and controlled generation."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "AI/ML \u2014 Training",
+        "description": "Covers the processes, algorithms, and techniques used to train machine learning models, including optimization, regularization, and modern fine-tuning methods.",
+        "subject": "ai_ml",
+        "difficulty": "intermediate",
+        "estimated_hours": 14,
+        "prerequisites": [
+          "calculus",
+          "linear algebra",
+          "Python",
+          "neural networks basics"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Gradient Descent",
+            "definition": "An iterative optimization algorithm that minimizes a loss function by repeatedly updating model parameters in the direction opposite to the gradient of the loss with respect to those parameters. The gradient points toward steepest increase, so moving against it reduces the loss. The update rule is: \u03b8 = \u03b8 - \u03b1 * \u2207L(\u03b8), where \u03b1 is the learning rate.",
+            "difficulty": "beginner",
+            "module": "math-foundations",
+            "category": "training",
+            "code_example": "theta = theta - learning_rate * gradient_of_loss",
+            "short_reference": "It's a method that adjusts parameters step by step by moving opposite to the gradient of the loss, using a learning rate to control how much each adjustment changes the parameters."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Stochastic Gradient Descent (SGD)",
+            "definition": "Approximates full gradient computation by computing the gradient using a single training example (or a small mini-batch) rather than the entire dataset. This makes each update much faster and introduces noise that can help escape local minima. Mini-batch is the standard training algorithm for deep learning, with most modern optimizers (Adam, AdaGrad) built as extensions of this core idea.",
+            "difficulty": "beginner",
+            "module": "math-foundations",
+            "category": "training",
+            "code_example": "optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)",
+            "short_reference": "It's a training method that updates the model using just one or a few examples at a time, which makes it faster and adds some randomness to avoid getting stuck in local minima."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Backpropagation",
+            "definition": "The algorithm for computing gradients of a loss function with respect to all parameters in a neural network by applying the chain rule backward through the computation graph. Starting from the loss, it propagates error signals layer by layer toward the inputs, efficiently computing how each weight contributed to the final error. Without it, training deep networks would be computationally intractable.",
+            "difficulty": "intermediate",
+            "module": "deep-learning",
+            "category": "training",
+            "code_example": "loss.backward()  # PyTorch: computes gradients for all parameters via autograd",
+            "short_reference": "It calculates how each weight in a neural network affects the overall error by working backward from the final result, allowing the model to adjust weights during training."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Loss Function",
+            "definition": "A cost measure (also called objective function) calculates the discrepancy between the model's predictions and the true targets, producing a scalar value that the optimizer seeks to minimize. The choice of cost function depends on the task \u2014 cross-entropy for classification, mean squared error for regression, and specialized losses like contrastive loss for metric learning. The cost function encodes what 'correct' behavior means for the model.",
+            "difficulty": "beginner",
+            "module": "classical-ml",
+            "category": "training",
+            "code_example": "loss = nn.CrossEntropyLoss()(logits, targets)  # classification; or nn.MSELoss()(preds, targets) for regression",
+            "short_reference": "It essentially defines what 'correct' behavior means for the model's specific task."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Cross-Entropy Loss",
+            "definition": "Measures the difference between a predicted probability distribution and the true one-hot target distribution, penalizing confident wrong predictions heavily. For a correct class c with predicted probability p_c, the loss is -log(p_c) \u2014 low when the model is confident and correct, high when confident and wrong. It is the standard loss for multi-class classification tasks.",
+            "difficulty": "intermediate",
+            "module": "classical-ml",
+            "category": "training",
+            "code_example": "L = -sum(y_true * log(y_pred))  # discrete form over classes",
+            "short_reference": "It measures how much the model's predictions differ from the actual outcomes, especially when the model is confident but wrong."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Learning Rate",
+            "definition": "A hyperparameter that controls the step size of parameter updates during optimization, determining how quickly or slowly a model adapts to the training data. Too high a value causes unstable training and divergence; too low causes slow convergence or getting stuck. It is often the single most important hyperparameter to tune in deep learning.",
+            "difficulty": "beginner",
+            "module": "deep-learning",
+            "category": "training",
+            "code_example": "optimizer = torch.optim.Adam(model.parameters(), lr=3e-4)  # 3e-4 is a common starting point",
+            "short_reference": "It controls how much a model changes its settings during training\u2014too high makes it jump around, too low makes it learn super slow."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Learning Rate Scheduler",
+            "definition": "Adjusts the step size of parameter updates during training according to a predefined schedule, such as step decay, cosine annealing, or warm-up followed by decay. Starting with a warm-up helps stabilize early training, while decaying later allows the optimizer to converge more precisely. Such schedulers are especially critical for large model training, where a fixed learning rate rarely yields optimal results.",
+            "difficulty": "intermediate",
+            "module": "deep-learning",
+            "category": "training",
+            "code_example": "scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=100)",
+            "short_reference": "It changes the learning rate during training based on a schedule, starting high to stabilize early and then lowering to help the model converge, which is important for large models."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Dropout",
+            "definition": "A regularization technique that randomly sets a fraction of neuron activations to zero during each training forward pass, preventing any single neuron from becoming overly reliant on specific inputs. This forces the network to learn more robust, redundant representations. It is disabled at inference time, and activations are scaled accordingly to maintain expected values.",
+            "difficulty": "intermediate",
+            "module": "deep-learning",
+            "category": "training",
+            "code_example": "nn.Dropout(p=0.1)  # drops 10% of activations; p=0.1 is common in transformer FFN layers",
+            "short_reference": "It randomly deactivates parts of the network during training to prevent over-reliance on specific inputs, helping the model learn more flexible patterns."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Transfer Learning",
+            "definition": "Reuses a model trained on one task or dataset as the starting point for a different but related task, rather than training from scratch. The intuition is that features learned in one domain (e.g., visual edges from ImageNet) are reusable in others. In NLP, pretrained LLMs like BERT and GPT are routinely transferred to downstream tasks via fine-tuning.",
+            "difficulty": "intermediate",
+            "module": "deep-learning",
+            "category": "training",
+            "code_example": "model = AutoModel.from_pretrained('bert-base-uncased')  # load pretrained weights for transfer",
+            "short_reference": "It's using a model trained on one task to help with another related task instead of starting from scratch. For example, in NLP, models like BERT are often adjusted for new tasks by fine-tuning them."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Fine-Tuning",
+            "definition": "A form of transfer learning where a pretrained model's weights are further updated on a smaller, task-specific dataset, allowing the model to specialize while retaining general knowledge. Unlike feature extraction (freezing pretrained layers), it trains some or all layers end-to-end on the new task. Full adaptation of large models is expensive, which motivates parameter-efficient methods like LoRA.",
+            "difficulty": "intermediate",
+            "module": "deep-learning",
+            "category": "training",
+            "code_example": "for param in model.parameters(): param.requires_grad = True  # unfreeze all layers for full fine-tuning",
+            "short_reference": "It's when you take a model already trained on lots of data and tweak it with a smaller dataset for a specific task, so it can focus on that task while keeping general knowledge. Unlike just using parts of the model, it retrains the whole thing, which can be pricey for big models, so shortcuts like LoRA help save effort."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "LoRA (Low-Rank Adaptation)",
+            "definition": "A parameter-efficient fine-tuning technique that freezes the original model weights and injects trainable low-rank decomposition matrices into each transformer layer. Instead of updating all billions of parameters, only the small adapter matrices are trained, reducing memory and compute costs by orders of magnitude. Adapter matrices can be merged back into the base model at inference time with no added latency.",
+            "difficulty": "advanced",
+            "module": "llm",
+            "category": "training",
+            "code_example": "from peft import get_peft_model, LoraConfig; config = LoraConfig(r=16, lora_alpha=32, target_modules=['q_proj','v_proj'])",
+            "short_reference": "It's a method where you train small matrices instead of the whole model to save resources and then combine them back later."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "RLHF (Reinforcement Learning from Human Feedback)",
+            "definition": "A training paradigm that aligns language model behavior with human preferences by using human judgments to train a reward model, then optimizing the LLM against that reward using reinforcement learning (typically PPO). The process involves supervised fine-tuning, reward modeling from ranked human preferences, and RL-based policy optimization. It is how models like GPT-4 and Claude are aligned to be helpful, harmless, and honest.",
+            "difficulty": "advanced",
+            "module": "llm",
+            "category": "training",
+            "code_example": "Pipeline: SFT \u2192 reward model training \u2192 PPO optimization with KL penalty vs reference policy",
+            "short_reference": "This process ensures the model behaves in ways that are helpful, harmless, and honest."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Early Stopping",
+            "definition": "A regularization technique that halts training when the model's performance on a held-out validation set stops improving, even if training loss continues to decrease. This prevents overfitting by stopping before the model memorizes training data at the expense of generalization. It also saves compute by avoiding unnecessary training epochs.",
+            "difficulty": "beginner",
+            "module": "classical-ml",
+            "category": "training",
+            "code_example": "EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)  # Keras callback",
+            "short_reference": "It stops training when the model's performance on test data plateaus to avoid overfitting and save computing time."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Mixed Precision Training",
+            "definition": "Uses 16-bit floating point (FP16 or BF16) for most computations while maintaining a 32-bit master copy of weights for gradient accumulation and updates. This halves memory usage and accelerates computation on modern GPUs and TPUs with tensor cores, enabling larger batch sizes and models. BF16 is generally preferred over FP16 for LLM training due to better numeric stability.",
+            "difficulty": "advanced",
+            "module": "deep-learning",
+            "category": "training",
+            "code_example": "from torch.cuda.amp import autocast; with autocast(dtype=torch.bfloat16): outputs = model(inputs)",
+            "short_reference": "It uses 16-bit numbers for most calculations to save memory and speed things up on GPUs, but keeps 32-bit weights for accurate gradients. BF16 is better than FP16 for training big language models because it's more stable."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Data Augmentation",
+            "definition": "Artificially expands the training dataset by applying label-preserving transformations to existing examples, such as flipping, cropping, and color jitter for images, or synonym replacement and back-translation for text. This reduces overfitting by exposing the model to more varied inputs without requiring additional labeled data. This technique is especially valuable in low-data regimes.",
+            "difficulty": "beginner",
+            "module": "classical-ml",
+            "category": "training",
+            "code_example": "transforms.Compose([transforms.RandomHorizontalFlip(), transforms.ColorJitter(brightness=0.2)])",
+            "short_reference": "They change existing data in ways that keep the labels the same, like flipping images or swapping words with synonyms, to help the model learn from more varied examples without needing new data."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "AI/ML \u2014 Inference",
+        "description": "Covers the techniques and patterns for deploying trained models and generating predictions efficiently, including optimization methods like quantization, distillation, and serving strategies.",
+        "subject": "ai_ml",
+        "difficulty": "intermediate",
+        "estimated_hours": 10,
+        "prerequisites": [
+          "neural networks basics",
+          "Python",
+          "cloud deployment basics"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Model Inference",
+            "definition": "The process of using a trained machine learning model to generate predictions on new, unseen data. Unlike training, it involves only a forward pass through the network with no gradient computation, making it far cheaper computationally. Optimizing latency and throughput is a distinct engineering discipline from training.",
+            "difficulty": "beginner",
+            "module": "mlops",
+            "category": "inference",
+            "code_example": "with torch.no_grad(): predictions = model(inputs)  # no_grad disables gradient tracking for efficiency",
+            "short_reference": "Using a trained model to make predictions on new data without retraining, which is faster because it skips gradient calculations and focuses on speed."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Batch Inference",
+            "definition": "Processes multiple inputs together in a single forward pass rather than one at a time, improving throughput by better utilizing hardware parallelism. It is the preferred pattern when latency requirements are loose and throughput matters, such as nightly scoring pipelines or offline evaluation. Most ML hardware (GPUs, TPUs) is optimized for batch operations and significantly underutilizes its capacity on single-sample requests.",
+            "difficulty": "beginner",
+            "module": "mlops",
+            "category": "inference",
+            "code_example": "outputs = model(batch_of_inputs)  # batch dimension typically first: (batch_size, seq_len, hidden_dim)",
+            "short_reference": "It's processing multiple data points at once to make better use of hardware and speed up results when you need lots of outputs quickly."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Online Inference",
+            "definition": "Serves individual or small-batch predictions in response to live requests, prioritizing low latency over raw throughput. It requires a persistent model serving endpoint and careful attention to tail latency (p99) and concurrency. Common patterns include REST/gRPC APIs backed by frameworks like TorchServe, TensorFlow Serving, or AWS SageMaker endpoints.",
+            "difficulty": "intermediate",
+            "module": "mlops",
+            "category": "inference",
+            "code_example": "sagemaker_endpoint.predict(data=input_payload, content_type='application/json')",
+            "short_reference": "It's real-time predictions for live requests, focusing on low latency using frameworks like TorchServe or TensorFlow Serving."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Quantization",
+            "definition": "Reduces model size and cost by representing weights and activations with lower-precision data types (e.g., INT8 or INT4) instead of FP32 or FP16. Post-training conversion (PTQ) converts a pretrained model without retraining, while conversion-aware training (QAT) simulates low-precision arithmetic during training for better accuracy. This technique can reduce LLM memory footprint by 4-8x with minimal quality degradation.",
+            "difficulty": "advanced",
+            "module": "llm",
+            "category": "inference",
+            "code_example": "from transformers import BitsAndBytesConfig; config = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.float16)",
+            "short_reference": "This can shrink the memory footprint by 4-8x with minimal quality loss."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Model Distillation",
+            "definition": "Trains a smaller 'student' model to mimic the output distribution (soft targets) of a larger 'teacher' model, transferring knowledge more effectively than training the student on hard labels alone. The soft probability outputs from the teacher contain richer information about inter-class relationships than one-hot labels. DistilBERT and TinyLlama are examples of distilled models that retain most of the teacher's performance at a fraction of the size.",
+            "difficulty": "advanced",
+            "module": "deep-learning",
+            "category": "inference",
+            "code_example": "student_loss = alpha * hard_loss + (1-alpha) * KL_divergence(student_logits/T, teacher_logits/T)",
+            "short_reference": "Training a smaller model to learn from a larger one's soft predictions helps it perform well while being much smaller, like DistilBERT learning from BERT."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "ONNX (Open Neural Network Exchange)",
+            "definition": "Is an open format that represents machine learning models in a framework-agnostic way, enabling models trained in PyTorch, TensorFlow, or other frameworks to be deployed using any compatible runtime. The ONNX Runtime (ORT) provides optimized execution across CPUs, GPUs, and specialized accelerators. Exporting to this format is a common step in production ML pipelines to decouple training frameworks from serving infrastructure.",
+            "difficulty": "intermediate",
+            "module": "mlops",
+            "category": "inference",
+            "code_example": "torch.onnx.export(model, dummy_input, 'model.onnx', opset_version=17, dynamic_axes={'input': {0: 'batch_size'}})",
+            "short_reference": "It's an open format that lets machine learning models work across different tools and hardware, making it easier to use models trained in one system on another."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "KV Cache",
+            "definition": "Stores the key and value matrices computed for previously generated tokens in an autoregressive transformer, so they do not need to be recomputed at each generation step. Without this cache, generating a 1000-token response would require reprocessing all prior tokens at every step, making cost quadratic in sequence length. Caching reduces autoregressive generation to roughly linear cost and is essential for practical LLM serving.",
+            "difficulty": "advanced",
+            "module": "llm",
+            "category": "inference",
+            "code_example": "outputs = model.generate(inputs, use_cache=True, max_new_tokens=512)  # cache enabled by default in HuggingFace",
+            "short_reference": "It's a way to save key and value data from past tokens so the model doesn't have to redo calculations for each new token, making generating long responses faster and cheaper."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Temperature (Sampling)",
+            "definition": "A scalar parameter that controls the randomness of token sampling in language model generation by scaling the logits before applying softmax. A temperature of 1.0 samples from the model's learned distribution; below 1.0 sharpens the distribution toward higher-probability tokens (more deterministic); above 1.0 flattens it (more creative/random). Temperature 0 is equivalent to greedy decoding.",
+            "difficulty": "intermediate",
+            "module": "llm",
+            "category": "inference",
+            "code_example": "scaled_logits = logits / temperature; probs = softmax(scaled_logits); next_token = sample(probs)",
+            "short_reference": "It adjusts how random the output is by scaling the probabilities of possible next words\u2014lower values make choices more predictable, higher values increase randomness, and zero just picks the most likely option each time."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Top-k Sampling",
+            "definition": "Restricts token generation to the k most probable tokens at each step, zeroing out all others before sampling, preventing low-probability tokens from being selected while preserving diversity. It is often combined with temperature scaling for controllable generation. The nucleus (top-p) sampling variant dynamically adjusts the candidate set to include tokens whose cumulative probability reaches a threshold p, adapting to the distribution's shape.",
+            "difficulty": "intermediate",
+            "module": "llm",
+            "category": "inference",
+            "code_example": "model.generate(inputs, do_sample=True, top_k=50, top_p=0.9, temperature=0.8)",
+            "short_reference": "It limits token choices to the top k most probable options at each step, ignoring others to keep variety and can be adjusted with temperature for better control."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Beam Search",
+            "definition": "A deterministic decoding algorithm that maintains a fixed number (beam width) of candidate sequences at each generation step, expanding each candidate and keeping only the top-scoring continuations. Unlike greedy decoding (beam width = 1), it explores multiple paths simultaneously and often produces higher-quality outputs for structured tasks like translation. However, for open-ended generation, sampling-based methods often outperform it in diversity and naturalness.",
+            "difficulty": "intermediate",
+            "module": "nlp",
+            "category": "inference",
+            "code_example": "model.generate(inputs, num_beams=5, early_stopping=True)  # beam width 5",
+            "short_reference": "It's a decoding method that keeps a set number of top candidates at each step, expanding them and picking the best ones to build sequences, which helps in structured tasks but might not be as good for creative or varied outputs."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "RAG (Retrieval-Augmented Generation)",
+            "definition": "Is an architecture that augments a language model's generation by first retrieving relevant documents from an external knowledge store at inference time, then conditioning the LLM's response on those documents. This allows LLMs to access current, domain-specific, or proprietary knowledge without retraining, and to cite sources. This architecture typically pairs a dense retrieval model with a vector database and a generative LLM.",
+            "difficulty": "advanced",
+            "module": "llm",
+            "category": "inference",
+            "code_example": "docs = retriever.get_relevant_documents(query); answer = llm(f'Context: {docs}\\nQuestion: {query}')",
+            "short_reference": "Wait, I'll check if I need to output the probably. Yes."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Vector Database",
+            "definition": "Stores high-dimensional embedding vectors and supports efficient approximate nearest-neighbor (ANN) search, enabling fast semantic retrieval at scale. Unlike traditional databases that match on exact values, it finds embeddings that are geometrically close \u2014 representing semantic similarity. They are a core infrastructure component of RAG systems, semantic search, and recommendation engines.",
+            "difficulty": "intermediate",
+            "module": "mlops",
+            "category": "inference",
+            "code_example": "results = vector_db.query(query_embedding, top_k=5)  # returns 5 most similar stored vectors",
+            "short_reference": "It stores complex vectors to find similar items quickly based on meaning rather than exact matches, using geometric proximity for semantic searches."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Speculative Decoding",
+            "definition": "Accelerates LLM generation by using a small, fast draft model to speculatively generate several candidate tokens, which the large target model then verifies in parallel in a single forward pass. Accepted tokens are kept; rejected tokens are corrected using the target model's distribution. This achieves the same output distribution as pure target-model decoding but at significantly higher throughput.",
+            "difficulty": "advanced",
+            "module": "llm",
+            "category": "inference",
+            "code_example": "Draft model generates k tokens speculatively; target model verifies all k in one pass \u2014 net speedup: 2-4x",
+            "short_reference": "It's a method where a smaller model quickly suggests possible next words, and a larger model checks them all at once, keeping the good ones and fixing the bad ones using its own choices."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "AI/ML \u2014 Evaluation",
+        "description": "Covers the metrics, methodologies, and benchmarks used to measure, compare, and validate machine learning model performance across classification, regression, and generative tasks.",
+        "subject": "ai_ml",
+        "difficulty": "intermediate",
+        "estimated_hours": 8,
+        "prerequisites": [
+          "statistics basics",
+          "probability",
+          "Python"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Accuracy",
+            "definition": "The fraction of predictions the model got correct out of all predictions made, computed as (TP + TN) / (TP + TN + FP + FN). It is the most intuitive classification metric but is misleading on imbalanced datasets \u2014 a model predicting 'negative' 99% of the time achieves 99% when negatives make up 99% of the data. Use precision, recall, or F1 when class distributions are skewed.",
+            "difficulty": "beginner",
+            "module": "classical-ml",
+            "category": "evaluation",
+            "code_example": "accuracy = correct_predictions / total_predictions",
+            "short_reference": "It measures how many predictions a model gets right overall, but can be misleading if one class is much more common than the other because the model might just guess the majority class most of the time."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Precision",
+            "definition": "Measures the fraction of predicted positive cases that are truly positive: TP / (TP + FP). It answers 'of everything the model called positive, how much was actually positive?' High precision rates mean low false alarm rate. This metric and recall are inversely coupled \u2014 improving one typically degrades the other \u2014 so the application context determines which to optimize.",
+            "difficulty": "beginner",
+            "module": "classical-ml",
+            "category": "evaluation",
+            "code_example": "precision = TP / (TP + FP)  # use when false positives are costly (e.g., spam filter)",
+            "short_reference": "It measures how many of the model's positive predictions are actually correct, focusing on minimizing false alarms. High precision means fewer mistakes when the model says something is positive."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Recall",
+            "definition": "Measures the fraction of actual positive cases that the model correctly identified: TP / (TP + FN). It answers 'of all true positives, how many did the model catch?' High recall rates mean few missed positives. This metric is prioritized when false negatives are more costly than false positives, such as in medical screening where missing a disease is worse than a false alarm.",
+            "difficulty": "beginner",
+            "module": "classical-ml",
+            "category": "evaluation",
+            "code_example": "recall = TP / (TP + FN)  # use when false negatives are costly (e.g., disease detection)",
+            "short_reference": "It measures how well a model catches actual positive cases, focusing on minimizing missed positives, especially important when missing a real positive is worse than a false alarm."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "F1 Score",
+            "definition": "The harmonic mean of precision and recall, providing a single metric that balances both: F1 = 2 * (precision * recall) / (precision + recall). It is more informative than accuracy on imbalanced datasets and useful when both false positives and false negatives matter. The harmonic mean penalizes extreme imbalances between precision and recall more harshly than the arithmetic mean.",
+            "difficulty": "beginner",
+            "module": "classical-ml",
+            "category": "evaluation",
+            "code_example": "from sklearn.metrics import f1_score; f1_score(y_true, y_pred, average='macro')",
+            "short_reference": "It combines precision and recall using a harmonic mean to balance both, especially useful when datasets are skewed or both false positives and false negatives need attention."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "ROC-AUC",
+            "definition": "The Receiver Operating Characteristic curve plots true positive rate against false positive rate at all classification thresholds, and Area Under the Curve summarizes this curve in a single scalar. An area-under-curve value of 1.0 indicates perfect discrimination; 0.5 indicates no better than random. This metric is threshold-independent and robust to class imbalance, making it useful for comparing classifiers.",
+            "difficulty": "intermediate",
+            "module": "classical-ml",
+            "category": "evaluation",
+            "code_example": "from sklearn.metrics import roc_auc_score; roc_auc_score(y_true, y_pred_proba)",
+            "short_reference": "ROC-AUC measures how well a model distinguishes between classes by calculating the area under a curve that tracks true vs false positive rates; higher values mean better performance, with 1 being perfect and 0.5 being random."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Confusion Matrix",
+            "definition": "A tabular summary of a classifier's predictions organized by actual vs. predicted class, with cells representing TP, TN, FP, and FN counts. For multi-class problems it extends naturally to an N\u00d7N table where diagonal entries are correct predictions. Visual inspection reveals which specific classes the model confuses, providing actionable diagnostic information beyond a single accuracy number.",
+            "difficulty": "beginner",
+            "module": "classical-ml",
+            "category": "evaluation",
+            "code_example": "from sklearn.metrics import confusion_matrix; cm = confusion_matrix(y_true, y_pred)",
+            "short_reference": "It's a table showing how often a model's predictions match the actual classes, breaking down correct and incorrect guesses for each category to spot where the model struggles."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Perplexity",
+            "definition": "A metric for language models that measures how well the model predicts a held-out text sample, computed as the exponent of the average negative log-likelihood per token. Lower values indicate the model assigns higher probability to the test text, meaning it is less 'surprised' by the data. This metric is commonly used to compare pretrained language models or evaluate fine-tuned models on domain-specific text.",
+            "difficulty": "intermediate",
+            "module": "nlp",
+            "category": "evaluation",
+            "code_example": "perplexity = exp(-1/N * sum(log P(token_i)))  # N = number of tokens",
+            "short_reference": "It's a measure of how well a language model predicts new text, with lower values meaning the model is less surprised by the text."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "BLEU Score",
+            "definition": "Bilingual Evaluation Understudy measures the quality of machine-translated text by computing n-gram precision between the candidate translation and one or more human reference translations, with a brevity penalty for short outputs. It is the dominant automated metric for machine translation, ranging from 0 to 1 (or 0 to 100). This metric is criticized for poor correlation with human judgments on more diverse tasks like summarization, where ROUGE is preferred.",
+            "difficulty": "intermediate",
+            "module": "nlp",
+            "category": "evaluation",
+            "code_example": "from nltk.translate.bleu_score import corpus_bleu; score = corpus_bleu(references, hypotheses)",
+            "short_reference": "It's a metric that checks how well machine translations match human references by comparing word and phrase matches, adjusting for short outputs, but isn't great for tasks like summarization where other measures work better."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "ROUGE Score",
+            "definition": "Recall-Oriented Understudy for Gisting Evaluation measures the quality of text summarization by computing n-gram overlap or longest common subsequence between a candidate summary and reference summaries. Unlike BLEU, this metric emphasizes recall (coverage of reference content). This metric and related variants measure unigram and bigram overlap; another variant measures structural similarity.",
+            "difficulty": "intermediate",
+            "module": "nlp",
+            "category": "evaluation",
+            "code_example": "from rouge_score import rouge_scorer; scorer = rouge_scorer.RougeScorer(['rouge1','rougeL'])",
+            "short_reference": "It evaluates how well a summary includes the main points from the original text by checking word or phrase matches and sentence structures, focusing on covering as much of the original content as possible."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Mean Squared Error (MSE)",
+            "definition": "Is the standard loss and evaluation metric for regression problems, computed as the average of squared differences between predictions and true values. Squaring the errors penalizes large mistakes disproportionately more than small ones and ensures a non-negative, differentiable loss. Root mean square error is often reported instead because it has the same units as the target variable.",
+            "difficulty": "beginner",
+            "module": "classical-ml",
+            "category": "evaluation",
+            "code_example": "MSE = (1/n) * sum((y_pred - y_true)^2);  RMSE = sqrt(MSE)",
+            "short_reference": "It measures how much a model's predictions differ from actual values in regression by averaging squared errors, which makes big mistakes count more heavily. RMSE is often used instead to keep units consistent with the target variable."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Cross-Validation",
+            "definition": "Estimates model generalization by repeatedly splitting the dataset into training and validation folds, training on k-1 folds and evaluating on the held-out fold, then averaging results across all k folds. This reduces the variance of the generalization estimate compared to a single train/val split, especially on small datasets. With k=5 or k=10, this approach is the most common setup.",
+            "difficulty": "intermediate",
+            "module": "classical-ml",
+            "category": "evaluation",
+            "code_example": "from sklearn.model_selection import cross_val_score; scores = cross_val_score(model, X, y, cv=5)",
+            "short_reference": "This reduces the variance of the estimate compared to a single train and validation split."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Overfitting",
+            "definition": "Occurs when a model learns the training data too closely, including its noise and random fluctuations, resulting in high training performance but poor generalization to new data. Such models have low bias but high variance. Common remedies include regularization (L2, dropout), more training data, early stopping, and reducing model capacity.",
+            "difficulty": "beginner",
+            "module": "classical-ml",
+            "category": "evaluation",
+            "code_example": "Signs: train_loss << val_loss; train_acc >> val_acc \u2014 check learning curves during training",
+            "short_reference": "A model that memorizes training data, including noise, performs well on training but poorly on new data because it's too sensitive to small changes."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Bias-Variance Tradeoff",
+            "definition": "Describes the fundamental tension between two sources of generalization error: bias (error from incorrect assumptions, underfitting) and variance (sensitivity to small fluctuations in training data, overfitting). Simple models have high bias and low variance; complex models have low bias and high variance. The goal is to find model complexity that minimizes total generalization error.",
+            "difficulty": "intermediate",
+            "module": "classical-ml",
+            "category": "evaluation",
+            "code_example": "Total error = Bias^2 + Variance + Irreducible noise",
+            "short_reference": "Balancing how much a model is too simple (high bias) or too complex (high variance) to avoid errors when predicting new data."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Benchmark Dataset",
+            "definition": "A standardized dataset with established evaluation protocols used to compare model performance across the research community. Examples include ImageNet (image classification), GLUE/SuperGLUE (NLP understanding), MMLU (LLM reasoning), and SQuAD (question answering). Such datasets enable reproducible comparisons but can also mislead if models are inadvertently trained on data (contamination).",
+            "difficulty": "beginner",
+            "module": "classical-ml",
+            "category": "evaluation",
+            "code_example": "from datasets import load_dataset; squad = load_dataset('squad')  # load SQuAD benchmark",
+            "short_reference": "It's a standard dataset used to compare how well different models perform, like ImageNet for images or GLUE for language tasks. But sometimes models might accidentally learn from the benchmark data itself, which can mess up the results."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "AI/ML \u2014 Data Preparation",
+        "description": "Covers the processes of collecting, cleaning, transforming, and engineering data before it is fed into machine learning models.",
+        "subject": "ai_ml",
+        "difficulty": "beginner",
+        "estimated_hours": 8,
+        "prerequisites": [
+          "Python",
+          "statistics basics",
+          "pandas/numpy"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Feature Engineering",
+            "definition": "The process of using domain knowledge to create, transform, or select input variables (features) that better represent the underlying structure of the problem for the model. Good features can compensate for a weaker model; poor features limit even the most powerful architectures. In classical ML, feature engineering is critical; deep learning shifts some burden by learning representations automatically.",
+            "difficulty": "intermediate",
+            "module": "classical-ml",
+            "category": "data-prep",
+            "code_example": "df['interaction'] = df['feature_a'] * df['feature_b']  # polynomial interaction feature",
+            "short_reference": "It's about using what you know about the problem to create or pick features that help the model learn better. Good features can make a simple model work well, while bad ones can mess up even complex models."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Normalization",
+            "definition": "Rescales feature values to a fixed range, typically [0, 1], by subtracting the minimum and dividing by the range. It prevents features with large numeric ranges from dominating gradient updates in distance-based or gradient-based models. Preferred when the feature distribution is known to be bounded and uniform.",
+            "difficulty": "beginner",
+            "module": "classical-ml",
+            "category": "data-prep",
+            "code_example": "x_norm = (x - x.min()) / (x.max() - x.min())  # min-max normalization to [0,1]",
+            "short_reference": "It's adjusting feature values to a 0-1 range by subtracting the smallest value and dividing by the difference between max and min. This helps prevent larger features from overpowering smaller ones in models."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Standardization",
+            "definition": "(Z-score normalization) transforms features to have zero mean and unit variance by subtracting the mean and dividing by the standard deviation. Unlike min-max normalization, it does not bound values to a fixed range, handling outliers more gracefully. Generally preferred for normally distributed features and is the default preprocessing step for many algorithms like SVMs and neural networks.",
+            "difficulty": "beginner",
+            "module": "classical-ml",
+            "category": "data-prep",
+            "code_example": "x_std = (x - x.mean()) / x.std()  # or: from sklearn.preprocessing import StandardScaler",
+            "short_reference": "It adjusts data by subtracting the average and dividing by how spread out the data is, which helps with outliers and works well for algorithms like SVMs and neural networks."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "One-Hot Encoding",
+            "definition": "Converts categorical variables into binary indicator columns, one per category, where exactly one column is 1 and all others are 0 for each sample. This is necessary for algorithms that require numeric inputs and cannot interpret ordinal relationships in category labels. It can cause high dimensionality for high-cardinality features, for which target encoding or embedding layers are alternatives.",
+            "difficulty": "beginner",
+            "module": "classical-ml",
+            "category": "data-prep",
+            "code_example": "pd.get_dummies(df['color'], prefix='color')  # or: sklearn OneHotEncoder",
+            "short_reference": "It converts categories into columns with 1s and 0s, where each row has a single 1 showing which category it belongs to. This helps algorithms that need numbers instead of text labels."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Tokenization",
+            "definition": "Splits raw text into discrete units (tokens) that a model can process \u2014 these may be words, subwords, characters, or byte pairs depending on the vocabulary design. Modern LLMs use subword tokenizers (BPE or WordPiece) that balance vocabulary size with coverage, allowing rare words to be represented as combinations of common subwords. The tokenizer is a fixed pre/post-processing component that must be paired with its specific model.",
+            "difficulty": "beginner",
+            "module": "nlp",
+            "category": "data-prep",
+            "code_example": "from transformers import AutoTokenizer; tokenizer = AutoTokenizer.from_pretrained('gpt2'); tokens = tokenizer('Hello world')",
+            "short_reference": "It's breaking text into smaller units like words or parts of words so models can process them, often using subword methods to handle rare words by combining common pieces."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Word Embeddings",
+            "definition": "Dense vector representations of words learned from large text corpora, capturing semantic and syntactic relationships so that similar words are geometrically close in embedding space. Classic embedding models like Word2Vec and GloVe produce static embeddings (one vector per word regardless of context). Transformer-based models produce contextual embeddings where the same word gets different representations based on surrounding text.",
+            "difficulty": "intermediate",
+            "module": "nlp",
+            "category": "data-prep",
+            "code_example": "from gensim.models import Word2Vec; model = Word2Vec(sentences, vector_size=100, window=5, min_count=1)",
+            "short_reference": "They're word vectors that show how words connect, with similar ones close together. Some models give fixed vectors, others change based on context."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "TF-IDF",
+            "definition": "(Term Frequency-Inverse Document Frequency) is a statistical feature representation for text that weights each word by how often it appears in a document (TF) divided by how common it is across all documents (IDF). Words that appear frequently in one document but rarely in the corpus get high scores, capturing document-specific signal. A strong baseline for text classification and information retrieval without any learned representations.",
+            "difficulty": "beginner",
+            "module": "nlp",
+            "category": "data-prep",
+            "code_example": "from sklearn.feature_extraction.text import TfidfVectorizer; vec = TfidfVectorizer(max_features=10000); X = vec.fit_transform(corpus)",
+            "short_reference": "It's a method that scores words based on how often they appear in a specific document versus how common they are across all documents, highlighting words unique to that document for tasks like text analysis or search."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Train/Test Split",
+            "definition": "Partitions the dataset into a training set (used to fit the model) and a held-out test set (used only for final evaluation), ensuring the reported performance reflects generalization to unseen data. A common split is 80% train / 20% test, with an additional validation set for hyperparameter tuning. Crucially, the test set must never influence model training or selection decisions, or its evaluation becomes optimistically biased.",
+            "difficulty": "beginner",
+            "module": "classical-ml",
+            "category": "data-prep",
+            "code_example": "from sklearn.model_selection import train_test_split; X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)",
+            "short_reference": "Split your data into two parts\u2014one to train the model and another to test it on\u2014so you can see how well it works on new data without letting the test part affect training."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Missing Value Imputation",
+            "definition": "Fills in missing values in a dataset with estimated substitutes rather than dropping the affected rows or columns, preserving dataset size and avoiding selection bias. Simple strategies include replacing with the mean, median, or mode; advanced methods use model-based imputation (e.g., k-NN or regression) to predict missing values from other features. The choice of imputation strategy can meaningfully affect downstream model performance.",
+            "difficulty": "beginner",
+            "module": "classical-ml",
+            "category": "data-prep",
+            "code_example": "from sklearn.impute import SimpleImputer; imp = SimpleImputer(strategy='median'); X_imputed = imp.fit_transform(X)",
+            "short_reference": "It's filling in missing data with estimates like averages or models to keep the dataset size and avoid bias."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Dimensionality Reduction",
+            "definition": "Compresses high-dimensional feature spaces into fewer dimensions while preserving as much structure as possible, reducing computational cost and the curse of dimensionality. Linear methods like PCA find orthogonal axes of maximum variance; nonlinear methods like t-SNE and UMAP preserve local neighborhood structure for visualization. Also used as a preprocessing step before clustering or classification.",
+            "difficulty": "intermediate",
+            "module": "classical-ml",
+            "category": "data-prep",
+            "code_example": "from sklearn.decomposition import PCA; pca = PCA(n_components=50); X_reduced = pca.fit_transform(X)",
+            "short_reference": "It's a way to simplify complex data by cutting down on the number of features while keeping the key patterns, which makes analysis faster and helps with tasks like grouping or predicting."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Feature Selection",
+            "definition": "Identifies and retains only the most informative input variables for a model, discarding irrelevant or redundant features to reduce noise, overfitting, and training time. Filter methods score features independently of the model (e.g., correlation, mutual information); wrapper methods evaluate subsets using a model; embedded methods perform selection during training (e.g., L1 regularization). Unlike dimensionality reduction, feature selection retains original interpretable features.",
+            "difficulty": "intermediate",
+            "module": "classical-ml",
+            "category": "data-prep",
+            "code_example": "from sklearn.feature_selection import SelectKBest, f_classif; selector = SelectKBest(f_classif, k=20).fit(X_train, y_train)",
+            "short_reference": "It's about picking the most useful variables for a model and leaving out the ones that don't help, so the model works better and doesn't get confused by extra stuff. It keeps the original features so you can still understand what's going on."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Dataset Labeling",
+            "definition": "(annotation) is the process of assigning ground-truth labels to raw data \u2014 such as labeling images with bounding boxes, transcribing speech, or categorizing text sentiment \u2014 to create supervised training data. Label quality directly bounds model quality; noisy or inconsistent labels cause training instability and evaluation errors. Techniques like inter-annotator agreement, active learning, and weak supervision manage annotation cost and quality at scale.",
+            "difficulty": "beginner",
+            "module": "mlops",
+            "category": "data-prep",
+            "code_example": "Label quality check: Cohen's kappa between annotators; flag items with kappa < 0.6 for review",
+            "short_reference": "It's when you add labels to data like images or text so machines can learn from examples, but if the labels are wrong, the model might not work well."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "AI/ML \u2014 NLP",
+        "description": "Covers natural language processing concepts from classical methods to transformer-based language models, including tokenization, embeddings, attention, and major model families.",
+        "subject": "ai_ml",
+        "difficulty": "intermediate",
+        "estimated_hours": 14,
+        "prerequisites": [
+          "Python",
+          "neural networks",
+          "linear algebra",
+          "probability"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Subword Tokenization (BPE)",
+            "definition": "An algorithm that iteratively merges the most frequent adjacent byte or character pairs to build a fixed-size vocabulary of subword units. This allows rare words to be represented as sequences of common subwords, balancing vocabulary coverage with size. Variants (WordPiece, SentencePiece) are the tokenization schemes used in virtually all modern LLMs.",
+            "difficulty": "intermediate",
+            "module": "nlp",
+            "category": "nlp",
+            "code_example": "'unhappiness' \u2192 ['un', 'happiness'] or ['un', 'happ', 'iness'] depending on vocabulary",
+            "short_reference": "It's a way to break words into smaller common parts by combining frequent letter or byte pairs, helping rare words be expressed with simpler units used in big language models."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Sentence Embedding",
+            "definition": "A single dense vector representation of an entire sentence or passage, encoding its semantic meaning in a continuous space. Models like sentence-transformers (SBERT) are specifically trained to produce high-quality where cosine similarity corresponds to semantic similarity. Embeddings power semantic search, clustering, and the retrieval component of RAG systems.",
+            "difficulty": "intermediate",
+            "module": "nlp",
+            "category": "nlp",
+            "code_example": "from sentence_transformers import SentenceTransformer; model = SentenceTransformer('all-MiniLM-L6-v2'); emb = model.encode('Hello world')",
+            "short_reference": "It's a way to turn a sentence into a set of numbers that capture its meaning, often using models like SBERT to make similar sentences have closer numerical values. These are used for tasks like finding related sentences or organizing text data."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Self-Attention",
+            "definition": "An attention mechanism where a sequence attends to itself \u2014 each position computes queries, keys, and values from the same input sequence, and attends to all other positions. This allows each token's representation to be contextualized by every other token in the sequence in a single layer. The core operation in transformer encoder and decoder blocks, replacing recurrence for modeling long-range dependencies.",
+            "difficulty": "intermediate",
+            "module": "nlp",
+            "category": "nlp",
+            "code_example": "Q=K=V=input * W_q/W_k/W_v; scores = softmax(QK^T/sqrt(d_k)); output = scores @ V",
+            "short_reference": "It's when each part of the input looks at all other parts to understand context, used in transformers to handle long dependencies without loops."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "BERT",
+            "definition": "A pretrained transformer encoder model trained with masked language modeling (MLM), where random tokens are masked and the model predicts them using context from both directions. This bidirectionality gives rich contextual representations useful for understanding tasks like classification, NER, and question answering. Is fine-tuned on downstream tasks by adding a task-specific head on top of the encoder.",
+            "difficulty": "intermediate",
+            "module": "nlp",
+            "category": "nlp",
+            "code_example": "from transformers import BertModel; model = BertModel.from_pretrained('bert-base-uncased'); outputs = model(**inputs)",
+            "short_reference": "It's a model that learns word meanings by predicting missing words using surrounding text from both sides, then gets adjusted for specific tasks like answering questions or classifying text."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "GPT",
+            "definition": "A family of autoregressive language models built with transformer decoder stacks, pretrained to predict the next token in a sequence. Because the model processes tokens left-to-right (causal attention), it excels at generation tasks and is the basis for the GPT-3, GPT-4, and ChatGPT family. Unlike BERT's bidirectional encoder, causal decoder makes it naturally suited for text generation and few-shot prompting.",
+            "difficulty": "intermediate",
+            "module": "llm",
+            "category": "nlp",
+            "code_example": "from transformers import GPT2LMHeadModel; model = GPT2LMHeadModel.from_pretrained('gpt2'); output = model.generate(input_ids, max_new_tokens=100)",
+            "short_reference": "It's an AI model that learns to predict the next word in a sentence by analyzing patterns in large amounts of text, forming the basis for tools like ChatGPT that generate human-like responses."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Sequence-to-Sequence Model",
+            "definition": "A model maps an input sequence of arbitrary length to an output sequence of arbitrary length, using an encoder to compress the input and a decoder to generate the output token by token. Originally implemented with RNNs (with attention), modern seq2seq models use transformer encoder-decoder architectures. Core applications include machine translation, summarization, question answering, and code generation.",
+            "difficulty": "intermediate",
+            "module": "nlp",
+            "category": "nlp",
+            "code_example": "model = T5ForConditionalGeneration.from_pretrained('t5-base'); out = model.generate(input_ids)",
+            "short_reference": "It's a model that uses an encoder to process input and a decoder to generate output, often used for tasks like translation or summarization."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Named Entity Recognition (NER)",
+            "definition": "An NLP task that identifies and classifies named entities in text \u2014 such as persons, organizations, locations, and dates \u2014 into predefined categories. It is typically framed as a token classification problem where each token is labeled with its entity type. A foundational NLP component used in information extraction, knowledge graph construction, and document processing pipelines.",
+            "difficulty": "intermediate",
+            "module": "nlp",
+            "category": "nlp",
+            "code_example": "from transformers import pipeline; ner = pipeline('ner', model='dslim/bert-base-NER'); ner('Apple was founded by Steve Jobs in Cupertino.')",
+            "short_reference": "It is a foundational component used for extracting structured information from unstructured documents."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Sentiment Analysis",
+            "definition": "Classifies the emotional tone or opinion expressed in text, most commonly into positive, negative, or neutral categories. It is one of the most commercially deployed NLP tasks, used in product review analysis, social media monitoring, and customer feedback systems. Fine-tuned transformer models like RoBERTa and DistilBERT now achieve near-human performance on standard sentiment benchmarks.",
+            "difficulty": "beginner",
+            "module": "nlp",
+            "category": "nlp",
+            "code_example": "classifier = pipeline('sentiment-analysis'); classifier('This product is amazing!')",
+            "short_reference": "It's a method that checks if text is positive, negative, or neutral, used in reviews or social media to understand opinions."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Prompt Engineering",
+            "definition": "The practice of designing and structuring input prompts to elicit desired behaviors or outputs from large language models without changing model weights. Techniques include zero-shot prompting, few-shot examples, chain-of-thought reasoning, role specification, and output format constraints. As LLMs become more capable, this has become a practical skill for deploying AI applications.",
+            "difficulty": "intermediate",
+            "module": "llm",
+            "category": "nlp",
+            "code_example": "prompt = 'You are an expert Python tutor. Explain {concept} with a simple analogy and a code example.'",
+            "short_reference": "It's about creating effective prompts to guide AI models to give the right answers using tricks like examples or specific instructions, which helps use AI tools better as they improve."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Question Answering",
+            "definition": "An NLP task where a model produces a natural language answer to a question, either extracting a span from a provided passage (extractive QA) or generating a free-form answer (generative QA). Extractive systems like BERT-based models predict start and end token positions of the answer span; generative systems like T5 and GPT generate the answer token by token. This is a core evaluation task for general NLP capability.",
+            "difficulty": "intermediate",
+            "module": "nlp",
+            "category": "nlp",
+            "code_example": "qa_pipeline = pipeline('question-answering'); qa_pipeline(question='Who invented Python?', context=document_text)",
+            "short_reference": "It's when a model answers questions by either pulling out specific text or creating new answers, showing how well it understands language."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Text Classification",
+            "definition": "Assigns predefined category labels to text inputs, encompassing tasks from binary sentiment analysis to multi-class topic categorization and multi-label classification. Modern approaches fine-tune a pretrained encoder (BERT, RoBERTa) by adding a classification head on the [CLS] token and training on labeled examples. Performance degrades gracefully with fewer labels when combined with transfer learning.",
+            "difficulty": "beginner",
+            "module": "nlp",
+            "category": "nlp",
+            "code_example": "model = AutoModelForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=5)",
+            "short_reference": "It's about sorting text into categories like positive/negative or topics using models like BERT, especially when there aren't many examples to learn from."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "AI/ML \u2014 MLOps",
+        "description": "Covers the operational practices and tooling for deploying, monitoring, and maintaining machine learning models in production, including pipelines, experiment tracking, and model lifecycle management.",
+        "subject": "ai_ml",
+        "difficulty": "intermediate",
+        "estimated_hours": 10,
+        "prerequisites": [
+          "cloud deployment basics",
+          "Python",
+          "CI/CD concepts",
+          "basic ML knowledge"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Experiment Tracking",
+            "definition": "Records the hyperparameters, code versions, metrics, and artifacts associated with each ML training run, enabling systematic comparison and reproducibility. Without tracking, iterating on models quickly becomes chaotic \u2014 it is easy to lose which configuration produced a given result. Tools like MLflow, Weights & Biases, and Neptune provide dashboards for visualizing histories and managing model versions.",
+            "difficulty": "intermediate",
+            "module": "mlops",
+            "category": "mlops",
+            "code_example": "import mlflow; with mlflow.start_run(): mlflow.log_param('lr', 0.001); mlflow.log_metric('val_loss', 0.23)",
+            "short_reference": "Without this, iterating on models becomes chaotic because it is easy to lose track of which configuration produced a given result."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Model Registry",
+            "definition": "A centralized repository that stores versioned model artifacts along with their metadata, evaluation metrics, and deployment status. It serves as the handoff point between data scientists (who train models) and engineers (who deploy them), providing lineage, approval workflows, and lifecycle state tracking (Staging \u2192 Production \u2192 Archived). MLflow Model Registry and SageMaker Model Registry are common implementations.",
+            "difficulty": "intermediate",
+            "module": "mlops",
+            "category": "mlops",
+            "code_example": "mlflow.register_model('runs:/run_id/model', 'MyClassifier')  # register run artifact",
+            "short_reference": "A Model Registry is like a central hub where different versions of machine learning models are kept with details like their performance and where they're deployed. It helps teams share models smoothly, track their progress from testing to real-world use, and manage approvals."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "ML Pipeline",
+            "definition": "An automated, reproducible workflow that chains together data ingestion, preprocessing, training, evaluation, and deployment steps into a single orchestrated sequence. Pipelines replace manual, ad-hoc notebook workflows with versioned, schedulable, and auditable processes. Frameworks like SageMaker Pipelines, Kubeflow, and MLflow Projects provide the infrastructure to define and run these workflows.",
+            "difficulty": "intermediate",
+            "module": "mlops",
+            "category": "mlops",
+            "code_example": "pipeline = Pipeline(steps=[('preprocess', preprocessor), ('train', trainer), ('evaluate', evaluator)])",
+            "short_reference": "It automates the steps from data collection to deployment in a repeatable, organized way instead of manual work."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Feature Store",
+            "definition": "A centralized data platform that stores, versifies, and serves engineered features for both training and real-time inference, ensuring consistency between the two. Without a feature store, teams often reimplement feature logic separately for training (batch) and serving (real-time), introducing subtle divergences that degrade model performance. AWS SageMaker Feature Store and Feast are widely used implementations.",
+            "difficulty": "advanced",
+            "module": "mlops",
+            "category": "mlops",
+            "code_example": "feature_group.get_record(IdentifierFeatureName='user_id', RecordIdentifierValueAsString='42')",
+            "short_reference": "It's a central place where features used for training and real-time predictions are stored and kept consistent, so teams don't have to rebuild them separately each time."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Model Monitoring",
+            "definition": "Continuously tracks a deployed model's behavior and predictions in production to detect degradation before it causes business impact. Key signals include prediction distribution shifts, error rates, latency, and feature statistics. Monitoring answers the question 'is the model still working correctly?' after deployment, triggering alerts or retraining pipelines when quality degrades.",
+            "difficulty": "intermediate",
+            "module": "mlops",
+            "category": "mlops",
+            "code_example": "sagemaker.monitor.ModelMonitor(role=role).create_monitoring_schedule(endpoint_input=endpoint, statistics=stats, constraints=constraints)",
+            "short_reference": "It's tracking a deployed model's performance in real-time using metrics like prediction changes or error rates to catch issues before they hurt the business."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Data Drift",
+            "definition": "(covariate shift) occurs when the statistical distribution of input features changes between training time and serving time, causing a model trained on historical data to make increasingly poor predictions on current data. For example, a fraud detection model trained before a new payment method was introduced may degrade as that method's transactions grow. Monitoring feature distributions and triggering retraining is the standard mitigation.",
+            "difficulty": "intermediate",
+            "module": "mlops",
+            "category": "mlops",
+            "code_example": "Drift detection: compare PSI or KL divergence between training feature distribution and live feature distribution",
+            "short_reference": "When the data a model was trained on changes over time\u2014like new payment methods appearing\u2014the model's predictions can get worse because it doesn't recognize the new patterns."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Concept Drift",
+            "definition": "Occurs when the relationship between input features and the target variable changes over time, even if the feature distribution stays the same. Unlike data drift, the model's learned decision boundary is no longer valid for the current world. Examples include changes in consumer behavior, language usage, or regulatory definitions. Detecting requires monitoring prediction accuracy against ground-truth labels, which may arrive with delay.",
+            "difficulty": "intermediate",
+            "module": "mlops",
+            "category": "mlops",
+            "code_example": "Detect via: track rolling accuracy/F1 on labeled production data; compare to baseline performance",
+            "short_reference": "It's when the way features relate to the target changes over time, making the model's predictions wrong even if the features themselves haven't changed. This is different from data drift, where the features shift but the model's understanding stays valid."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Shadow Deployment",
+            "definition": "A new model version runs in parallel with the production model, receiving the same live traffic and making predictions, but those predictions are not served to users. Predictions from both models are logged and compared, allowing engineers to validate the new model's behavior on real data before exposing it to users. This is the safest deployment pattern for high-stakes systems.",
+            "difficulty": "advanced",
+            "module": "mlops",
+            "category": "mlops",
+            "code_example": "Shadow mode: route 100% of requests to both models; serve prod predictions; log shadow predictions for offline evaluation",
+            "short_reference": "It's when a new model runs alongside the current one, getting the same data but not showing its predictions to users so engineers can compare results before switching."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Canary Deployment",
+            "definition": "Routes a small percentage of live traffic to a new model version while keeping the majority on the current production model, limiting the blast radius of unexpected regressions. If the canary performs well, traffic is gradually shifted until full rollout; if metrics degrade, traffic is quickly reverted. This pattern balances risk with validation on real traffic.",
+            "difficulty": "intermediate",
+            "module": "mlops",
+            "category": "mlops",
+            "code_example": "Route 5% of traffic to new model; monitor error rate and latency; auto-rollback if errors > threshold",
+            "short_reference": "It's a method where a new version is tested on a small group first; if it works, more people use it gradually, but if it fails, everyone switches back fast."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "CI/CD for ML",
+            "definition": "Extends software CI/CD practices to machine learning workflows, automatically running data validation, model training, evaluation against quality gates, and deployment when code or data changes are pushed. Unlike software CI/CD (where tests are deterministic), ML CI/CD must handle model quality metrics as the success criterion and manage large data and model artifacts. GitHub Actions, SageMaker Pipelines, and Vertex AI Pipelines are common implementations.",
+            "difficulty": "intermediate",
+            "module": "mlops",
+            "category": "mlops",
+            "code_example": "On push to main: 1) data validation 2) retrain model 3) evaluate vs baseline 4) deploy if F1 > threshold",
+            "short_reference": "It automates ML tasks like data checks, training models, and deploying them when code or data changes. It's different from regular CI/CD because it uses model quality metrics instead of fixed tests to decide if something works."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "MLflow",
+            "definition": "An open-source platform for managing the ML lifecycle, including experiment tracking, model packaging (MLflow Models), a model registry, and project reproducibility (MLflow Projects). Its tracking API is framework-agnostic and can log metrics, parameters, and artifacts from any Python ML code. MLflow can be self-hosted or used via managed services like Databricks.",
+            "difficulty": "intermediate",
+            "module": "mlops",
+            "category": "mlops",
+            "code_example": "mlflow.set_experiment('my-experiment'); with mlflow.start_run(): mlflow.log_params(params); mlflow.sklearn.log_model(model, 'model')",
+            "short_reference": "You can use it to log metrics and parameters from any Python code to ensure your projects are reproducible."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "SageMaker Pipelines",
+            "definition": "AWS's managed ML workflow orchestration service that defines end-to-end ML pipelines as directed acyclic graphs (DAGs) of processing, training, evaluation, and deployment steps. Pipelines are versioned, auditable, and integrated with the SageMaker ecosystem including the Model Registry, Feature Store, and Experiments. They support conditional steps, parallel execution, and parameter overrides at runtime.",
+            "difficulty": "advanced",
+            "module": "mlops",
+            "category": "mlops",
+            "code_example": "pipeline = Pipeline(name='MyPipeline', steps=[process_step, train_step, eval_step, register_step]); pipeline.upsert(role_arn=role)",
+            "short_reference": "It's an AWS tool that automates ML workflows by organizing steps like training and deployment into a diagram, letting you track versions and integrate with SageMaker features while allowing flexible steps and runtime changes."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "AI/ML \u2014 Math Foundations",
+        "description": "Covers the linear algebra, calculus, probability, and statistics concepts that underpin machine learning algorithms, from gradient computation to probabilistic inference.",
+        "subject": "ai_ml",
+        "difficulty": "intermediate",
+        "estimated_hours": 12,
+        "prerequisites": [
+          "high school mathematics",
+          "basic calculus",
+          "basic statistics"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Matrix Multiplication",
+            "definition": "Combines two matrices A (m\u00d7n) and B (n\u00d7p) into a result matrix C (m\u00d7p) where each element C[i,j] is the dot product of the i-th row of A and the j-th column of B. Nearly every neural network layer \u2014 linear layers, attention \u2014 is fundamentally a sequence of these operations, making this operation the computational bottleneck that GPUs are designed to accelerate.",
+            "difficulty": "beginner",
+            "module": "math-foundations",
+            "category": "numeric/math",
+            "code_example": "C = A @ B  # PyTorch/NumPy operator; or torch.matmul(A, B); requires A.shape[-1] == B.shape[-2]",
+            "short_reference": "It's multiplying rows of one matrix by columns of another to create a new matrix, often used in neural networks and other computations."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Dot Product",
+            "definition": "Produces a scalar equal to the sum of element-wise products: a\u00b7b = sum(a_i * b_i). Geometrically, it measures the projection of one vector onto another, with value ||a|| ||b|| cos(\u03b8). In ML, is ubiquitous in attention score computation, cosine similarity, and linear transformations.",
+            "difficulty": "beginner",
+            "module": "math-foundations",
+            "category": "numeric/math",
+            "code_example": "score = torch.dot(query, key)  # or: (query * key).sum(); used in attention: Q @ K.T",
+            "short_reference": "This value tells you how much one vector projects onto the other."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Gradient",
+            "definition": "Of a scalar function with respect to a vector of parameters is a vector of partial derivatives, one per parameter, pointing in the direction of steepest increase of the function. In ML, of the loss function with respect to model weights tells each weight how much and in which direction to change to increase loss \u2014 so we move in the opposite direction. Automatic differentiation systems like PyTorch compute automatically by tracing the computation graph.",
+            "difficulty": "intermediate",
+            "module": "math-foundations",
+            "category": "numeric/math",
+            "code_example": "\u2207\u03b8 L(\u03b8) \u2014 vector of \u2202L/\u2202\u03b8_i for each parameter; computed via loss.backward() in PyTorch",
+            "short_reference": "It's a vector showing how each parameter affects the function's rate of change, used in ML to adjust model weights by moving opposite to the direction of steepest loss increase."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Chain Rule",
+            "definition": "A calculus rule for differentiating composite functions: if y = f(g(x)), then dy/dx = (df/dg) * (dg/dx). In neural networks, is applied repeatedly through each layer during backpropagation, multiplying local gradients backward through the computation graph. It is the mathematical foundation that makes computing gradients in deep networks tractable.",
+            "difficulty": "intermediate",
+            "module": "math-foundations",
+            "category": "numeric/math",
+            "code_example": "\u2202L/\u2202W = (\u2202L/\u2202output) * (\u2202output/\u2202W)  \u2014 backward chain through one linear layer",
+            "short_reference": "It's a calculus method for finding derivatives of composite functions by multiplying the derivatives of the outer and inner functions. In neural networks, it helps calculate gradients layer by layer during training."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Probability Distribution",
+            "definition": "Describes how probability is allocated across the possible outcomes of a random variable \u2014 for discrete variables as a probability mass function (PMF), for continuous variables as a probability density function (PDF). Common distributions in ML include Gaussian (normal distribution, used for weight initialization and noise), Bernoulli (binary classification), and Categorical (softmax outputs). Understanding these patterns is essential for loss function design and Bayesian methods.",
+            "difficulty": "beginner",
+            "module": "math-foundations",
+            "category": "numeric/math",
+            "code_example": "torch.distributions.Normal(loc=0, scale=1).sample((100,))  # sample 100 values from standard normal",
+            "short_reference": "It shows how probabilities are spread across different possible outcomes for random variables, using different methods for things that can be counted versus those that can't, and it's important in machine learning for things like setting model weights or handling binary choices."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Bayes' Theorem",
+            "definition": "Relates the conditional probability of a hypothesis given evidence to the prior probability of the hypothesis and the likelihood of the evidence: P(H|E) = P(E|H) * P(H) / P(E). In ML, Bayesian inference uses this to update beliefs about model parameters given observed data. Bayesian approaches explicitly model uncertainty and are foundational to methods like Gaussian processes and Bayesian neural networks.",
+            "difficulty": "intermediate",
+            "module": "math-foundations",
+            "category": "numeric/math",
+            "code_example": "P(class | features) \u221d P(features | class) * P(class)  \u2014 Naive Bayes classifier",
+            "short_reference": "It connects the probability of a hypothesis being true after seeing evidence to its initial likelihood and how likely the evidence is under that hypothesis, used in machine learning to update model beliefs based on data."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "KL Divergence",
+            "definition": "Measures how different one probability distribution P is from a reference distribution Q, computed as the expected log ratio of their probabilities: the formula is sum(P(x) * log(P(x)/Q(x))). The measure is asymmetric and equals zero when the distributions are identical. Appears in VAE training (regularizing the latent space) and RLHF (penalizing policy drift from the reference model).",
+            "difficulty": "advanced",
+            "module": "math-foundations",
+            "category": "numeric/math",
+            "code_example": "KL(P||Q) = sum(P(x) * log(P(x)/Q(x)));  torch.distributions.kl_divergence(p, q)",
+            "short_reference": "It compares how different two probability distributions are by looking at the log of their probabilities, and switching which one is the reference changes the result."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Softmax Function",
+            "definition": "Converts a vector of real-valued scores (logits) into a probability distribution where all values are positive and sum to 1: softmax(z_i) = exp(z_i) / sum(exp(z_j)). Is applied as the final layer of classification networks to produce class probabilities, and within attention mechanisms to normalize scores. Amplifies differences between values through the exponential, making high-scoring classes dominate.",
+            "difficulty": "beginner",
+            "module": "math-foundations",
+            "category": "numeric/math",
+            "code_example": "probs = torch.softmax(logits, dim=-1)  # converts logits to class probabilities along last dim",
+            "short_reference": "It converts scores into probabilities by boosting higher values more through exponents, ensuring all add up to 1."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Sigmoid Function",
+            "definition": "The logistic function maps any real value to the range (0, 1): \u03c3(x) = 1 / (1 + exp(-x)), making it useful as an activation function for binary classification output layers or gating mechanisms. Its output is interpretable as a probability, and it saturates near 0 and 1, which can cause vanishing gradients in deep networks. ReLU largely replaced it as a hidden-layer activation, but it remains standard for binary outputs and LSTM gates.",
+            "difficulty": "beginner",
+            "module": "math-foundations",
+            "category": "numeric/math",
+            "code_example": "\u03c3(x) = 1 / (1 + exp(-x));  torch.sigmoid(tensor)  or  nn.Sigmoid()",
+            "short_reference": "It's a function that squishes any number into a value between 0 and 1, often used in neural networks for probabilities or decision-making. It can get stuck at 0 or 1, which might slow down learning in deep networks."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "ReLU Activation",
+            "definition": "(Rectified Linear Unit) is the most widely used neural network activation function, defined as f(x) = max(0, x) \u2014 it passes positive values unchanged and zeros out negative values. Is computationally cheap, avoids the vanishing gradient problem that affects sigmoid and tanh, and induces sparsity in activations. Variants like Leaky ReLU, GELU, and SwiGLU address 'dying neuron' problems and are common in modern transformer models.",
+            "difficulty": "beginner",
+            "module": "math-foundations",
+            "category": "numeric/math",
+            "code_example": "nn.ReLU()  or  torch.relu(x)  \u2014 GELU used in transformers: nn.GELU()",
+            "short_reference": "It's an activation function that zeros out negative numbers and keeps positives, helping neural networks avoid gradient problems and work more efficiently."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Principal Component Analysis (PCA)",
+            "definition": "A linear dimensionality reduction technique that finds the orthogonal directions (principal components) of maximum variance in the data and projects it onto a lower-dimensional subspace spanned by those directions. The first principal component captures the most variance, the second the most of the remainder, and so on. Used for feature compression, noise reduction, and visualization of high-dimensional data.",
+            "difficulty": "intermediate",
+            "module": "math-foundations",
+            "category": "numeric/math",
+            "code_example": "from sklearn.decomposition import PCA; pca = PCA(n_components=2); X_2d = pca.fit_transform(X_high_dim)",
+            "short_reference": "It's a way to simplify data by finding the main patterns (directions) with the most variation and then summarizing the data using just those patterns. It helps make big datasets easier to work with by focusing on what matters most."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Eigenvalue / Eigenvector",
+            "definition": "A non-zero vector v such that multiplying by A only scales v without changing its direction: Av = \u03bbv, where \u03bb (the eigenvalue) is the scaling factor. In PCA, eigenvectors of the data covariance matrix are the principal components, and eigenvalues give the variance explained by each component. Eigendecomposition is foundational to understanding linear transformations in ML.",
+            "difficulty": "intermediate",
+            "module": "math-foundations",
+            "category": "numeric/math",
+            "code_example": "eigenvalues, eigenvectors = torch.linalg.eig(covariance_matrix)",
+            "short_reference": "It's a vector that stays in the same direction when multiplied by a matrix, with the eigenvalue showing how much it's stretched or compressed. In PCA, these vectors (eigenvectors) highlight the main patterns in data, and eigenvalues show how much variation each pattern accounts for."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Monte Carlo Methods",
+            "definition": "Use random sampling to estimate numerical quantities that are difficult or impossible to compute analytically, relying on the law of large numbers to converge as sample count grows. In ML, they appear in Monte Carlo gradient estimation (REINFORCE in reinforcement learning), approximate Bayesian inference, and dropout-based uncertainty estimation at inference time. The name comes from the Monte Carlo casino and reflects the use of randomness.",
+            "difficulty": "advanced",
+            "module": "math-foundations",
+            "category": "numeric/math",
+            "code_example": "# Estimate pi: samples = torch.rand(N, 2); inside = (samples**2).sum(dim=1) < 1; pi_est = 4 * inside.float().mean()",
+            "short_reference": "They use random sampling to estimate hard-to-calculate values by averaging many trials, which gets more accurate with more samples. In machine learning, they're used for things like estimating gradients or predicting uncertainty through methods like dropout."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    }
+  ]
+}

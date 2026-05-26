@@ -336,3 +336,34 @@ lambda-model-separation
 refactor_tests.py
 
 *.onnx
+
+# ML model artifacts — archived to ~/ML-Archive, not tracked in repo
+final_similarity_model/
+final_similarity_model_onnx/
+flan-t5-base*/
+nli-cross-encoder*/
+stsb-cross-encoder*/
+trained_mnrl_model/
+MNRL-Similarity/
+data/working_data/
+
+# Session / working notes
+session-*.md
+saved-context.md
+session-context.md
+opencode-status.md
+
+# Training checkpoints and temp dirs
+checkpoints/
+tmp/
+
+# AI tool working directories — local only
+.claude/
+.gemini/
+.opencode/
+.opencode.json
+.roo/
+.kiro/
+
+# Playwright MCP session files
+.playwright-mcp/

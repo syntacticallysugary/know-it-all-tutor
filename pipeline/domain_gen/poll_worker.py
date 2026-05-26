@@ -4,11 +4,12 @@ Runs continuously on the LAN machine, claiming pending jobs from the
 domain_gen_jobs table and running the two-prompt generation pipeline.
 
 Usage:
-  python -m pipeline.domain_gen.poll_worker
-  python -m pipeline.domain_gen.poll_worker --interval 120
-  python -m pipeline.domain_gen.poll_worker --url https://192.168.1.105/lite/v1 --model thinker1
+  LLM_BASE_URL=https://host/lite/v1 LLM_MODEL=mymodel DB_PROXY_FUNCTION_NAME=fn python -m pipeline.domain_gen.poll_worker
+  python -m pipeline.domain_gen.poll_worker --url https://host/lite/v1 --model mymodel --interval 120
 
 Requires:
+  LLM_BASE_URL env var (or --url flag)
+  LLM_MODEL env var (or --model flag)
   DB_PROXY_FUNCTION_NAME env var (or --db-proxy-fn flag)
   AWS credentials with lambda:InvokeFunction on that function
 """
@@ -204,13 +205,13 @@ def main() -> None:
     )
     parser.add_argument(
         "--url",
-        default="https://192.168.1.105/lite/v1",
-        help="LLM API base URL",
+        default=os.environ.get("LLM_BASE_URL", ""),
+        help="LLM API base URL (default: LLM_BASE_URL env var)",
     )
     parser.add_argument(
         "--model",
-        default="thinker1",
-        help="Model identifier",
+        default=os.environ.get("LLM_MODEL", ""),
+        help="Model identifier (default: LLM_MODEL env var)",
     )
     parser.add_argument(
         "--db-proxy-fn",
@@ -221,6 +222,10 @@ def main() -> None:
 
     if not args.db_proxy_fn:
         raise SystemExit("DB_PROXY_FUNCTION_NAME env var or --db-proxy-fn flag required")
+    if not args.url:
+        raise SystemExit("LLM_BASE_URL env var or --url flag required")
+    if not args.model:
+        raise SystemExit("LLM_MODEL env var or --model flag required")
 
     logger.info(f"Polling every {args.interval}s — model: {args.model} @ {args.url}")
 

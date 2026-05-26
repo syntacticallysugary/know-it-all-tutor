@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import time
 
 import urllib3
@@ -22,8 +23,8 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logger = logging.getLogger(__name__)
 
-SPARKY_BASE = "https://192.168.1.105/lite/v1"
-SPARKY_MODEL = "thinker1"
+SPARKY_BASE = os.environ.get("LLM_BASE_URL", "")
+SPARKY_MODEL = os.environ.get("LLM_MODEL", "")
 
 
 def _stream_call(

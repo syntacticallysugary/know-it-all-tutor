@@ -1,0 +1,1354 @@
+{
+  "domains": [
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "TypeScript \u2014 Type System",
+        "description": "Core TypeScript type constructs including generics, union and intersection types, conditional types, mapped types, and template literal types that form the foundation of TypeScript's static analysis.",
+        "subject": "typescript",
+        "difficulty": "intermediate",
+        "estimated_hours": 10,
+        "prerequisites": [
+          "JavaScript fundamentals",
+          "Basic TypeScript syntax"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "generic type",
+            "definition": "A type definition that accepts one or more type parameters, written as angle-bracket placeholders such as `<T>`. Generics let you write functions, classes, and interfaces that work correctly across multiple types while retaining full type information, avoiding the loss of specificity that comes with using `any`. They are the primary mechanism for reusable, type-safe abstractions in TypeScript.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "type-system",
+            "code_example": "function identity<T>(value: T): T { return value; }"
+          },
+          "metadata": {
+            "signature": "<T>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "union type",
+            "definition": "Expresses that a value may be one of several distinct types, written with the pipe operator: `A | B`. TypeScript uses control flow analysis to narrow the type within each branch of a conditional, ensuring you handle all members before accessing type-specific properties. The idiomatic replacement for overloaded runtime checks.",
+            "difficulty": "beginner",
+            "module": "typescript-type-operator",
+            "category": "type-system",
+            "code_example": "type StringOrNumber = string | number;"
+          },
+          "metadata": {
+            "signature": "T | U",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "intersection type",
+            "definition": "Combines multiple types into one using the `&` operator, producing a type that satisfies all constituent types simultaneously. Commonly used to merge object shapes \u2014 the resulting type has every property from each member. Unlike union types, the resulting value must fulfill all constituent types at once.",
+            "difficulty": "intermediate",
+            "module": "typescript-type-operator",
+            "category": "type-system",
+            "code_example": "type AdminUser = User & { adminLevel: number };"
+          },
+          "metadata": {
+            "signature": "T & U",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "conditional type",
+            "definition": "Selects between two types based on whether a type relationship holds, using the syntax `T extends U ? X : Y`. When `T` is assignable to `U`, the type resolves to `X`; otherwise it resolves to `Y`. Most powerful when combined with `infer` to extract and reuse parts of a type, enabling expressive type-level computations.",
+            "difficulty": "advanced",
+            "module": "typescript-type-operator",
+            "category": "type-system",
+            "code_example": "type IsString<T> = T extends string ? true : false;"
+          },
+          "metadata": {
+            "signature": "T extends U ? X : Y",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "mapped type",
+            "definition": "Transforms each property of an existing type by iterating over its keys with the `in keyof` syntax, optionally modifying property modifiers like `readonly` or `?`. The foundation for most built-in utility types such as `Partial` and `Readonly`. Lets you derive new types programmatically from existing ones without manually repeating structure.",
+            "difficulty": "advanced",
+            "module": "typescript-type-operator",
+            "category": "type-system",
+            "code_example": "type Optional<T> = { [K in keyof T]?: T[K] };"
+          },
+          "metadata": {
+            "signature": "{ [K in keyof T]: T[K] }",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "template literal type",
+            "definition": "Constructs string literal types by interpolating other types into a template string expression, using backtick syntax at the type level. Given a union type as an interpolated slot, TypeScript distributes across all combinations to produce a union of strings. Enables precise typing of string-manipulation patterns such as event names, CSS property keys, or URL segments.",
+            "difficulty": "advanced",
+            "module": "typescript-type-operator",
+            "category": "type-system",
+            "code_example": "type EventName<T extends string> = `on${Capitalize<T>}`;"
+          },
+          "metadata": {
+            "signature": "`prefix${T}`",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "literal type",
+            "definition": "Narrows a primitive type down to a single specific value, such as the string `'GET'` or the number `42`, rather than the broader `string` or `number` type. Especially powerful in union combinations to model a finite set of allowed values; TypeScript infers them automatically from `const` declarations. The basis for discriminated unions and string-enum patterns.",
+            "difficulty": "beginner",
+            "module": "typescript-type-operator",
+            "category": "type-system",
+            "code_example": "type Direction = 'north' | 'south' | 'east' | 'west';"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "tuple type",
+            "definition": "A typed array with a fixed number of elements where each position has a known, potentially distinct type. Unlike a plain array type which only expresses element type, the positional structure is encoded precisely. TypeScript 4.x added support for labeled positions and variadic rest segments for more expressive REST patterns.",
+            "difficulty": "intermediate",
+            "module": "typescript-type-operator",
+            "category": "type-system",
+            "code_example": "type Point = [x: number, y: number];"
+          },
+          "metadata": {
+            "signature": "[T, U, ...V[]]",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "unknown",
+            "definition": "The type-safe counterpart of `any`: it can hold any value, but TypeScript requires narrowing before performing any operation on it. Unlike `any`, assigning a variable of this type to a typed variable without first narrowing it is a compile error. The recommended return type for APIs that genuinely cannot predict their result type, such as JSON parsers.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "type-system",
+            "code_example": "function parse(input: unknown): string { if (typeof input === 'string') return input; throw new Error(); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "never",
+            "definition": "The bottom type of TypeScript's type hierarchy \u2014 represents a value that cannot possibly exist, assignable to every type but assignable from none. Functions that always throw or loop infinitely have this return type, and exhaustive switch statements use it to verify all cases have been handled. When a conditional type resolves to this type, it effectively removes that branch from a union.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "type-system",
+            "code_example": "function fail(msg: string): never { throw new Error(msg); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "any",
+            "definition": "Opts a value entirely out of TypeScript's type checking, allowing it to be used in all contexts without compiler errors. Useful as an escape hatch when migrating JavaScript code or interoperating with untyped libraries, but silences all safety guarantees for that value and everything derived from it. Stricter compiler flags prevent it from appearing implicitly in well-typed code.",
+            "difficulty": "beginner",
+            "module": "typescript-keyword",
+            "category": "type-system",
+            "code_example": "let value: any = getData(); value.foo.bar();"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "infer",
+            "definition": "A keyword that appears only inside the `extends` clause of a conditional type, declaring a new type variable that TypeScript fills in from the matched type. Allows extracting sub-components of a type \u2014 such as the return type of a function or the element type of an array \u2014 without knowing them in advance. The built-in `ReturnType<T>` and `Parameters<T>` utility types are implemented using this keyword.",
+            "difficulty": "advanced",
+            "module": "typescript-keyword",
+            "category": "type-system",
+            "code_example": "type Unpack<T> = T extends Array<infer U> ? U : T;"
+          },
+          "metadata": {
+            "signature": "T extends Array<infer U> ? U : T",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "interface",
+            "definition": "A named object type declaration describing the shape that a value must conform to, including property names, types, optional fields, and method signatures. Declaration merging is supported \u2014 multiple declarations with the same name are automatically combined \u2014 making this the preferred choice for public API contracts and library type augmentation. Unlike type aliases, this construct always produces named types in error messages.",
+            "difficulty": "beginner",
+            "module": "typescript-keyword",
+            "category": "type-system",
+            "code_example": "interface User { id: number; name: string; email?: string; }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "type alias",
+            "definition": "Creates a named reference to any type expression using the `type` keyword, including primitives, unions, intersections, mapped types, and conditional types. Unlike interfaces, this construct cannot be merged and can represent non-object types such as unions of literals. It remains the only way to name union, intersection, and conditional type expressions.",
+            "difficulty": "beginner",
+            "module": "typescript-keyword",
+            "category": "type-system",
+            "code_example": "type ID = string | number;"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "index signature",
+            "definition": "Declares that an object may have any number of properties with keys matching a given type, all sharing the same value type, using the syntax `[key: string]: ValueType`. Enables typing of dynamic objects such as dictionaries and lookup tables where property names are not known at authoring time. TypeScript enforces that all explicitly declared properties on the same type are also assignable to its value type.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "type-system",
+            "code_example": "interface Dictionary { [key: string]: string; }"
+          },
+          "metadata": {
+            "signature": "[key: string]: T",
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "TypeScript \u2014 Utility Types",
+        "description": "Built-in generic types provided by TypeScript that perform common type transformations without requiring manual mapped or conditional type definitions.",
+        "subject": "typescript",
+        "difficulty": "intermediate",
+        "estimated_hours": 4,
+        "prerequisites": [
+          "TypeScript type system basics",
+          "Generics"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Partial<T>",
+            "definition": "Constructs a new type identical to `T` but with every property made optional using the `?` modifier. Commonly used for update or patch operation payloads, where only a subset of an object's fields need to be supplied.",
+            "difficulty": "beginner",
+            "module": "typescript-utility-type",
+            "category": "utility-types",
+            "code_example": "function update(user: User, patch: Partial<User>) { return { ...user, ...patch }; }"
+          },
+          "metadata": {
+            "signature": "Partial<T>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Required<T>",
+            "definition": "The inverse of `Partial<T>`: constructs a type where every property of `T` is made mandatory, removing the `?` optional modifier from all keys. Useful for validating that a fully-populated object has been constructed after a series of optional-property operations.",
+            "difficulty": "beginner",
+            "module": "typescript-utility-type",
+            "category": "utility-types",
+            "code_example": "type CompleteConfig = Required<Config>;"
+          },
+          "metadata": {
+            "signature": "Required<T>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Readonly<T>",
+            "definition": "Constructs a type identical to `T` where every property is write-protected, preventing reassignment after initial construction. Applies only shallowly \u2014 nested objects are not locked unless applied recursively. Commonly used to type immutable data structures or frozen objects returned from pure functions.",
+            "difficulty": "beginner",
+            "module": "typescript-utility-type",
+            "category": "utility-types",
+            "code_example": "const config: Readonly<Config> = Object.freeze(loadConfig());"
+          },
+          "metadata": {
+            "signature": "Readonly<T>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Record<K, V>",
+            "definition": "Constructs an object type whose keys are the type `K` and whose values are all of type `V`. The idiomatic way to type dictionaries and lookup tables where all values share the same type. Unlike an index signature, using a union key type forces you to handle all members of the key union, enabling exhaustiveness checking.",
+            "difficulty": "beginner",
+            "module": "typescript-utility-type",
+            "category": "utility-types",
+            "code_example": "type Scores = Record<string, number>;"
+          },
+          "metadata": {
+            "signature": "Record<K extends keyof any, V>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Pick<T, K>",
+            "definition": "Constructs a type by selecting only the properties named in the union `K` from the type `T`, discarding all others. Commonly used to create view models or API response shapes that expose a subset of a larger internal type.",
+            "difficulty": "beginner",
+            "module": "typescript-utility-type",
+            "category": "utility-types",
+            "code_example": "type UserPreview = Pick<User, 'id' | 'name'>;"
+          },
+          "metadata": {
+            "signature": "Pick<T, K extends keyof T>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Omit<T, K>",
+            "definition": "The complement of `Pick<T, K>`: constructs a type containing all properties of `T` except those named in `K`. Useful for creating types that represent objects with sensitive or internal fields removed, such as stripping a `password` property from a user type before returning it from an API.",
+            "difficulty": "beginner",
+            "module": "typescript-utility-type",
+            "category": "utility-types",
+            "code_example": "type PublicUser = Omit<User, 'passwordHash' | 'internalId'>;"
+          },
+          "metadata": {
+            "signature": "Omit<T, K extends keyof any>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Exclude<T, U>",
+            "definition": "Filters a union type `T` by removing all members that are assignable to `U`, leaving only the remaining members. Unlike `Omit` which operates on object property keys, this type operates directly on the members of a union. Implemented as a distributive conditional type: `T extends U ? never : T`.",
+            "difficulty": "intermediate",
+            "module": "typescript-utility-type",
+            "category": "utility-types",
+            "code_example": "type NonString = Exclude<string | number | boolean, string>; // number | boolean"
+          },
+          "metadata": {
+            "signature": "Exclude<T, U>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Extract<T, U>",
+            "definition": "Keeps only the members of union `T` that are assignable to `U`, discarding the rest. Useful for narrowing a broad union to a specific subset, such as isolating only string members from a mixed union. Implemented as the distributive conditional type `T extends U ? T : never`.",
+            "difficulty": "intermediate",
+            "module": "typescript-utility-type",
+            "category": "utility-types",
+            "code_example": "type OnlyStrings = Extract<string | number | null, string>; // string"
+          },
+          "metadata": {
+            "signature": "Extract<T, U>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "NonNullable<T>",
+            "definition": "Removes `null` and `undefined` from a type `T`, producing the type of the value that remains when those nullable members are excluded. Shorthand for `Exclude<T, null | undefined>` and commonly used with strict null checks enabled.",
+            "difficulty": "beginner",
+            "module": "typescript-utility-type",
+            "category": "utility-types",
+            "code_example": "type DefinitelyString = NonNullable<string | null | undefined>; // string"
+          },
+          "metadata": {
+            "signature": "NonNullable<T>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "ReturnType<T>",
+            "definition": "Extracts the return type of a function type `T` using an `infer` clause in a conditional type. Lets you derive the return type of an existing function without duplicating the type declaration, keeping derived types automatically in sync when the function signature changes.",
+            "difficulty": "intermediate",
+            "module": "typescript-utility-type",
+            "category": "utility-types",
+            "code_example": "type Result = ReturnType<typeof fetchUser>;"
+          },
+          "metadata": {
+            "signature": "ReturnType<T extends (...args: any) => any>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Parameters<T>",
+            "definition": "Extracts the parameter types of a function type `T` as a tuple, preserving both the types and positional order. Useful for generic wrapper functions that need to accept the same arguments as a given function without manually re-declaring them.",
+            "difficulty": "intermediate",
+            "module": "typescript-utility-type",
+            "category": "utility-types",
+            "code_example": "type Args = Parameters<typeof Math.atan2>; // [y: number, x: number]"
+          },
+          "metadata": {
+            "signature": "Parameters<T extends (...args: any) => any>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Awaited<T>",
+            "definition": "Recursively unwraps `Promise` layers to produce the resolved value type, modeling what `await` yields at runtime. Correctly handles nested promises and is used internally to type `async` function return types. Added in TypeScript 4.5, replacing ad-hoc conditional types commonly written for the same purpose.",
+            "difficulty": "intermediate",
+            "module": "typescript-utility-type",
+            "category": "utility-types",
+            "code_example": "type Value = Awaited<Promise<string>>; // string"
+          },
+          "metadata": {
+            "signature": "Awaited<T>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "InstanceType<T>",
+            "definition": "Extracts the instance type produced by the `new` constructor of a class type `T`. Given a class constructor function, yields the type of objects that `new T()` would create. Useful in factory patterns and dependency injection containers where you receive a constructor reference rather than an instance.",
+            "difficulty": "intermediate",
+            "module": "typescript-utility-type",
+            "category": "utility-types",
+            "code_example": "type MyInstance = InstanceType<typeof MyClass>;"
+          },
+          "metadata": {
+            "signature": "InstanceType<T extends abstract new (...args: any) => any>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "NoInfer<T>",
+            "definition": "Introduced in TypeScript 5.4, prevents TypeScript from using an occurrence of `T` as a site for type inference. Useful in generic functions where you want inference to occur at one argument but not at another that should be constrained to the inferred type. Resolves a class of subtle bugs where TypeScript would widen an inferred type by pulling in a second argument.",
+            "difficulty": "advanced",
+            "module": "typescript-utility-type",
+            "category": "utility-types",
+            "code_example": "function createStore<T>(initial: T, fallback: NoInfer<T>): T { return initial ?? fallback; }"
+          },
+          "metadata": {
+            "signature": "NoInfer<T>",
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "TypeScript \u2014 Type Narrowing",
+        "description": "TypeScript mechanisms for refining a broad type to a more specific one within a conditional branch, including built-in guards, user-defined type predicates, and control flow analysis.",
+        "subject": "typescript",
+        "difficulty": "intermediate",
+        "estimated_hours": 4,
+        "prerequisites": [
+          "TypeScript type system basics",
+          "Union types"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "typeof guard",
+            "definition": "A conditional check using JavaScript's `typeof` operator that TypeScript's control flow analysis recognizes as a narrowing operation. Inside the `if (typeof x === 'string')` branch, TypeScript narrows `x` to `string`, removing other union members from consideration. TypeScript understands all six result strings: 'string', 'number', 'boolean', 'symbol', 'bigint', 'object', and 'function'.",
+            "difficulty": "beginner",
+            "module": "typescript-keyword",
+            "category": "type-narrowing",
+            "code_example": "if (typeof value === 'string') { console.log(value.toUpperCase()); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "instanceof guard",
+            "definition": "A conditional check that narrows a value to a specific class type when TypeScript's control flow analysis can verify the relationship. Inside `if (err instanceof TypeError)`, TypeScript narrows `err` to `TypeError`. The standard way to distinguish between error subtypes in catch blocks.",
+            "difficulty": "beginner",
+            "module": "typescript-keyword",
+            "category": "type-narrowing",
+            "code_example": "if (err instanceof NetworkError) { retry(err.statusCode); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "in narrowing",
+            "definition": "The `in` operator used in a conditional checks whether a property name exists on an object, and TypeScript's control flow analysis narrows the type based on the result. In `if ('fly' in animal)`, TypeScript narrows `animal` to whichever union members include a `fly` property. The standard technique for discriminating between object union members that lack a shared discriminant property.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "type-narrowing",
+            "code_example": "if ('swim' in creature) { creature.swim(); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "discriminated union",
+            "definition": "A union type whose members each include a shared literal property \u2014 the discriminant \u2014 that uniquely identifies each variant. TypeScript's control flow analysis uses the discriminant to narrow the union inside a switch or if block, giving full type safety for each branch. The TypeScript equivalent of algebraic data types and the recommended way to model sum types.",
+            "difficulty": "intermediate",
+            "module": "typescript-type-operator",
+            "category": "type-narrowing",
+            "code_example": "type Shape = { kind: 'circle'; radius: number } | { kind: 'rect'; width: number; height: number };"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "type predicate",
+            "definition": "A user-defined type guard expressed as a function whose return type is annotated `paramName is Type`. When the function returns `true`, TypeScript narrows the parameter to the specified type in the calling scope. Allows encapsulating arbitrarily complex runtime checks while still surfacing their narrowing effect to the compiler.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "type-narrowing",
+            "code_example": "function isString(value: unknown): value is string { return typeof value === 'string'; }"
+          },
+          "metadata": {
+            "signature": "(x: T): x is U",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "assertion function",
+            "definition": "A function annotated with `asserts condition` or `asserts param is Type` in its return type, indicating that if the function returns normally the stated condition is guaranteed to hold. TypeScript narrows the type in the calling scope after the call, unlike regular type predicates which require the call to appear in a conditional. Useful for writing `invariant`-style helpers that throw on bad state.",
+            "difficulty": "advanced",
+            "module": "typescript-keyword",
+            "category": "type-narrowing",
+            "code_example": "function assert(val: unknown): asserts val { if (!val) throw new Error('Assertion failed'); }"
+          },
+          "metadata": {
+            "signature": "function assert(x: unknown): asserts x",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "satisfies operator",
+            "definition": "Introduced in TypeScript 4.9, validates that an expression conforms to a given type without widening the expression's inferred type to that type. Lets you get type-checking benefits while retaining the narrow literal types inferred from the initializer. Commonly used for configuration objects where you want both validation and precise key inference.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "type-narrowing",
+            "code_example": "const palette = { red: [255, 0, 0], blue: '#0000ff' } satisfies Record<string, string | number[]>;"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "control flow analysis",
+            "definition": "TypeScript's mechanism for tracking which types are possible for a variable at each point in the program based on the checks and assignments that precede it. After a null check or type guard, TypeScript automatically narrows the variable's type in the subsequent code path without requiring explicit casts. It understands if/else, ternaries, switch statements, early returns, and the && / || operators as narrowing boundaries.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "type-narrowing",
+            "code_example": "let x: string | null = getValue(); if (x !== null) { x.toUpperCase(); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "exhaustiveness check",
+            "definition": "The practice of using `never` in the default branch of a switch or if-else chain to ensure all members of a discriminated union are handled. If a new variant is added to the union later, the compiler reports an error because the new type is not assignable to `never`. This pattern turns runtime bugs from unhandled cases into compile-time errors.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "type-narrowing",
+            "code_example": "default: { const _: never = shape; throw new Error('Unhandled case'); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "TypeScript \u2014 Modules",
+        "description": "TypeScript's module system, including ES module syntax extensions, type-only imports and exports, declaration merging, ambient module declarations, and module resolution strategies.",
+        "subject": "typescript",
+        "difficulty": "intermediate",
+        "estimated_hours": 3,
+        "prerequisites": [
+          "JavaScript ES modules",
+          "Basic TypeScript syntax"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "import type",
+            "definition": "Syntax that imports a name solely for use in type positions, guaranteeing that the imported binding is erased entirely at compile time and never emitted as a runtime import. Prevents accidental value imports when you only need a type for annotation, and allows bundlers and transpilers that strip types without full TypeScript compilation to handle the import correctly.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "modules",
+            "code_example": "import type { UserDTO } from './types';"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "export type",
+            "definition": "Syntax that marks an export as type-only, signaling that the export carries no runtime value. Ensures that importing modules using `import type` can safely reference the export without pulling in any JavaScript. Inline `export { type Foo }` syntax is also supported as of TypeScript 4.5.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "modules",
+            "code_example": "export type { UserDTO };"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "namespace",
+            "definition": "Groups related types, interfaces, and values under a single named scope, preventing global name collisions and organizing related declarations. Today mainly used for declaration merging \u2014 augmenting a class or function with additional types \u2014 and in `.d.ts` ambient declaration files.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "modules",
+            "code_example": "namespace Validation { export interface StringValidator { isAcceptable(s: string): boolean; } }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "declaration merging",
+            "definition": "TypeScript's rule that when two or more declarations share the same name, the compiler combines them into a single definition. Applies to interfaces (properties are merged), namespaces with enums, and namespaces with functions or classes, enabling augmentation patterns. Only available for interfaces and namespaces, not type aliases.",
+            "difficulty": "advanced",
+            "module": "typescript-keyword",
+            "category": "modules",
+            "code_example": "interface Window { myLib: MyLib; } // augments the existing Window interface"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "ambient declaration",
+            "definition": "Uses the `declare` keyword to tell TypeScript about types and values that exist at runtime but are not present in the current TypeScript source, such as global variables injected by a script tag or types from a third-party library without its own `.d.ts` file. These appear in `.d.ts` files or in a `declare global` block and carry no emitted JavaScript.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "modules",
+            "code_example": "declare const __ENV__: 'development' | 'production';"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "module augmentation",
+            "definition": "A TypeScript pattern for adding new declarations to an existing external module by re-opening it with `declare module 'module-name'` inside your own module file. Lets you extend third-party type definitions without modifying the original `.d.ts` files. The augmenting file must itself be a module for the declaration to be treated as augmentation rather than a global ambient declaration.",
+            "difficulty": "advanced",
+            "module": "typescript-keyword",
+            "category": "modules",
+            "code_example": "declare module 'express' { interface Request { user?: AuthenticatedUser; } }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "path mapping",
+            "definition": "A TypeScript compiler option (`paths` in `tsconfig.json`) that remaps module import strings to different file system locations, enabling project-relative imports like `@app/components` instead of deep relative paths. TypeScript uses these mappings only for type resolution; a bundler or runtime loader must separately be configured to perform the same remapping at runtime.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "modules",
+            "code_example": "{ \"paths\": { \"@app/*\": [\"src/*\"] } }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "triple-slash directive",
+            "definition": "A single-line comment beginning with `///` that contains an XML-style tag instructing the TypeScript compiler to include additional type information. The most common form, `/// <reference types='...' />`, adds a type package dependency. These are placed at the top of a file and are primarily used in `.d.ts` declaration files.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "modules",
+            "code_example": "/// <reference types=\"node\" />"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "TypeScript \u2014 Functional",
+        "description": "TypeScript's type-level support for function signatures, overloads, higher-order functions, generics on functions, and readonly collections.",
+        "subject": "typescript",
+        "difficulty": "intermediate",
+        "estimated_hours": 4,
+        "prerequisites": [
+          "JavaScript functions and closures",
+          "TypeScript generics"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "function overload",
+            "definition": "Allows a single function to be declared with multiple distinct call signatures before a single implementation signature. The overload signatures define the valid ways to call the function, while the implementation signature is hidden from callers. Lets TypeScript provide precise return types for different argument combinations.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "functional",
+            "code_example": "function parse(input: string): number;\nfunction parse(input: number): string;\nfunction parse(input: any): any { /* impl */ }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "call signature",
+            "definition": "A type-level declaration that describes how an object can be called as a function, using the syntax `(param: Type): ReturnType` inside an interface or object type. Allows interfaces to describe callable objects \u2014 values that are both objects with properties and functions that can be invoked.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "functional",
+            "code_example": "interface Formatter { (input: string): string; locale: string; }"
+          },
+          "metadata": {
+            "signature": "(param: T): R",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "generic constraint",
+            "definition": "Restricts the set of types that a type parameter may accept by using the `extends` keyword, ensuring the generic code can safely access properties or methods that all valid types share. Without a constraint, TypeScript treats a type parameter as `unknown`, permitting no property access.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "functional",
+            "code_example": "function longest<T extends { length: number }>(a: T, b: T): T { return a.length >= b.length ? a : b; }"
+          },
+          "metadata": {
+            "signature": "<T extends Constraint>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "readonly array",
+            "definition": "A type (`ReadonlyArray<T>` or `readonly T[]`) describing an array whose elements cannot be added, removed, or replaced after creation \u2014 mutation methods like `push` and `pop` are absent from its type. TypeScript treats `readonly T[]` as a supertype of `T[]`, so a mutable array is assignable to this type but not vice versa.",
+            "difficulty": "beginner",
+            "module": "typescript-keyword",
+            "category": "functional",
+            "code_example": "function sum(nums: readonly number[]): number { return nums.reduce((a, b) => a + b, 0); }"
+          },
+          "metadata": {
+            "signature": "ReadonlyArray<T> | readonly T[]",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "variadic tuple type",
+            "definition": "Uses the `...T` spread syntax within a tuple to represent a variable-length portion of a typed sequence, where `T` is constrained to an array or tuple. Allows precise typing of functions that spread or concatenate typed arrays. Introduced in TypeScript 4.0, variadic tuples are the foundation for strongly-typed `curry` and pipeline utilities.",
+            "difficulty": "advanced",
+            "module": "typescript-keyword",
+            "category": "functional",
+            "code_example": "function concat<T extends unknown[], U extends unknown[]>(a: [...T], b: [...U]): [...T, ...U] { return [...a, ...b]; }"
+          },
+          "metadata": {
+            "signature": "[...T, ...U]",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "const type parameter",
+            "definition": "Written as `<const T>` and introduced in TypeScript 5.0, infers the narrowest possible literal type for an argument rather than widening to its base type. Without `const`, TypeScript infers `string[]` for `['a', 'b']`; with `const T`, it infers the tuple `['a', 'b']`. Eliminates the need for callers to append `as const` to every literal argument.",
+            "difficulty": "advanced",
+            "module": "typescript-keyword",
+            "category": "functional",
+            "code_example": "function makeArray<const T>(items: T): T { return items; }"
+          },
+          "metadata": {
+            "signature": "<const T>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "as const",
+            "definition": "An assertion that tells TypeScript to infer the narrowest possible type for a literal expression: string literals stay as their specific value type, arrays become readonly tuples, and object properties become `readonly` with literal types. Commonly used with object literals that represent fixed configuration or enum-like constant maps.",
+            "difficulty": "beginner",
+            "module": "typescript-keyword",
+            "category": "functional",
+            "code_example": "const directions = ['north', 'south', 'east', 'west'] as const;"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "construct signature",
+            "definition": "Describes the shape of a constructor function at the type level, using the `new` keyword inside an interface or type. Allows typing values that must be constructable \u2014 for example, factory parameters that accept a class. The abstract variant was added in TypeScript 4.2 to support factories that work with abstract classes.",
+            "difficulty": "advanced",
+            "module": "typescript-keyword",
+            "category": "functional",
+            "code_example": "interface Constructable<T> { new (arg: string): T; }"
+          },
+          "metadata": {
+            "signature": "new (params): T",
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "TypeScript \u2014 Collections",
+        "description": "TypeScript's typed collection types adding static type safety to JavaScript's built-in data structures.",
+        "subject": "typescript",
+        "difficulty": "beginner",
+        "estimated_hours": 3,
+        "prerequisites": [
+          "JavaScript arrays and objects",
+          "TypeScript generics"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Array<T>",
+            "definition": "Describes a mutable, ordered collection of elements all sharing type `T`. TypeScript infers the element type from literal expressions and enforces it at all push, index assignment, and access sites. When a function should not mutate its collection parameter, prefer `readonly T[]`.",
+            "difficulty": "beginner",
+            "module": "typescript-keyword",
+            "category": "collections",
+            "code_example": "const names: Array<string> = ['alice', 'bob'];"
+          },
+          "metadata": {
+            "signature": "Array<T> | T[]",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Map<K, V>",
+            "definition": "Describes a keyed collection where each entry pairs a key of type `K` with a value of type `V`. TypeScript enforces key and value types at all `get`, `set`, and `has` call sites. Unlike the plain object index signature approach, this collection supports keys of any type including objects.",
+            "difficulty": "beginner",
+            "module": "typescript-keyword",
+            "category": "collections",
+            "code_example": "const cache: Map<string, number> = new Map();"
+          },
+          "metadata": {
+            "signature": "Map<K, V>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Set<T>",
+            "definition": "Describes an unordered collection of unique values all of type `T`. TypeScript enforces the element type at `add`, `has`, and `delete` call sites. Useful for deduplication and membership testing with O(1) average complexity.",
+            "difficulty": "beginner",
+            "module": "typescript-keyword",
+            "category": "collections",
+            "code_example": "const seen: Set<string> = new Set();"
+          },
+          "metadata": {
+            "signature": "Set<T>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "ReadonlyArray<T>",
+            "definition": "Describes an array from which elements cannot be added, removed, or replaced \u2014 exposing only non-mutating methods like `map`, `filter`, and `slice`. A supertype of the mutable `T[]`, so a mutable array is always assignable to this type but not the reverse.",
+            "difficulty": "beginner",
+            "module": "typescript-keyword",
+            "category": "collections",
+            "code_example": "function process(items: ReadonlyArray<string>): void { items.forEach(console.log); }"
+          },
+          "metadata": {
+            "signature": "ReadonlyArray<T> | readonly T[]",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "WeakMap<K, V>",
+            "definition": "Describes a collection of key-value pairs where the keys must be objects and the entries are garbage-collected when no other reference to the key object exists. TypeScript uses the `object` constraint on the key type to enforce this, preventing primitive keys at compile time. Commonly used for associating private metadata with objects without preventing their collection.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "collections",
+            "code_example": "const meta: WeakMap<object, Metadata> = new WeakMap();"
+          },
+          "metadata": {
+            "signature": "WeakMap<K extends object, V>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "ReadonlyMap<K, V>",
+            "definition": "Describes a `Map` whose contents cannot be modified \u2014 exposing only `get`, `has`, `keys`, `values`, `entries`, and `forEach`. TypeScript provides this as a built-in interface distinct from `Map`, enabling functions to declare that they will only read from a map parameter without mutating it.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "collections",
+            "code_example": "function lookup(map: ReadonlyMap<string, number>, key: string): number | undefined { return map.get(key); }"
+          },
+          "metadata": {
+            "signature": "ReadonlyMap<K, V>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "readonly tuple",
+            "definition": "A tuple type prefixed with the `readonly` modifier, preventing index assignment and mutation of its fixed-position elements. TypeScript infers this type from `as const` assertions on array literals. Because `readonly [T, U]` is a supertype of `[T, U]`, mutable tuples are assignable to this type but not vice versa.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "collections",
+            "code_example": "const point: readonly [number, number] = [0, 0] as const;"
+          },
+          "metadata": {
+            "signature": "readonly [T, U, ...]",
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "TypeScript \u2014 Concurrency",
+        "description": "TypeScript's type-level support for asynchronous programming, including typed Promises, async/await, the Awaited utility type, and async iterator types.",
+        "subject": "typescript",
+        "difficulty": "intermediate",
+        "estimated_hours": 3,
+        "prerequisites": [
+          "JavaScript Promises and async/await",
+          "TypeScript generics"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Promise<T>",
+            "definition": "Describes a value that resolves asynchronously to type `T`. TypeScript infers the resolved type from the argument passed to the static `resolve` method or from `async` function return values, and enforces it at all `.then` and `await` sites.",
+            "difficulty": "beginner",
+            "module": "typescript-keyword",
+            "category": "concurrency",
+            "code_example": "async function fetchUser(id: number): Promise<User> { return await api.get(id); }"
+          },
+          "metadata": {
+            "signature": "Promise<T>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "async function",
+            "definition": "A function declared with the `async` keyword always returns a `Promise<T>`, where `T` is the type of the value returned in the body. TypeScript uses this to automatically wrap the declared return type and correctly types `await` expressions inside such functions using `Awaited<T>` for recursive promise unwrapping.",
+            "difficulty": "beginner",
+            "module": "typescript-keyword",
+            "category": "concurrency",
+            "code_example": "async function load(): Promise<string[]> { return fetchItems(); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AsyncIterable<T>",
+            "definition": "Describes objects that implement the async iteration protocol via `[Symbol.asyncIterator]()`, yielding values of type `T` asynchronously. The type consumed by `for await...of` loops and used in Node.js stream types and database cursor patterns.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "concurrency",
+            "code_example": "async function* generate(): AsyncIterable<number> { yield 1; yield 2; }"
+          },
+          "metadata": {
+            "signature": "AsyncIterable<T>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "PromiseSettledResult<T>",
+            "definition": "A union of `PromiseFulfilledResult<T>` and `PromiseRejectedResult`, representing the possible outcomes from each element in a `Promise.allSettled` call. The `status` discriminant allows TypeScript to narrow to the appropriate variant in a type-safe way.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "concurrency",
+            "code_example": "const results: PromiseSettledResult<string>[] = await Promise.allSettled(promises);"
+          },
+          "metadata": {
+            "signature": "PromiseFulfilledResult<T> | PromiseRejectedResult",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "using declaration",
+            "definition": "The `using` keyword (TypeScript 5.2) declares a resource that implements `Symbol.dispose`, ensuring the resource is automatically disposed when the enclosing block exits. TypeScript's implementation of explicit resource management. The `await using` variant calls `Symbol.asyncDispose` for asynchronous cleanup.",
+            "difficulty": "advanced",
+            "module": "typescript-keyword",
+            "category": "concurrency",
+            "code_example": "await using db = await openDatabase(); // db[Symbol.asyncDispose] called on block exit"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "for await...of",
+            "definition": "Iterates over an `AsyncIterable<T>`, awaiting each yielded promise before proceeding to the next iteration. TypeScript types the loop variable as `T` based on the iterable's type parameter, providing full type safety within the loop body. The standard way to consume async generators and Node.js readable streams.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "concurrency",
+            "code_example": "for await (const chunk of readableStream) { process(chunk); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "TypeScript \u2014 Introspection",
+        "description": "TypeScript type-level operators that inspect, query, and transform types at compile time.",
+        "subject": "typescript",
+        "difficulty": "intermediate",
+        "estimated_hours": 4,
+        "prerequisites": [
+          "TypeScript generics",
+          "Conditional types"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "keyof",
+            "definition": "A type operator that produces a union of all known property key types of a given type `T`. The foundation for writing generic functions that accept a valid property name of an object, enabling type-safe property access patterns. Combined with indexed access types, it lets you derive value types for all properties of `T`.",
+            "difficulty": "intermediate",
+            "module": "typescript-type-operator",
+            "category": "introspection",
+            "code_example": "function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] { return obj[key]; }"
+          },
+          "metadata": {
+            "signature": "keyof T",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "typeof (type-level)",
+            "definition": "When used in a type position, queries the TypeScript type of a value, variable, or function declaration and uses it as a type. Allows deriving a type from an existing value without manually writing out the type. Commonly used with `ReturnType<T>` and class constructors.",
+            "difficulty": "intermediate",
+            "module": "typescript-type-operator",
+            "category": "introspection",
+            "code_example": "const defaultConfig = { theme: 'dark', size: 12 };\ntype Config = typeof defaultConfig;"
+          },
+          "metadata": {
+            "signature": "typeof value",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "indexed access type",
+            "definition": "Written `T[K]`, retrieves the type of a property `K` on type `T` at the type level, mirroring how JavaScript accesses a property value at runtime. When `K` is a union, the result is a union of all matching property types. Used to build derived types that stay in sync with their source.",
+            "difficulty": "intermediate",
+            "module": "typescript-type-operator",
+            "category": "introspection",
+            "code_example": "type AgeType = Person['age']; // number"
+          },
+          "metadata": {
+            "signature": "T[K]",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "infer (introspection)",
+            "definition": "A keyword inside a conditional type's `extends` clause that captures an unknown portion of a matched type into a new type variable. Enables compile-time decomposition of complex types \u2014 extracting the element type from an array, the first parameter of a function, or the resolved type of a promise \u2014 without knowing them in advance. Without this keyword, built-in utility types like `ReturnType` and `Parameters` could not be expressed.",
+            "difficulty": "advanced",
+            "module": "typescript-keyword",
+            "category": "introspection",
+            "code_example": "type FirstArg<T> = T extends (first: infer F, ...rest: any[]) => any ? F : never;"
+          },
+          "metadata": {
+            "signature": "T extends Pattern<infer U> ? U : never",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "PropertyKey",
+            "definition": "A built-in TypeScript alias for `string | number | symbol`, representing the complete set of types that can serve as a JavaScript object property key. When writing generic code that must accept any valid property key, constraining to this type is more explicit than the broad union type.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "introspection",
+            "code_example": "function hasKey<T extends object>(obj: T, key: PropertyKey): key is keyof T { return key in obj; }"
+          },
+          "metadata": {
+            "signature": "type PropertyKey = string | number | symbol",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "intrinsic string types",
+            "definition": "TypeScript provides four built-in string transformation utility types \u2014 `Uppercase<S>`, `Lowercase<S>`, `Capitalize<S>`, and `Uncapitalize<S>` \u2014 that operate on string literal types at compile time. They are intrinsic to the compiler and allow template literal types to produce correctly-cased string union members.",
+            "difficulty": "advanced",
+            "module": "typescript-utility-type",
+            "category": "introspection",
+            "code_example": "type Shout<T extends string> = Uppercase<T>; // 'hello' \u2192 'HELLO'"
+          },
+          "metadata": {
+            "signature": "Uppercase<S> | Lowercase<S> | Capitalize<S> | Uncapitalize<S>",
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "ThisType<T>",
+            "definition": "A marker utility type that specifies what `this` refers to within the methods of an object literal, without affecting the type of the object itself. Primarily used in framework APIs where `this` inside a method should be typed as the merged component instance. Carries no runtime representation; a pure compile-time signal.",
+            "difficulty": "advanced",
+            "module": "typescript-utility-type",
+            "category": "introspection",
+            "code_example": "type ObjectDescriptor<D, M> = { data?: D; methods?: M & ThisType<D & M> };"
+          },
+          "metadata": {
+            "signature": "ThisType<T>",
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "TypeScript \u2014 Decorators",
+        "description": "TypeScript's decorator syntax based on the ECMAScript Stage 3 decorator proposal, including class, method, property, accessor, and parameter decorators in TypeScript 5.x.",
+        "subject": "typescript",
+        "difficulty": "advanced",
+        "estimated_hours": 5,
+        "prerequisites": [
+          "TypeScript classes",
+          "TypeScript generics"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "class decorator",
+            "definition": "A function applied to a class declaration that receives the class constructor as its argument and can return a new constructor to replace the original. In TypeScript 5.x's standard decorator model, it is called after the class is defined and may modify its prototype or wrap the constructor. Distinct from the legacy `experimentalDecorators` behavior.",
+            "difficulty": "advanced",
+            "module": "typescript-keyword",
+            "category": "decorators",
+            "code_example": "@sealed class BugReport { type = 'report'; title: string; constructor(t: string) { this.title = t; } }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "method decorator",
+            "definition": "Applied to a class method; can wrap it \u2014 adding logging, caching, or retry logic \u2014 by replacing the value on the descriptor or returning a new descriptor. In the TypeScript 5.x standard decorator model, each receives the method function and a context object with the method's name and kind.",
+            "difficulty": "advanced",
+            "module": "typescript-keyword",
+            "category": "decorators",
+            "code_example": "@log method greet(name: string) { return `Hello, ${name}`; }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "property decorator",
+            "definition": "Applied to a class property declaration; in the TypeScript 5.x standard model, receives a context object containing the property name and kind. Can register metadata about the property or configure class-level behavior but cannot directly intercept reads and writes \u2014 for that, use an accessor decorator.",
+            "difficulty": "advanced",
+            "module": "typescript-keyword",
+            "category": "decorators",
+            "code_example": "class User { @required name: string = ''; }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "accessor decorator",
+            "definition": "Applied to a getter, setter, or a field declared with the `accessor` keyword (TypeScript 4.9); receives both the get and set functions along with a context object. Can wrap or replace both accessors, enabling patterns like observable properties, lazy evaluation, and validation on assignment.",
+            "difficulty": "advanced",
+            "module": "typescript-keyword",
+            "category": "decorators",
+            "code_example": "class Person { @clamp(0, 150) accessor age: number = 0; }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "decorator factory",
+            "definition": "A function that returns a decorator function, allowing decorators to accept configuration parameters. The outer function takes configuration arguments and closes over them, while the inner returned function is the actual decorator TypeScript applies to the target. The standard pattern for parameterized decorators such as `@Column({ type: 'varchar' })` in ORMs.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "decorators",
+            "code_example": "function minLength(min: number) { return function(target: any, context: any) { /* ... */ }; }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "experimentalDecorators",
+            "definition": "A compiler option that enables the legacy TypeScript decorator syntax predating the ECMAScript Stage 3 proposal. This older model is widely used by Angular, NestJS, and TypeORM but differs from the TypeScript 5.x standard in how decorators are called and what arguments they receive. New projects should prefer standard TypeScript 5.x decorators.",
+            "difficulty": "intermediate",
+            "module": "typescript-keyword",
+            "category": "decorators",
+            "code_example": "// tsconfig.json: { \"compilerOptions\": { \"experimentalDecorators\": true } }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "emitDecoratorMetadata",
+            "definition": "A compiler option that causes TypeScript to emit `Reflect.Metadata` calls recording the TypeScript types of decorated class members as runtime metadata. Powers dependency injection frameworks like NestJS and InversifyJS that read constructor parameter types at runtime to resolve dependencies. Requires the `reflect-metadata` polyfill and depends on `experimentalDecorators`.",
+            "difficulty": "advanced",
+            "module": "typescript-keyword",
+            "category": "decorators",
+            "code_example": "// tsconfig.json: { \"compilerOptions\": { \"emitDecoratorMetadata\": true } }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "decorator composition",
+            "definition": "Applying multiple decorators to the same target, where factory expressions are evaluated top-down but the resulting decorator functions are applied bottom-up. So `@A @B method()` calls `B`'s decorator before `A`'s. Understanding evaluation order is essential when decorators have dependencies or when the output of one is expected to be the input of another.",
+            "difficulty": "advanced",
+            "module": "typescript-keyword",
+            "category": "decorators",
+            "code_example": "@log @validate method submit(data: FormData) { /* ... */ }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "TypeScript documentation: https://www.typescriptlang.org/docs/",
+    "TypeScript Handbook \u2014 Type Manipulation: https://www.typescriptlang.org/docs/handbook/2/types-from-types.html",
+    "TypeScript Handbook \u2014 Utility Types: https://www.typescriptlang.org/docs/handbook/utility-types.html",
+    "TypeScript Handbook \u2014 Narrowing: https://www.typescriptlang.org/docs/handbook/2/narrowing.html",
+    "TypeScript Handbook \u2014 Decorators (5.x): https://www.typescriptlang.org/docs/handbook/decorators.html",
+    "TypeScript Handbook \u2014 Modules: https://www.typescriptlang.org/docs/handbook/2/modules.html",
+    "TypeScript Release Notes 5.0-5.4: https://www.typescriptlang.org/docs/handbook/release-notes/overview.html",
+    "Note: Definitions produced from training knowledge (August 2025 cutoff); live web verification not performed."
+  ]
+}

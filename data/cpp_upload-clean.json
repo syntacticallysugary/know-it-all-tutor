@@ -1,0 +1,1578 @@
+{
+  "domains": [
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "C++ \u2014 Collections",
+        "description": "Covers the C++ Standard Template Library (STL) containers and sequence/associative data structures used to store and organize data.",
+        "subject": "cpp",
+        "difficulty": "intermediate",
+        "estimated_hours": 6,
+        "prerequisites": [
+          "basic C++ syntax",
+          "templates basics"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::vector",
+            "definition": "A dynamically resizable array that stores elements contiguously in memory, defined in the <vector> header. It provides O(1) random access and amortized O(1) push_back via automatic capacity doubling. Because storage is contiguous, iterating it is cache-friendly compared to node-based containers like std::list.",
+            "difficulty": "beginner",
+            "module": "<vector>",
+            "category": "collections",
+            "code_example": "std::vector<int> v = {1, 2, 3}; v.push_back(4); int x = v[2];",
+            "short_reference": "A flexible array that grows as needed, stores items next to each other in memory for fast access, and adds elements quickly by doubling size when full."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::list",
+            "definition": "A doubly-linked list container providing O(1) insertion and removal at any iterator position, defined in <list>. Unlike std::vector, elements are not stored contiguously, so random access (operator[]) is not supported. It is best suited for workloads that require frequent mid-sequence insertions or deletions without iterator invalidation.",
+            "difficulty": "beginner",
+            "module": "<list>",
+            "category": "collections",
+            "code_example": "std::list<int> lst; lst.push_back(10); lst.push_front(5); lst.remove(10);",
+            "short_reference": "It's a linked list that lets you add or remove items quickly in the middle without messing up the rest, but you can't jump to any position directly."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::deque",
+            "definition": "A double-ended queue that supports efficient O(1) insertion and removal at both the front and back, defined in <deque>. Internally it uses a sequence of fixed-size chunks rather than a single buffer, so random access is supported but slightly slower than std::vector. It is the underlying container for std::stack and std::queue by default.",
+            "difficulty": "beginner",
+            "module": "<deque>",
+            "category": "collections",
+            "code_example": "std::deque<int> dq; dq.push_front(1); dq.push_back(2); int x = dq[0];",
+            "short_reference": "It's a data structure that lets you add or remove from both ends quickly, using chunks of memory which makes random access possible but not as fast as a vector. It's often used as the base for stacks and queues."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::array",
+            "definition": "A fixed-size array whose size is a compile-time constant, defined in <array> and introduced in C++11. It provides the same stack-allocated, contiguous storage as a raw C array but adds STL-compatible iterators, size(), and bounds-checked at() access. Prefer it over raw C arrays when the size is known at compile time.",
+            "difficulty": "beginner",
+            "module": "<array>",
+            "category": "collections",
+            "code_example": "std::array<int, 4> arr = {10, 20, 30, 40}; std::sort(arr.begin(), arr.end());",
+            "short_reference": "You should prefer it over raw arrays whenever the size is known at compile time."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::map",
+            "definition": "An ordered associative container that stores unique key-value pairs sorted by key, defined in <map>. Internally implemented as a red-black tree, it provides O(log n) lookup, insertion, and deletion. When iteration in key-sorted order matters, it is preferred over the faster but unordered std::unordered_map.",
+            "difficulty": "beginner",
+            "module": "<map>",
+            "category": "collections",
+            "code_example": "std::map<std::string, int> m; m[\"apple\"] = 3; auto it = m.find(\"apple\");",
+            "short_reference": "It's a container that keeps key-value pairs sorted by key, letting you find and manage them efficiently while keeping them in order. It's part of the standard library under <map> and works best when you need sorted data."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::unordered_map",
+            "definition": "A hash-table-based associative container storing unique key-value pairs with no defined iteration order, defined in <unordered_map> (C++11). Average O(1) lookup, insertion, and deletion make it faster than std::map for large datasets, but worst-case O(n) can occur with hash collisions. A custom hash functor is required for non-standard key types.",
+            "difficulty": "intermediate",
+            "module": "<unordered_map>",
+            "category": "collections",
+            "code_example": "std::unordered_map<std::string, int> um; um[\"key\"] = 42; um.count(\"key\");",
+            "short_reference": "It's a hash table-based container for key-value pairs that doesn't maintain order, offering fast average lookups but can slow down with collisions. It's faster than std::map for large data but needs a custom hash function for non-standard keys."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::set",
+            "definition": "An ordered container of unique elements, backed by a red-black tree, defined in <set>. All elements are immutable through iterators (to preserve ordering) and are stored sorted by a comparator (default: operator<). It is useful when you need sorted unique elements and fast membership testing in O(log n).",
+            "difficulty": "beginner",
+            "module": "<set>",
+            "category": "collections",
+            "code_example": "std::set<int> s = {3, 1, 4, 1}; s.insert(5); s.count(1); // always 0 or 1",
+            "short_reference": "It's a sorted container that stores unique elements and lets you quickly check if something exists, using a special tree structure under the hood."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::unordered_set",
+            "definition": "A hash-table-based container of unique elements with no defined iteration order, defined in <unordered_set> (C++11). It provides average O(1) insert, erase, and find operations, making it the fastest container for pure membership testing when order does not matter. Like std::unordered_map, it requires a hashable key type.",
+            "difficulty": "intermediate",
+            "module": "<unordered_set>",
+            "category": "collections",
+            "code_example": "std::unordered_set<std::string> us; us.insert(\"hello\"); us.count(\"hello\");",
+            "short_reference": "It's a hash-based container for unique elements with fast lookups, inserts, and deletes, and doesn't maintain any order."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::stack",
+            "definition": "A container adaptor providing a LIFO (last-in, first-out) interface, defined in <stack>. By default it uses std::deque as the underlying container, but any container supporting back(), push_back(), and pop_back() (such as std::vector) can be used. Only top(), push(), pop(), and empty() are exposed, enforcing the stack discipline.",
+            "difficulty": "beginner",
+            "module": "<stack>",
+            "category": "collections",
+            "code_example": "std::stack<int> st; st.push(1); st.push(2); st.top(); st.pop();",
+            "short_reference": "It's a LIFO data structure that lets you push items onto the top and pop them off last, using a container like a deque or vector under the hood. You mainly use push, pop, and check the top element or if it's empty."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::queue",
+            "definition": "A container adaptor providing a FIFO (first-in, first-out) interface, defined in <queue>. The default underlying container is std::deque; any container supporting front(), back(), push_back(), and pop_front() works. Access is limited to front() and back(), and elements are enqueued with push() and dequeued with pop().",
+            "difficulty": "beginner",
+            "module": "<queue>",
+            "category": "collections",
+            "code_example": "std::queue<int> q; q.push(1); q.push(2); q.front(); q.pop();",
+            "short_reference": "A FIFO data structure that uses a deque by default, letting you add items to the back and remove them from the front."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::priority_queue",
+            "definition": "A container adaptor that always gives access to the largest element first (max-heap by default), defined in <queue>. It is backed by std::vector and uses std::make_heap/push_heap/pop_heap internally. Supplying std::greater<T> as the comparator converts it to a min-heap, which is common in graph algorithms like Dijkstra's.",
+            "difficulty": "intermediate",
+            "module": "<queue>",
+            "category": "collections",
+            "code_example": "std::priority_queue<int> pq; pq.push(3); pq.push(1); pq.top(); // 3",
+            "short_reference": "It's a container that always gives you the largest element first, like a max-heap, but you can switch to a min-heap with a comparator. It uses a vector and manages elements with heap operations."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::span",
+            "definition": "A non-owning view over a contiguous sequence of elements, introduced in C++20 and defined in <span>. It stores only a pointer and a length, so passing it avoids copying while still providing bounds-safe access via size() and iterators. It replaces the common pattern of passing a (pointer, length) pair and works with arrays, vectors, and any contiguous range.",
+            "difficulty": "intermediate",
+            "module": "<span>",
+            "category": "collections",
+            "code_example": "void print(std::span<const int> s) { for (int x : s) std::cout << x; }",
+            "short_reference": "A std::span is a lightweight way to reference a continuous block of data without owning it, using just a pointer and size to avoid copying. It lets you safely access elements via size and iterators, replacing the old method of passing pointers and lengths separately."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::pair / std::tuple",
+            "definition": "The former holds exactly two values of potentially different types; the latter generalizes this to an arbitrary number of types \u2014 both are defined in <utility> and <tuple> respectively. They are commonly returned from functions that produce multiple values and are the element type of std::map. C++17 structured bindings allow unpacking them cleanly: auto [k, v] = *map_iter;.",
+            "difficulty": "beginner",
+            "module": "<utility> / <tuple>",
+            "category": "collections",
+            "code_example": "auto p = std::make_pair(1, \"hello\"); auto [a, b] = p; // C++17",
+            "short_reference": "They are C++ data structures that store multiple values\u2014std::pair for two and std::tuple for any number. They're used to return multiple results from functions and are part of the standard library."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "C++ \u2014 Type System",
+        "description": "Covers C++ type-system features including primitive types, qualifiers, type deduction, aliases, enumerations, and compile-time type utilities.",
+        "subject": "cpp",
+        "difficulty": "intermediate",
+        "estimated_hours": 5,
+        "prerequisites": [
+          "basic C++ syntax"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "fundamental types",
+            "definition": "The built-in scalar types provided directly by the C++ language: bool, char, short, int, long, long long (and unsigned variants), float, double, and long double. Their exact sizes are implementation-defined (only minimum widths are guaranteed), so portable code uses fixed-width aliases like int32_t from <cstdint>. Choosing the right numeric type matters for performance, serialization, and interoperability.",
+            "difficulty": "beginner",
+            "module": "language-keyword",
+            "category": "type-system",
+            "code_example": "#include <cstdint>  int32_t x = 0; uint64_t mask = 0xFFFFFFFF;",
+            "short_reference": "They're the basic data types in C++ like int, char, and bool that have different sizes on different systems, so programmers use fixed-size types like int32_t to make sure code works the same everywhere."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "const qualifier",
+            "definition": "The const keyword marks a variable or parameter as immutable after initialization, enabling compiler enforcement of read-only access. Applied to member functions it indicates the function does not modify the object's observable state (const correctness). Distinguishing const T* (pointer to const data) from T* const (const pointer) is a fundamental C++ skill.",
+            "difficulty": "beginner",
+            "module": "language-keyword",
+            "category": "type-system",
+            "code_example": "const int MAX = 100; void foo(const std::string& s); // s is read-only",
+            "short_reference": "It's a keyword that makes variables or parameters unchangeable after they're set, so the compiler can enforce they're only read. For functions, it means they don't change the object's state."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "constexpr",
+            "definition": "The specifier (C++11) indicates that a variable or function can be evaluated at compile time, enabling computations to be moved from runtime to compilation. A function marked this way is evaluated at compile time when called with constant expressions and at runtime otherwise. C++20 extended this capability to allow dynamic allocation, virtual functions, and most standard algorithms in constant expressions.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "type-system",
+            "code_example": "constexpr int factorial(int n) { return n <= 1 ? 1 : n * factorial(n-1); } constexpr int f5 = factorial(5);",
+            "short_reference": "It lets variables or functions be calculated during compilation instead of runtime, especially with constant values. In newer C++ versions, it can also handle more complex operations like dynamic memory or virtual functions in constant expressions."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "auto",
+            "definition": "This keyword instructs the compiler to deduce a variable's type from its initializer (C++11). It reduces verbosity\u2014especially with long iterator or template types\u2014while keeping full static typing. The keyword strips top-level cv-qualifiers and references by default; use reference syntax when you want to bind by reference without copying.",
+            "difficulty": "beginner",
+            "module": "language-keyword",
+            "category": "type-system",
+            "code_example": "auto it = myMap.begin(); auto& ref = someVector[0]; auto val = compute();",
+            "short_reference": "It lets the compiler figure out a variable's type from what you assign to it, which saves time with complex types but still keeps the type fixed. You usually don't need to add things like references or const unless you specifically want them."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "decltype",
+            "definition": "The specifier queries the declared type of an expression without evaluating it, available since C++11. It is indispensable in generic code where the return type of a template function depends on its arguments: the exact type of the expression a + b is captured. Combined with auto in trailing return types (auto f() -> ...) or in C++14 return type deduction, it enables precise type forwarding.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "type-system",
+            "code_example": "int x = 0; decltype(x) y = 5; // y is int\ntemplate<class A, class B> auto add(A a, B b) -> decltype(a+b);",
+            "short_reference": "It's a C++ feature that captures the exact type of an expression without evaluating it, especially useful in templates and for specifying return types with auto."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "type alias (using)",
+            "definition": "The keyword creates an alias for a type, replacing the older typedef syntax since C++11. Unlike typedef, alias templates support templates directly, making them strictly more powerful. For example, an alias template that typedef cannot express can be created.",
+            "difficulty": "beginner",
+            "module": "language-keyword",
+            "category": "type-system",
+            "code_example": "using StringVec = std::vector<std::string>;\ntemplate<typename T> using Ptr = std::unique_ptr<T>;",
+            "short_reference": "It creates type aliases that work with templates directly, making them more flexible than typedef which can't handle templates."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "enum class",
+            "definition": "A scoped enumeration introduced in C++11 that prevents implicit conversion to int and scopes enumerator names inside the enum type. Unlike an unscoped enum, you must qualify each enumerator (e.g., Color::Red), eliminating name-collision bugs and accidental arithmetic on enum values. The underlying type can be specified explicitly for precise memory layout control.",
+            "difficulty": "beginner",
+            "module": "language-keyword",
+            "category": "type-system",
+            "code_example": "enum class Direction { North, South, East, West }; Direction d = Direction::North;",
+            "short_reference": "It's a C++11 scoped enum where you must use the class name with each value to avoid conflicts and prevent automatic integer conversion. You can also set the data type explicitly for memory control."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "struct",
+            "definition": "A class in C++ where members default to public visibility, and is used to define aggregate or record types. Modern C++ classes can have constructors, member functions, inheritance, and template parameters just like classes. The idiomatic distinction is stylistic: the former for passive data aggregates (POD-like), class for types with invariants and private state.",
+            "difficulty": "beginner",
+            "module": "language-keyword",
+            "category": "type-system",
+            "code_example": "struct Point { float x; float y; }; Point p{1.0f, 2.0f};",
+            "short_reference": "It's like a class but with public members by default, used for simple data structures. Think of it as a class for plain data without extra rules or private stuff."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "static_assert",
+            "definition": "A compile-time assertion that causes a compilation error with a diagnostic message if a constant expression evaluates to false. It is the preferred way to validate template arguments, type properties, and configuration constants at compile time rather than at runtime. Combined with <type_traits>, it is a powerful tool for validating type properties.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "type-system",
+            "code_example": "static_assert(sizeof(int) == 4, \"int must be 32 bits\");\ntemplate<typename T> void f() { static_assert(std::is_integral_v<T>); }",
+            "short_reference": "It's a compile-time check that throws an error if a condition is false, used to validate things like types or template parameters before the program runs."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::type_traits",
+            "definition": "A header (<type_traits>, C++11) providing compile-time metafunctions that query and transform type properties. Traits like std::is_integral, std::is_pointer, std::is_same, and std::remove_reference produce bool constants or transformed types usable in templates. They are the building blocks for SFINAE-based overload resolution, concepts (C++20), and generic algorithms that need to branch on type properties.",
+            "difficulty": "advanced",
+            "module": "<type_traits>",
+            "category": "type-system",
+            "code_example": "static_assert(std::is_same_v<int, int>); std::remove_reference_t<int&> x = 0;",
+            "short_reference": "It's a C++ header that provides tools to check and modify type properties at compile time, like determining if a type is an integer or a pointer, which helps build flexible templates and modern C++ features."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "structured bindings (C++17)",
+            "definition": "A C++17 language feature that lets you unpack the members of a struct, array, or tuple-like object into named local variables in a single declaration. The syntax auto [a, b, c] = expr; creates bindings for each element, making code that iterates std::map or returns multiple values significantly cleaner. Bindings can be references (auto& [k, v]) to avoid copies and to allow mutation.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "type-system",
+            "code_example": "std::map<std::string,int> m; for (auto& [key, val] : m) { val++; }",
+            "short_reference": "It's a C++17 feature that lets you unpack structs, arrays, or tuples into named variables with syntax like auto [a,b,c] = expr; to simplify handling multiple values."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "C++ \u2014 Control Flow",
+        "description": "Covers C++ control-flow constructs including conditionals, loops, exception handling, and compile-time branching features added in C++17/20.",
+        "subject": "cpp",
+        "difficulty": "beginner",
+        "estimated_hours": 4,
+        "prerequisites": [
+          "basic C++ syntax"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "if/else",
+            "definition": "The fundamental conditional branching statement that executes one of two code paths based on a boolean expression. C++17 added the init-statement form if (auto it = m.find(k); it != m.end()) that limits the scope of a variable to the if block. This reduces namespace pollution and is the idiomatic way to test results of operations that produce both a value and a success indicator.",
+            "difficulty": "beginner",
+            "module": "language-keyword",
+            "category": "control-flow",
+            "code_example": "if (auto pos = str.find('x'); pos != std::string::npos) { /* found */ } // C++17",
+            "short_reference": "It's a way to choose between two actions based on whether a condition is true or false."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "switch",
+            "definition": "A multi-way branch statement that compares an integral or enum expression against a set of constant cases. Fall-through between cases is intentional but error-prone; C++17 introduced the [[fallthrough]] attribute to silence compiler warnings when fall-through is deliberate. Prefer enum class over plain integers for these values to get compiler warnings on unhandled enumerators.",
+            "difficulty": "beginner",
+            "module": "language-keyword",
+            "category": "control-flow",
+            "code_example": "switch (cmd) { case Cmd::Start: start(); break; case Cmd::Stop: stop(); break; default: break; }",
+            "short_reference": "It's a code block that runs different code based on a value, where cases can automatically go to the next one. Using enum class instead of numbers helps prevent errors."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "range-based for",
+            "definition": "A C++11 loop syntax (for (auto& elem : container)) that iterates over all elements in any range that provides begin() and end() iterators or is an array. It eliminates boilerplate index or iterator management and works with all STL containers, std::initializer_list, and user-defined ranges. Use auto& to avoid copying and const auto& when read-only access is intended.",
+            "difficulty": "beginner",
+            "module": "language-keyword",
+            "category": "control-flow",
+            "code_example": "for (const auto& s : myVector) { std::cout << s << '\\n'; }",
+            "short_reference": "It's a C++11 loop that iterates over elements in a container or array using auto& to avoid copying, eliminating the need for manual index management and working with STL containers, initializer lists, and custom ranges."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "try-catch-throw",
+            "definition": "C++ exception handling: throw raises an exception object that unwinds the call stack until a matching catch clause is found, then a try block delineates the guarded scope. During stack unwinding, destructors of all local objects are called, which is the mechanism that makes RAII exception-safe. Catching by const reference (catch (const std::exception& e)) avoids slicing and unnecessary copies.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "control-flow",
+            "code_example": "try { riskyOp(); } catch (const std::runtime_error& e) { std::cerr << e.what(); }",
+            "short_reference": "Catches errors by throwing exceptions, using try blocks to protect code and catch clauses to handle them safely. Destructors clean up during the process, avoiding extra copies when using const references."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "noexcept",
+            "definition": "A function specifier (C++11) that declares that a function does not throw exceptions; if it does throw, std::terminate() is called immediately. Marking move constructors and move assignment operators with this specifier is critical because STL containers (like std::vector) only use move operations during reallocation when they are guaranteed not to throw. This is also an operator: the expression evaluates to true if it is known not to throw.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "control-flow",
+            "code_example": "MyClass(MyClass&&) noexcept = default; bool safe() noexcept { return true; }",
+            "short_reference": "It's a way to tell C++ a function shouldn't throw exceptions, and if it does, the program crashes. It's super important for move operations in things like vectors to avoid crashes during resizing."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::exception",
+            "definition": "The standard base class for all exceptions thrown by the C++ standard library, defined in <stdexcept> and <exception>. It provides a virtual what() method returning a C-string description. The hierarchy includes std::runtime_error, std::logic_error, and their subclasses (std::out_of_range, std::invalid_argument, etc.); catching this base class by const reference is a clean way to catch any standard exception.",
+            "difficulty": "beginner",
+            "module": "<stdexcept>",
+            "category": "control-flow",
+            "code_example": "throw std::invalid_argument(\"n must be positive\");\ncatch (const std::exception& e) { log(e.what()); }",
+            "short_reference": "It's the base class for standard C++ exceptions, defined in <stdexcept> and <exception>, with a what() method to get error details. Catching it by const reference lets you handle any standard exception."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "if constexpr (C++17)",
+            "definition": "A compile-time conditional introduced in C++17 that discards the non-taken branch during template instantiation, preventing compilation errors in branches that would be ill-formed for a given type. Unlike a regular if, the discarded branch is not compiled for the current template arguments, making it a cleaner alternative to SFINAE-based overload selection for many patterns. It is widely used inside function templates to branch on type properties.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "control-flow",
+            "code_example": "template<typename T> void serialize(T val) { if constexpr (std::is_integral_v<T>) writeInt(val); else writeFloat(val); }",
+            "short_reference": "It's a compile-time if in C++17 that skips the unused branch during template processing, avoiding errors by not compiling the unused code path."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "[[nodiscard]] attribute",
+            "definition": "A C++17 attribute placed on a function declaration or type to warn the caller when its return value is discarded without use. This is especially important for functions returning error codes, handles, or computed results where silently ignoring the return value is almost always a bug. C++20 allows attaching a string reason to the attribute.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "control-flow",
+            "code_example": "[[nodiscard]] int openFile(const char* path); openFile(\"x\"); // compiler warning",
+            "short_reference": "It's a C++ feature that warns if you ignore a function's return value, especially for errors or handles, and lets you add a custom message in C++20."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "break/continue",
+            "definition": "Loop control statements: break exits the innermost enclosing loop or switch immediately, while continue skips the rest of the current iteration and jumps to the loop's update/condition check. Using these statements to exit early from complex loops is generally preferred over flag variables, as it keeps code linear and intent obvious. Neither statement works across function boundaries; use return for that.",
+            "difficulty": "beginner",
+            "module": "language-keyword",
+            "category": "control-flow",
+            "code_example": "for (int i = 0; i < n; ++i) { if (data[i] < 0) continue; if (data[i] > max) break; process(data[i]); }",
+            "short_reference": "Break stops the loop immediately, continue skips the rest of the current iteration and moves to the next one."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "C++ \u2014 I/O",
+        "description": "Covers C++ input/output facilities including stream classes, file I/O, string streams, formatted output, and the C++17 filesystem library.",
+        "subject": "cpp",
+        "difficulty": "beginner",
+        "estimated_hours": 4,
+        "prerequisites": [
+          "basic C++ syntax",
+          "std::string"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::cin / std::cout",
+            "definition": "The standard input and output stream objects from <iostream> provide reading from stdin and writing to stdout using the >> and << stream operators respectively. Chaining insertions (<< a << ' ' << b) is idiomatic, and std::endl flushes the buffer in addition to inserting a newline\u2014prefer '\\n' when flushing is not needed for performance. Mixing C-style printf and C++ streams requires std::ios_base::sync_with_stdio(false) to be safe.",
+            "difficulty": "beginner",
+            "module": "<iostream>",
+            "category": "i/o",
+            "code_example": "int n; std::cin >> n; std::cout << \"Result: \" << n * 2 << '\\n';",
+            "short_reference": "std::cin reads input from the keyboard using >> and std::cout writes output to the screen using <<. Chaining with << is common, and endl adds a newline but \\n is better for performance when flushing isn't needed."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::ifstream / std::ofstream",
+            "definition": "File stream classes for reading and writing files, defined in <fstream>. Opening a file binds the stream to a file descriptor; the file is automatically closed when the stream object goes out of scope, making it RAII-safe. Always check is_open() or the stream's bool conversion after opening to detect errors before reading or writing.",
+            "difficulty": "beginner",
+            "module": "<fstream>",
+            "category": "i/o",
+            "code_example": "std::ifstream in(\"data.txt\"); if (!in) throw std::runtime_error(\"open failed\"); std::string line; std::getline(in, line);",
+            "short_reference": "These are C++ classes for reading and writing files that close automatically when done, so you should check if they opened correctly before using them."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::stringstream",
+            "definition": "A string-backed stream defined in <sstream> that lets you build or parse strings using the same << and >> operators as file or console streams. It is commonly used to convert between strings and numeric types before C++17's std::to_string and std::stoi, and to tokenize strings. std::ostringstream for output-only and std::istringstream for input-only are lighter alternatives.",
+            "difficulty": "beginner",
+            "module": "<sstream>",
+            "category": "i/o",
+            "code_example": "std::ostringstream oss; oss << \"x=\" << 42; std::string s = oss.str();",
+            "short_reference": "It's a C++ tool that lets you read from or write to a string using the same operators as files, often for converting data or splitting strings into parts."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::getline",
+            "definition": "A free function defined in <string> that reads an entire line (up to a delimiter, default '\\n') from an input stream into a std::string. Unlike operator>>, it does not skip leading whitespace and reads the full line including spaces, making it the correct choice for reading text lines. A common pitfall is calling this function immediately after >>, which leaves a stale '\\n' in the buffer; call in.ignore() first.",
+            "difficulty": "beginner",
+            "module": "<string>",
+            "category": "i/o",
+            "code_example": "std::string line; while (std::getline(std::cin, line)) { process(line); }",
+            "short_reference": "It reads an entire line from input, including spaces, without skipping leading whitespace. Use it after clearing any leftover newline characters from previous input to avoid issues."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "stream manipulators",
+            "definition": "Objects and functions inserted into a stream with << to alter its formatting state, such as std::setw, std::setprecision, std::fixed, std::hex, and std::left, defined primarily in <iomanip>. Many of these (like std::fixed) are sticky \u2014 they persist for subsequent output \u2014 while others (like std::setw) apply only to the next field. Understanding sticky vs. non-sticky behavior is important for correct column-aligned or numeric output.",
+            "difficulty": "beginner",
+            "module": "<iomanip>",
+            "category": "i/o",
+            "code_example": "std::cout << std::fixed << std::setprecision(2) << 3.14159; // prints 3.14",
+            "short_reference": "Stream manipulators are functions or objects added to a stream with << to change formatting, like setting width or precision. Some stick around for later outputs, others only affect the next field."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::format (C++20)",
+            "definition": "A type-safe, locale-aware string formatting facility introduced in C++20, defined in <format>, inspired by Python's string formatting and the fmtlib library. It accepts a string with {} placeholders and returns a std::string without stream state side effects or printf's type-safety hazards. Compile-time string checking (in C++26) and rich fill/align/width/precision specifiers make it the modern replacement for both printf and stream manipulators.",
+            "difficulty": "intermediate",
+            "module": "<format>",
+            "category": "i/o",
+            "code_example": "std::string s = std::format(\"Hello, {}! You are {} years old.\", name, age);",
+            "short_reference": "It's a C++20 feature for safe string formatting using {} placeholders inspired by Python, replacing older methods like printf with better type safety and locale support."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::filesystem (C++17)",
+            "definition": "A library introduced in C++17 that provides portable operations on file system paths, directories, and metadata \u2014 path manipulation, directory iteration, exists/copy/remove, and file size queries. The central type is the path type, which handles OS path separators transparently. It replaces platform-specific POSIX or Win32 calls with portable, exception-throwing (or error_code-returning) alternatives.",
+            "difficulty": "intermediate",
+            "module": "<filesystem>",
+            "category": "i/o",
+            "code_example": "namespace fs = std::filesystem; fs::create_directories(\"a/b/c\"); for (auto& e : fs::directory_iterator(\".\")) std::cout << e.path();",
+            "short_reference": "It's a C++17 library that simplifies file system tasks across different operating systems by handling path separators automatically and offering functions like checking file existence or copying files without needing OS-specific code."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "binary file I/O",
+            "definition": "Reading and writing raw bytes to files using stream member functions read() and write() instead of formatted operators, by opening streams with std::ios::binary. This approach avoids newline translation and is essential for serializing numeric data, images, or custom formats where every byte must be exact. Always check gcount() after read() to confirm how many bytes were actually read.",
+            "difficulty": "intermediate",
+            "module": "<fstream>",
+            "category": "i/o",
+            "code_example": "std::ofstream out(\"data.bin\", std::ios::binary); int val = 42; out.write(reinterpret_cast<char*>(&val), sizeof(val));",
+            "short_reference": "It's reading and writing files byte-by-byte without formatting, using special functions and binary mode to keep data exact, like for images or numbers, and checking how many bytes actually got read."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "C++ \u2014 Concurrency",
+        "description": "Covers C++ standard-library concurrency primitives including threads, mutexes, condition variables, atomics, futures, and C++20 cooperative cancellation.",
+        "subject": "cpp",
+        "difficulty": "advanced",
+        "estimated_hours": 8,
+        "prerequisites": [
+          "RAII",
+          "lambdas",
+          "std::function"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::thread",
+            "definition": "The standard C++11 class defined in <thread> that launches a callable (function, lambda, or functor) in a new OS thread. A joinable instance must be joined or detached before the object is destroyed, or std::terminate() is called. std::jthread (C++20) improves on this by joining automatically on destruction and supporting cooperative cancellation.",
+            "difficulty": "intermediate",
+            "module": "<thread>",
+            "category": "concurrency",
+            "code_example": "std::thread t([](){ doWork(); }); t.join();",
+            "short_reference": "It's a C++ class that starts a new thread to run a function or lambda. You have to join or detach it before the thread object is destroyed, or the program might crash. C++20's std::jthread joins automatically and handles cancellation better."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::jthread (C++20)",
+            "definition": "An improved class added in C++20 that automatically joins on destruction (RAII-safe) and carries a std::stop_source for cooperative cancellation via std::stop_token. This eliminates the most common bug with std::thread\u2014forgetting to join\u2014and enables clean thread shutdown without shared boolean flags. When the instance is destroyed, it requests a stop and then joins, making exception-safe thread management straightforward.",
+            "difficulty": "intermediate",
+            "module": "<thread>",
+            "category": "concurrency",
+            "code_example": "std::jthread worker([](std::stop_token st){ while (!st.stop_requested()) doWork(); });",
+            "short_reference": "It's a C++20 thread that automatically joins when destroyed to avoid forgetting to join, and includes a cancellation feature for cleaner shutdown without shared flags."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::mutex",
+            "definition": "A mutual-exclusion primitive from <mutex> that protects shared data from concurrent access by allowing only one thread to hold the lock at a time. Call lock()/unlock() directly or\u2014preferably\u2014use RAII wrappers (std::lock_guard, std::unique_lock) that release the lock automatically. std::recursive_mutex allows the same thread to lock multiple times; std::shared_mutex (C++17) enables reader-writer locking.",
+            "difficulty": "intermediate",
+            "module": "<mutex>",
+            "category": "concurrency",
+            "code_example": "std::mutex mtx; { std::lock_guard<std::mutex> lk(mtx); sharedData++; }",
+            "short_reference": "It's a locking tool that ensures only one thread can access shared data at a time, using lock/unlock methods or RAII classes to handle the lock automatically."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::lock_guard",
+            "definition": "A lightweight RAII mutex wrapper from <mutex> that acquires a mutex on construction and releases it on destruction, ensuring the mutex is always unlocked even if an exception is thrown. It cannot be unlocked early or transferred, making it the safest and most efficient choice for simple critical sections. For cases requiring early unlock or condition variable integration, use std::unique_lock instead.",
+            "difficulty": "intermediate",
+            "module": "<mutex>",
+            "category": "concurrency",
+            "code_example": "void increment() { std::lock_guard<std::mutex> guard(mtx); ++counter; }",
+            "short_reference": "It automatically locks a mutex when created and unlocks it when destroyed, even if an error happens. You can't unlock it early, so it's best for simple locking needs."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::condition_variable",
+            "definition": "A synchronization primitive from <mutex> that lets one or more threads wait until a condition is signaled by another thread. Waiting threads call wait() with a std::unique_lock and a predicate; the mutex is released atomically during the wait and reacquired when notified. Always supply a predicate to guard against spurious wakeups, which the OS may generate without a corresponding notify_one()/notify_all() call.",
+            "difficulty": "advanced",
+            "module": "<condition_variable>",
+            "category": "concurrency",
+            "code_example": "std::condition_variable cv; cv.wait(lock, []{ return dataReady; }); cv.notify_one();",
+            "short_reference": "A tool that lets threads wait for a condition to be signaled by another thread, using a lock and a condition check to avoid false alarms."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::atomic",
+            "definition": "A template class from <atomic> that wraps a scalar type with guaranteed atomic read-modify-write operations, eliminating data races without a mutex for simple shared variables. Operations like fetch_add, compare_exchange_strong, and store/load accept a memory order parameter controlling visibility guarantees across CPUs. Instances of bool and int are the most common; only trivially copyable types are supported.",
+            "difficulty": "advanced",
+            "module": "<atomic>",
+            "category": "concurrency",
+            "code_example": "std::atomic<int> counter{0}; counter.fetch_add(1, std::memory_order_relaxed);",
+            "short_reference": "It's a C++ class that ensures safe shared variable access without locks by using atomic operations that handle memory visibility across CPUs, commonly used for types like int or bool."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::async / std::future",
+            "definition": "This launches a callable asynchronously (possibly in a new thread) and returns a handle that will hold the result when it is ready. Calling get() on the handle blocks until the result is available and rethrows any exception the task threw. The std::launch::async vs std::launch::deferred policy controls whether the task runs eagerly or lazily on get().",
+            "difficulty": "intermediate",
+            "module": "<future>",
+            "category": "concurrency",
+            "code_example": "auto fut = std::async(std::launch::async, computeValue); int result = fut.get();",
+            "short_reference": "It starts a task in the background (maybe in a new thread) and gives you a future object that holds the result when ready. You wait for the result with get(), which blocks until it's done and passes any errors through."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::promise",
+            "definition": "A one-shot communication channel that produces a std::future for its associated value, defined in <future>. One thread holds the handle and calls set_value() (or set_exception()) to fulfill it; another holds the future and calls get() to receive the result. This decouples the producer from the consumer more explicitly than std::async when you need fine control over when and from where the value is set.",
+            "difficulty": "advanced",
+            "module": "<future>",
+            "category": "concurrency",
+            "code_example": "std::promise<int> p; auto f = p.get_future(); std::thread([&p]{ p.set_value(42); }).detach(); int v = f.get();",
+            "short_reference": "A mechanism where one thread sets a value via set_value or set_exception, and another thread retrieves it with get, ensuring only one value is passed."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "thread_local",
+            "definition": "A storage class specifier that gives each thread its own independent instance of a variable, with a lifetime bound to the thread rather than the program or the enclosing scope. This eliminates the need for mutex protection on per-thread state (like per-thread random generators or caches) because no two threads share the same instance. It is the standard C++11 replacement for POSIX pthread_key_create.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "concurrency",
+            "code_example": "thread_local std::mt19937 rng(std::random_device{}()); // each thread has its own RNG",
+            "short_reference": "It's a storage class in C++ that lets each thread have its own separate copy of a variable, so they don't interfere with each other and don't need locks for things like thread-specific random numbers or caches. It's part of the C++11 standard and replaces older POSIX thread techniques."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "C++ \u2014 Functional",
+        "description": "Covers C++ functional-programming features including lambdas, std::function, higher-order algorithms, std::bind, and the C++20 ranges library.",
+        "subject": "cpp",
+        "difficulty": "intermediate",
+        "estimated_hours": 5,
+        "prerequisites": [
+          "auto",
+          "templates basics",
+          "STL containers"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "lambda expression",
+            "definition": "An anonymous function object defined inline with the syntax [capture](params) -> ret { body }, available since C++11. These are syntactic sugar for compiler-generated closure types; they are the idiomatic way to pass short predicates and callbacks to STL algorithms. C++14 added generic versions (auto parameters), C++20 added template versions and explicit capture of this by value ([=, this] was deprecated in C++20, replaced by [=, *this]).",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "functional",
+            "code_example": "std::sort(v.begin(), v.end(), [](int a, int b){ return a > b; }); // descending sort",
+            "short_reference": "A lambda expression is an anonymous function defined inline that captures variables from its surrounding scope, often used to pass short functions or callbacks to standard library algorithms."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "capture clause",
+            "definition": "The bracket section [capture] at the start of a lambda that specifies how the lambda's closure captures variables from the enclosing scope: by value ([=] or [x]), by reference ([&] or [&x]), or explicitly. Copying by value occurs at the point of lambda definition; capturing by reference requires the referred variable to outlive all invocations. C++14 introduced init-captures ([x = std::move(val)]) to move-capture non-copyable objects.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "functional",
+            "code_example": "int base = 10; auto add = [base](int x){ return base + x; }; // captures base by value\nauto sink = [p = std::move(ptr)](){ use(*p); }; // C++14 move-capture",
+            "short_reference": "It's how a lambda function grabs variables from the code around it\u2014either by making a copy or by linking to the original, which needs the original to stay around. C++14 added a way to move variables that can't be copied."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::function",
+            "definition": "A polymorphic callable wrapper from <functional> that can hold any callable \u2014 function pointer, lambda, functor, or std::bind result \u2014 with a given signature (e.g., a wrapper with signature int(std::string)). It enables type-erased storage of callables in containers, class members, and callbacks at the cost of heap allocation and a virtual-dispatch-like overhead. For performance-critical paths, prefer templates with auto parameters or concepts over this wrapper.",
+            "difficulty": "intermediate",
+            "module": "<functional>",
+            "category": "functional",
+            "code_example": "std::function<int(int,int)> op = [](int a, int b){ return a + b; }; op(2, 3);",
+            "short_reference": "It's a flexible way to store different types of functions or lambdas with a specific signature, letting you use them interchangeably but with some performance cost due to heap allocation and virtual calls."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::bind",
+            "definition": "A function adaptor from <functional> (C++11) that partially applies arguments to a callable, returning a new callable with some arguments already bound. Placeholders like std::placeholders::_1 represent positions of the remaining arguments. In modern C++ (C++14+), lambdas with captures are generally clearer and more efficient than this adaptor, which is considered largely legacy.",
+            "difficulty": "intermediate",
+            "module": "<functional>",
+            "category": "functional",
+            "code_example": "auto add5 = std::bind(std::plus<int>{}, 5, std::placeholders::_1); add5(3); // 8",
+            "short_reference": "It lets you fix some arguments of a function or functor in advance, creating a new function ready for the remaining ones later. It uses placeholders like _1 for unbound arguments, but lambdas are usually better in modern C++."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::ranges (C++20)",
+            "definition": "A C++20 library (<ranges>) that provides range-based, composable algorithms and views operating directly on containers without needing iterator pairs. These algorithms accept containers directly; views compose lazily via the pipe operator |. This enables expressive, zero-overhead data pipelines that replace verbose iterator-based code.",
+            "difficulty": "advanced",
+            "module": "<ranges>",
+            "category": "functional",
+            "code_example": "auto evens = v | std::views::filter([](int x){ return x % 2 == 0; }) | std::views::transform([](int x){ return x * x; });",
+            "short_reference": "It's a C++20 library that lets you work with ranges using containers directly and combine operations lazily with the pipe operator, making code cleaner and more efficient than old iterator methods."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::transform",
+            "definition": "An STL algorithm from <algorithm> that applies a unary or binary function to each element of a range and writes the results to an output range. It is the C++ equivalent of map in functional languages and is often paired with std::back_inserter to populate a destination container. With C++20 ranges, the lazy, non-allocating alternative composes with other views.",
+            "difficulty": "intermediate",
+            "module": "<algorithm>",
+            "category": "functional",
+            "code_example": "std::transform(v.begin(), v.end(), out.begin(), [](int x){ return x * 2; });",
+            "short_reference": "Applies a function to each element in a range and writes results to an output range, similar to map in functional languages and often used with back_inserter for containers."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::accumulate",
+            "definition": "An STL algorithm from <numeric> that reduces a range to a single value by repeatedly applying a binary operation, starting from an initial value. It is the C++ equivalent of fold/reduce: this function sums all elements. The custom binary operation form allows computing products, string concatenations, or any associative reduction.",
+            "difficulty": "beginner",
+            "module": "<numeric>",
+            "category": "functional",
+            "code_example": "int total = std::accumulate(prices.begin(), prices.end(), 0, [](int acc, int p){ return acc + p; });",
+            "short_reference": "It's an STL algorithm that combines elements in a range using a binary operation starting from an initial value, like summing numbers or concatenating strings."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "fold expressions (C++17)",
+            "definition": "A C++17 language feature that compactly expands a variadic parameter pack over a binary operator: (pack op ...) folds right, (... op pack) folds left, and the two-operand forms include an initial value. This feature eliminates recursive template metaprogramming for common operations like summing all arguments or printing them. For example, (std::cout << ... << args) prints every argument in the pack.",
+            "difficulty": "advanced",
+            "module": "language-keyword",
+            "category": "functional",
+            "code_example": "template<typename... Ts> auto sum(Ts... vals) { return (vals + ...); } sum(1, 2, 3, 4); // 10",
+            "short_reference": "It's a C++17 feature that applies a binary operator across all elements in a parameter pack, folding left or right to simplify tasks like summing or printing without recursion."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::invoke",
+            "definition": "A utility function from <functional> (C++17) that uniformly calls any callable \u2014 function pointer, member function pointer (with object), or functor \u2014 using a single syntax. It is the correct way to call a callable inside generic code when you do not know ahead of time whether it is a free function, a member function, or a lambda. std::apply uses this utility internally to call a callable with arguments from a tuple.",
+            "difficulty": "intermediate",
+            "module": "<functional>",
+            "category": "functional",
+            "code_example": "std::invoke(&MyClass::method, obj, arg1); std::invoke(myLambda, 42);",
+            "short_reference": "It's a C++17 tool that lets you call functions, member functions, or lambdas with one syntax, especially when you don't know what type of callable you're using. It's the go-to for generic code to handle different callable types uniformly."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "C++ \u2014 Memory",
+        "description": "Covers C++ memory management including stack vs. heap allocation, smart pointers, move semantics, perfect forwarding, RAII-safe allocation patterns, and common memory errors.",
+        "subject": "cpp",
+        "difficulty": "intermediate",
+        "estimated_hours": 7,
+        "prerequisites": [
+          "RAII",
+          "pointers",
+          "constructors/destructors"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "stack vs heap allocation",
+            "definition": "Automatic allocation is when local variables are allocated when a scope is entered and freed when it exits, with zero overhead and excellent cache locality. Manual or managed allocation (via new/delete or smart pointers) allows objects to outlive their creating scope, and supports runtime-sized allocations, but incurs allocator overhead and risks leaks or fragmentation. Prefer automatic allocation by default and use manual allocation only when needed for large, dynamic, or long-lived data.",
+            "difficulty": "beginner",
+            "module": "language-keyword",
+            "category": "memory",
+            "code_example": "int arr[1024]; // stack \u2014 fixed size, automatic\nauto p = std::make_unique<BigObject>(); // heap \u2014 dynamic, RAII-managed",
+            "short_reference": "Stack allocation is automatic for local variables, freeing them when the scope ends with no extra cost. Heap allocation is manual, lets objects live longer but uses more resources and can cause issues like leaks."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::unique_ptr",
+            "definition": "A smart pointer from <memory> (C++11) that expresses sole ownership of a heap-allocated object; when it goes out of scope, it automatically deletes the managed object. It is non-copyable but movable, enforcing single ownership at the type level. Always prefer std::make_unique<T>() over new to create one, as it is exception-safe and avoids double evaluation of arguments.",
+            "difficulty": "intermediate",
+            "module": "<memory>",
+            "category": "memory",
+            "code_example": "auto p = std::make_unique<Foo>(42); p->bar(); // no manual delete needed",
+            "short_reference": "It's a smart pointer that owns one object on the heap and deletes it when it goes out of scope. You can move it to transfer ownership but can't copy it."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::shared_ptr",
+            "definition": "A smart pointer from <memory> (C++11) implementing shared ownership via reference counting: the managed object is destroyed when the last one to it is destroyed. It is copyable (incrementing the reference count) and movable, suitable when multiple owners need to extend an object's lifetime. The overhead of atomic reference-count increments makes it slower than unique_ptr; prefer unique_ptr unless shared ownership is genuinely required.",
+            "difficulty": "intermediate",
+            "module": "<memory>",
+            "category": "memory",
+            "code_example": "auto s = std::make_shared<Node>(); auto s2 = s; // both own the same Node",
+            "short_reference": "It's a smart pointer that shares ownership of an object among multiple instances, using reference counting to automatically delete the object when no pointers remain. It's copyable and movable but slower than unique_ptr due to the counting overhead."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::weak_ptr",
+            "definition": "A non-owning observer of a shared_ptr-managed object, defined in <memory> (C++11), that does not affect the reference count. It is used to break circular references between shared_ptrs (which would otherwise cause memory leaks) and to implement optional/expired handles (e.g., caches and observer lists). To access the object, call lock() which returns a shared_ptr (empty if the object has been destroyed).",
+            "difficulty": "intermediate",
+            "module": "<memory>",
+            "category": "memory",
+            "code_example": "std::weak_ptr<Node> wk = sharedNode; if (auto sp = wk.lock()) sp->use();",
+            "short_reference": "It's a pointer that doesn't own the object it points to, used to avoid memory leaks in circular references and check if the object still exists without affecting its reference count."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "move semantics",
+            "definition": "A C++11 feature that enables the resources (heap buffers, file handles, etc.) of a temporary or explicitly transferred object to be transferred rather than copied, turning O(n) copies into O(1) transfers. The compiler uses this feature automatically for temporaries (rvalues); use std::move() to cast a named variable to an rvalue reference and enable movement explicitly. After a transfer, the source object is in a valid but unspecified state and should not be used without reassignment.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "memory",
+            "code_example": "std::vector<int> a = {1,2,3}; std::vector<int> b = std::move(a); // a is now empty",
+            "short_reference": "It's a way to transfer resources like memory or file handles without copying them, which is faster. You can do it automatically for temporary objects or explicitly with std::move(), but the original object can't be used afterward without reassigning."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "std::forward (perfect forwarding)",
+            "definition": "A utility function from <utility> (C++11) that preserves the value category (lvalue or rvalue) of a function argument when passing it to another function, used exclusively inside forwarding (universal) reference templates. Without this function, an rvalue argument becomes an lvalue inside the function body (because it has a name), and move semantics would be lost. The idiom template<typename T> void wrap(T&& arg) { inner(this_function<T>(arg)); } is canonical for this technique.",
+            "difficulty": "advanced",
+            "module": "<utility>",
+            "category": "memory",
+            "code_example": "template<typename T, typename... Args> auto make(Args&&... args) { return T(std::forward<Args>(args)...); }",
+            "short_reference": "It preserves whether an argument is an lvalue or rvalue when passing it to another function, so move semantics aren't lost."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "placement new",
+            "definition": "A form of the new operator that constructs an object in pre-allocated memory instead of allocating new memory, using the syntax new (ptr) T(args). It is used in advanced scenarios like custom allocators, memory pools, and the implementation of std::optional and std::variant. Objects created with this operator must be destroyed by calling their destructor explicitly (ptr->~T()) before the backing storage is reused or freed.",
+            "difficulty": "advanced",
+            "module": "language-keyword",
+            "category": "memory",
+            "code_example": "alignas(T) std::byte buf[sizeof(T)]; T* p = new (buf) T(42); p->~T();",
+            "short_reference": "It's a way to create an object in existing memory using new (ptr) T(args) instead of allocating new space, and you have to manually call the destructor later to clean it up."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "dangling pointer",
+            "definition": "A pointer or reference that refers to memory that has already been freed or gone out of scope, resulting in undefined behavior if dereferenced. Common causes include returning a pointer to a local variable, using a raw pointer after delete, and invalidating STL iterators by modifying the container. Smart pointers (unique_ptr, shared_ptr) and RAII eliminate most bugs of this type by tying object lifetime to scope.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "memory",
+            "code_example": "int* p = nullptr; { int x = 10; p = &x; } *p; // UB \u2014 x is gone",
+            "short_reference": "It's when a pointer points to memory that's already been freed or is no longer valid, which can cause crashes or weird behavior if you try to use it. Smart pointers help avoid this by automatically managing memory."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "C++ \u2014 Templates",
+        "description": "Covers C++ template programming including function and class templates, specialization, variadic templates, SFINAE, and C++20 concepts.",
+        "subject": "cpp",
+        "difficulty": "advanced",
+        "estimated_hours": 9,
+        "prerequisites": [
+          "type-system",
+          "auto",
+          "decltype",
+          "static_assert"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "function template",
+            "definition": "A blueprint for generating a family of functions parameterized by one or more types or values, declared with template<typename T>. The compiler instantiates a concrete function for each unique set of template arguments, which may be deduced from function arguments or supplied explicitly. These enable generic algorithms (like std::sort) that work on any type satisfying the operation's requirements.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "templates",
+            "code_example": "template<typename T> T max(T a, T b) { return a > b ? a : b; } max(3, 5); max(1.2, 3.4);",
+            "short_reference": "A function template is a way to create multiple versions of a function for different data types, letting you write code that works with any type without rewriting it each time."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "class template",
+            "definition": "A blueprint for generating a family of classes parameterized by types or values, such as std::vector<T> or std::pair<T1,T2>. The compiler creates a separate class for each unique instantiation; uninstantiated members are not compiled, so it can contain members that would be ill-formed for some T. Class Template Argument Deduction (CTAD, C++17) allows the compiler to infer template arguments from constructor arguments, eliminating verbose explicit instantiations.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "templates",
+            "code_example": "template<typename T> struct Box { T value; }; Box<int> b{42}; Box b2{3.14}; // CTAD, C++17",
+            "short_reference": "A class template is a blueprint for creating different classes with various types, like std::vector<T>, where each type becomes a unique class. C++17's CTAD lets the compiler figure out the types from the arguments, so you don't have to specify them manually."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "template specialization",
+            "definition": "A mechanism to provide a custom implementation of a template for a specific set of template arguments, overriding the generic version. Full specialization (template<> class Foo<int>) replaces the template entirely for that type; partial specialization (template<typename T> class Foo<T*>) applies when the arguments match a pattern. Specializations are used to optimize for specific types or to handle types that require different logic.",
+            "difficulty": "advanced",
+            "module": "language-keyword",
+            "category": "templates",
+            "code_example": "template<typename T> struct Traits { static bool is_signed = false; };\ntemplate<> struct Traits<int> { static bool is_signed = true; };",
+            "short_reference": "It's a way to create custom versions of a template for specific types, overriding the general code to handle them differently or more efficiently."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "variadic template",
+            "definition": "A template that accepts a variable number of type or non-type arguments via a parameter pack (typename... Args), introduced in C++11. Parameter packs are expanded with ..., enabling recursive template metaprogramming or (since C++17) fold expressions. These power std::tuple, std::make_unique, std::variant, and any function accepting heterogeneous argument lists like emplace or printf-style formatters.",
+            "difficulty": "advanced",
+            "module": "language-keyword",
+            "category": "templates",
+            "code_example": "template<typename... Args> void log(Args&&... args) { (std::cout << ... << args) << '\\n'; }",
+            "short_reference": "A C++ template that takes any number of arguments using a parameter pack, letting functions or classes handle variable inputs like std::tuple or printf-style formatters."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "SFINAE",
+            "definition": "Substitution Failure Is Not An Error \u2014 a C++ template rule stating that if substituting template arguments into a declaration produces an invalid type or expression, that overload is silently removed from the candidate set rather than causing a compile error. It is the foundation of std::enable_if-based overload selection: enable_if<condition, T>::type is ill-formed when condition is false, removing the overload. C++20 concepts are the modern, readable replacement for most such patterns.",
+            "difficulty": "advanced",
+            "module": "language-keyword",
+            "category": "templates",
+            "code_example": "template<typename T, typename = std::enable_if_t<std::is_integral_v<T>>> void onlyInt(T v);",
+            "short_reference": "It's a C++ template rule where invalid substitutions don't crash the compiler but just skip that option. Used to pick overloads conditionally, like with enable_if, so code only compiles when types match."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "concept (C++20)",
+            "definition": "A named, compile-time predicate on template arguments introduced in C++20 that constrains what types a template accepts, replacing verbose SFINAE patterns. They are defined with the concept keyword and a requires expression or a boolean constant expression; they are used in template declarations with requires clauses or shorthand concept syntax (template<Integral T>). Constraints appear directly in error messages, dramatically improving diagnosability of template failures.",
+            "difficulty": "advanced",
+            "module": "language-keyword",
+            "category": "templates",
+            "code_example": "template<typename T> concept Numeric = std::is_arithmetic_v<T>;\ntemplate<Numeric T> T square(T x) { return x * x; }",
+            "short_reference": "A concept in C++20 is a way to specify type requirements at compile time using 'concept' and 'requires', making template errors clearer by showing exactly what went wrong."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "requires clause (C++20)",
+            "definition": "A C++20 syntax for attaching a constraint expression to a template or function using the requires keyword, expressing prerequisites that template arguments must satisfy. It can appear after the template parameter list (template<typename T> requires Integral<T>) or as a trailing one. A requires expression inside it (requires { expr; }) checks whether a specific expression is valid for the given type, enabling expressive ad-hoc concept definitions.",
+            "difficulty": "advanced",
+            "module": "language-keyword",
+            "category": "templates",
+            "code_example": "template<typename T> requires requires(T a, T b) { a + b; } auto add(T a, T b) { return a + b; }",
+            "short_reference": "It's a C++20 feature that lets you add conditions to templates or functions using 'requires', checking if certain expressions work for the types involved. This helps define what's needed for a type without creating a full concept, making it easier to set specific requirements on the fly."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "consteval (C++20)",
+            "definition": "A C++20 function specifier that mandates a function must be evaluated at compile time (an immediate function), unlike constexpr which permits but does not require compile-time evaluation. Calling such a function with non-constant arguments is a compile error. This is useful for compile-time code generation, compile-time string processing, or ensuring that certain computations never happen at runtime.",
+            "difficulty": "advanced",
+            "module": "language-keyword",
+            "category": "templates",
+            "code_example": "consteval int compileTimeSquare(int n) { return n * n; } constexpr int val = compileTimeSquare(5);",
+            "short_reference": "It forces functions to run only at compile time, so if you pass variables that can change, it'll cause a compile error. Unlike constexpr, it doesn't let you skip compile-time evaluation."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "C++ \u2014 Pointers",
+        "description": "Covers C++ pointer and reference semantics including raw pointers, pointer arithmetic, ownership models, smart pointers, and common pitfalls.",
+        "subject": "cpp",
+        "difficulty": "intermediate",
+        "estimated_hours": 6,
+        "prerequisites": [
+          "basic C++ syntax",
+          "memory management basics"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "raw pointer",
+            "definition": "A variable that holds the memory address of another object, declared as T*. This conveys no ownership information: the compiler cannot tell whether the pointer owns (and must delete) the pointed-to object or merely observes it. Modern C++ guidelines recommend using such pointers only for non-owning observation; ownership should be expressed through smart pointers or containers.",
+            "difficulty": "beginner",
+            "module": "language-keyword",
+            "category": "pointers",
+            "code_example": "int x = 10; int* p = &x; *p = 20; // p does not own x",
+            "short_reference": "It's a variable that stores a memory address of another object but doesn't indicate who owns that object, so you have to manage memory manually."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "pointer arithmetic",
+            "definition": "Arithmetic on pointers that moves them through arrays: p + n advances p by n * sizeof(*p) bytes, and p - q (on pointers into the same array) gives the element count between them. This is valid only within a single array (or one past its end); applying it to unrelated objects is undefined behavior. It underpins the iterator model but is rarely used directly in modern C++ \u2014 prefer iterators or std::span instead.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "pointers",
+            "code_example": "int arr[5] = {1,2,3,4,5}; int* p = arr; *(p + 2); // 3 \u2014 same as arr[2]",
+            "short_reference": "It's moving a pointer through an array by adding or subtracting values, where each step equals the size of the data it points to. You can only do this within the same array, and it's mostly used in older C++ code rather than modern iterators."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "reference vs pointer",
+            "definition": "A reference (T&) is an alias for an existing object: it must be initialized at declaration, cannot be null, and cannot be reseated to refer to a different object after initialization. A pointer (T*) can be null, can be reassigned to point to different objects, and supports arithmetic. Prefer references for function parameters and return values when null is not a valid state; use pointers when optional/nullable semantics are needed.",
+            "difficulty": "beginner",
+            "module": "language-keyword",
+            "category": "pointers",
+            "code_example": "void inc(int& r) { ++r; } // reference \u2014 cannot be null\nvoid maybeInc(int* p) { if (p) ++*p; } // pointer \u2014 nullable",
+            "short_reference": "A reference is tied to a specific object from the start and can't change or be null, while a pointer can point to different things or be empty and allows math operations on its address."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "const pointer vs pointer to const",
+            "definition": "Two distinct const qualifications on pointers: a pointer-to-const (const T* or T const*) means the data pointed to cannot be modified through this pointer, while the pointer itself can be reassigned. A const pointer (T* const) means the pointer address is fixed but the data can be modified. const T* const combines both: neither the pointer nor the pointed-to data can be changed. Reading declarations right-to-left resolves ambiguity: T* const means 'const pointer to T'.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "pointers",
+            "code_example": "const int* p1 = &x; // data immutable, pointer mutable\nint* const p2 = &x; // pointer immutable, data mutable\nconst int* const p3 = &x; // both immutable",
+            "short_reference": "A const pointer can't change address but can change data, while a pointer to const can change address but not data."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "nullptr",
+            "definition": "A type-safe null pointer constant introduced in C++11 (type: std::nullptr_t) that replaces the error-prone NULL macro and the literal 0. Unlike NULL (which is an integer), it is not implicitly convertible to integer types, preventing ambiguous function overloads between pointer and integer parameters. Always use it instead of 0 or NULL in modern C++.",
+            "difficulty": "beginner",
+            "module": "language-keyword",
+            "category": "pointers",
+            "code_example": "int* p = nullptr; if (p == nullptr) { /* safe null check */ }",
+            "short_reference": "It's a type-safe way to represent a null pointer in C++11, avoiding issues with integers like NULL or 0."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "void pointer",
+            "definition": "A pointer of type void* that can hold the address of any object type, but cannot be dereferenced without first casting to a concrete type. It is used in C-style generic interfaces (malloc returns void*) and as an escape hatch for type-erased storage. In C++, void* is largely replaced by templates (which are type-safe) and std::any or std::variant for type-erased storage of heterogeneous values.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "pointers",
+            "code_example": "void* raw = operator new(sizeof(int)); int* p = static_cast<int*>(raw); *p = 42;",
+            "short_reference": "It's a pointer that can point to any data type but needs casting before use, often in C for memory allocation or C++ for handling different types without specific knowledge."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "reference counting",
+            "definition": "A memory management strategy where each heap object tracks how many owners point to it; when the count drops to zero, the object is destroyed. In C++, std::shared_ptr implements this with an atomic counter stored in a control block alongside the managed object. Circular references (A \u2192 B \u2192 A) prevent the count from reaching zero, causing memory leaks; std::weak_ptr breaks cycles by not incrementing the count.",
+            "difficulty": "intermediate",
+            "module": "<memory>",
+            "category": "pointers",
+            "code_example": "auto a = std::make_shared<Node>(); auto b = a; // ref count = 2\nb.reset(); // ref count = 1 \u2014 Node not destroyed yet",
+            "short_reference": "It's a memory management method where objects track how many references they have; when there are none left, they get deleted. In C++, smart pointers like std::shared_ptr use this but can have issues with circular references that weak pointers help fix."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "dangling reference",
+            "definition": "A reference or pointer that refers to an object whose lifetime has ended, resulting in undefined behavior when accessed. Common causes include returning a reference to a local variable, holding an iterator or pointer into a container that was subsequently reallocated (e.g., after std::vector::push_back), and using a raw pointer after the owning smart pointer was reset. The compiler cannot always detect such references; sanitizers (ASan) and smart pointer discipline are the main defenses.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "pointers",
+            "code_example": "const std::string& getTemp() { std::string s = \"hi\"; return s; } // UB: dangling reference",
+            "short_reference": "It's when you use a pointer or reference after the memory it points to has been deleted or the object it refers to is gone, which can cause unpredictable errors. Common examples include returning a reference to a local variable or using a pointer after the container it was in was changed."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "C++ \u2014 RAII",
+        "description": "Covers the RAII (Resource Acquisition Is Initialization) idiom, special member functions, the rule of three/five/zero, exception safety, and scope-bound resource management.",
+        "subject": "cpp",
+        "difficulty": "intermediate",
+        "estimated_hours": 6,
+        "prerequisites": [
+          "constructors/destructors basics",
+          "pointers",
+          "move semantics"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "RAII (Resource Acquisition Is Initialization)",
+            "definition": "A C++ design idiom that ties resource ownership to object lifetime: a resource (memory, file handle, lock, socket) is acquired in a constructor and released in the destructor. Because C++ guarantees destructor calls when objects go out of scope (including during exception stack unwinding), this idiom makes resource management automatic and exception-safe without explicit try/finally blocks. Smart pointers, std::lock_guard, and std::fstream are all types that follow this pattern.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "raii",
+            "code_example": "struct FileHandle { FILE* f; FileHandle(const char* p) { f = fopen(p, \"r\"); } ~FileHandle() { if (f) fclose(f); } };",
+            "short_reference": "RAII is a C++ technique where resources are acquired when an object is created and released when it's destroyed, ensuring automatic cleanup even if an exception occurs."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "constructor",
+            "definition": "A special member function with the same name as the class and no return type, invoked automatically when an object is created. These functions initialize member variables (preferably via the member initializer list, not the body) and acquire resources the object needs for its lifetime. C++11 delegating functions (one function calling another) and inherited functions reduce duplication in class hierarchies.",
+            "difficulty": "beginner",
+            "module": "language-keyword",
+            "category": "raii",
+            "code_example": "struct Socket { Socket(int port) : fd(connect(port)) {} int fd; };",
+            "short_reference": "A constructor is a special function that initializes an object when it's created, usually setting up its initial values through a member initializer list."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "destructor",
+            "definition": "A special member function (~ClassName()) called automatically when an object is destroyed \u2014 at scope exit, delete, or during exception unwinding. The function should release all resources the object owns and must never throw; a throwing function during unwinding calls std::terminate(). Declaring a function virtual in a base class is required whenever objects will be deleted through a base pointer.",
+            "difficulty": "beginner",
+            "module": "language-keyword",
+            "category": "raii",
+            "code_example": "struct Buffer { ~Buffer() noexcept { delete[] data; } char* data = new char[1024]; };",
+            "short_reference": "It's a function that automatically runs when an object is destroyed, like when it goes out of scope or is deleted. It should clean up resources the object uses and can't throw exceptions, or else the program will crash."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "copy constructor",
+            "definition": "A function of the form T(const T& other) that creates a new object as a copy of an existing one, called during pass-by-value, return-by-value, or explicit copy initialization. For types that own resources (heap memory, file handles), the compiler-generated function does a shallow member-wise copy, which is usually wrong \u2014 you must define a deep copy. If you define a custom function, the rule of three/five dictates you likely also need to define the copy assignment operator and destructor.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "raii",
+            "code_example": "struct MyVec { MyVec(const MyVec& o) : data(new int[o.size]), size(o.size) { std::copy(o.data, o.data+size, data); } int* data; int size; };",
+            "short_reference": "A copy constructor is a special function that makes a new object by copying an existing one, especially when passing or returning objects. For objects that manage resources like memory, it should copy the actual data deeply instead of just references to avoid problems."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "copy assignment operator",
+            "definition": "A member function T& operator=(const T& other) that replaces an existing object's contents with a copy of another, called when an already-constructed object appears on the left of an assignment. A correct implementation must handle self-assignment (if (this == &other) return *this;) and provide the strong exception guarantee \u2014 the copy-and-swap idiom (construct a copy, then std::swap) achieves both cleanly. If you define this, the rule of three/five likely requires also defining a copy constructor and destructor.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "raii",
+            "code_example": "MyVec& operator=(const MyVec& o) { MyVec tmp(o); std::swap(*this, tmp); return *this; } // copy-and-swap",
+            "short_reference": "It's a function that copies data from one object to another during assignment, ensuring it works even if you assign an object to itself and handles errors safely."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "move constructor",
+            "definition": "A function of the form T(T&& other) noexcept that transfers resources from a temporary or explicitly moved object instead of copying them, introduced in C++11. After the move, the source object must be left in a valid but unspecified state (typically null/empty). Declaring move functions noexcept is critical because STL containers only use moves during reallocation if they are guaranteed not to throw.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "raii",
+            "code_example": "struct MyVec { MyVec(MyVec&& o) noexcept : data(o.data), size(o.size) { o.data = nullptr; o.size = 0; } int* data; int size; };",
+            "short_reference": "It's a constructor that takes an rvalue reference to move resources from another object instead of copying them, leaving the original in a valid but empty state, and it must be marked noexcept to ensure safe use in STL containers."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "move assignment operator",
+            "definition": "A member function T& operator=(T&& other) noexcept that transfers resources from a moved-from object to this, releasing this's current resources first. Like the move constructor, it should be noexcept and leave the source in a valid-but-empty state. The combined move constructor + move assignment form part of the rule of five alongside the copy constructor, copy assignment, and destructor.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "raii",
+            "code_example": "MyVec& operator=(MyVec&& o) noexcept { if (this != &o) { delete[] data; data = o.data; size = o.size; o.data = nullptr; o.size = 0; } return *this; }",
+            "short_reference": "It transfers resources from one object to another, freeing up the original's resources first and leaving it in a clean state. It's part of the rule of five and must work without throwing exceptions."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "rule of three",
+            "definition": "A C++ guideline stating that if a class defines any of the destructor, copy constructor, or copy assignment operator, it almost certainly needs to define all three. The need for a custom destructor signals that the class manages a resource; if the resource must be properly released on destruction, it must also be properly duplicated on copy. Violating the guideline typically causes double-free bugs or resource leaks.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "raii",
+            "code_example": "// If you write ~MyClass() { delete ptr; }, you must also write\n// MyClass(const MyClass&) and MyClass& operator=(const MyClass&)",
+            "short_reference": "If a class manages resources like memory, it should define all three: destructor to free them, copy constructor to copy them, and copy assignment to assign them. Skipping any can cause memory leaks or bugs when objects are copied or deleted."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "rule of five",
+            "definition": "A C++11 extension of the rule of three: if a class defines any of the destructor, copy constructor, copy assignment, move constructor, or move assignment operator, it should define all five. Declaring any one of these suppresses compiler generation of the others in ways that can silently degrade to slow copies where fast moves were expected. The guideline ensures that resource ownership, copying, moving, and cleanup are all explicitly and correctly handled.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "raii",
+            "code_example": "// All five: ~T(), T(const T&), T& operator=(const T&), T(T&&) noexcept, T& operator=(T&&) noexcept",
+            "short_reference": "If a class defines any special functions like copy constructors or destructors, it should define all five related functions to ensure resources are managed properly and avoid performance problems."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "rule of zero",
+            "definition": "A C++ design principle stating that a class should define none of the special member functions (destructor, copy/move constructor, copy/move assignment) if it can rely on members that already manage their own resources correctly \u2014 such as std::unique_ptr, std::vector, or std::string. The principle reduces boilerplate, eliminates resource management bugs, and is the preferred approach when composing RAII member types handles all ownership automatically.",
+            "difficulty": "intermediate",
+            "module": "language-keyword",
+            "category": "raii",
+            "code_example": "struct Server { std::unique_ptr<Socket> sock; std::vector<Client> clients; }; // no special members needed",
+            "short_reference": "It means a class doesn't need to write special functions like copy constructors if its members handle resources automatically, which cuts down on code and mistakes."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "exception safety guarantees",
+            "definition": "A set of formal guarantees about what state a program is in after an exception is thrown during an operation. The no-throw guarantee (strongest) means no exceptions are ever emitted. The strong guarantee means the operation either succeeds fully or leaves the program in its pre-call state (commit or rollback). The basic guarantee means no resources leak and invariants hold, but state may differ. The copy-and-swap idiom provides the strong guarantee for assignment operators.",
+            "difficulty": "advanced",
+            "module": "language-keyword",
+            "category": "raii",
+            "code_example": "// Strong guarantee via copy-and-swap:\nMyClass& operator=(MyClass tmp) noexcept { swap(*this, tmp); return *this; }",
+            "short_reference": "It's about ensuring a program doesn't leave things broken or unsafe after an exception, like avoiding resource leaks or rolling back changes if possible."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    }
+  ]
+}

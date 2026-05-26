@@ -1,0 +1,1954 @@
+{
+  "domains": [
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "AWS \u2014 Compute",
+        "description": "Covers AWS compute services including virtual machines, serverless functions, containers, and scaling strategies used to run application workloads.",
+        "subject": "aws",
+        "difficulty": "intermediate",
+        "estimated_hours": 12,
+        "prerequisites": [
+          "cloud-fundamentals",
+          "linux-basics",
+          "networking-basics"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "EC2 Instance Types",
+            "definition": "The combination of vCPU, memory, storage, and network capacity available to a virtual machine. Families are purpose-built: general-purpose (M/T), compute-optimized (C), memory-optimized (R/X), storage-optimized (I/D), and accelerated computing (P/G/Inf). Choosing the right family and size directly impacts both performance and cost, so matching the workload profile to a family is a core architectural skill.",
+            "difficulty": "beginner",
+            "module": "EC2",
+            "category": "compute",
+            "code_example": "aws ec2 describe-instance-types --filters Name=instance-type,Values=m6i.* --query 'InstanceTypes[*].{Type:InstanceType,vCPU:VCpuInfo.DefaultVCpus,RAM:MemoryInfo.SizeInMiB}'",
+            "short_reference": "They specify the mix of CPU, memory, storage, and network power a virtual machine gets. Different types are built for specific needs like general tasks, heavy computing, or storage, which affects how well they perform and cost."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "EC2 Auto Scaling",
+            "definition": "Automatically adjusts the number of EC2 instances in a group based on demand, scheduled events, or custom metrics. It uses scaling policies (target tracking, step, simple, or scheduled) to maintain availability while minimizing cost. For the SAP-C02 exam, understand the difference between dynamic scaling, predictive scaling, and how cooldown periods prevent thrashing.",
+            "difficulty": "intermediate",
+            "module": "EC2",
+            "category": "compute",
+            "code_example": "aws autoscaling put-scaling-policy --auto-scaling-group-name my-asg --policy-name target-tracking-cpu --policy-type TargetTrackingScaling --target-tracking-configuration '{\"PredefinedMetricSpecification\":{\"PredefinedMetricType\":\"ASGAverageCPUUtilization\"},\"TargetValue\":50.0}'",
+            "short_reference": "It adjusts EC2 instances based on demand using scaling policies to maintain availability and reduce costs. For the SAP-C02 exam, it\u2019s key to know how it differs from predictive scaling and uses cooldown periods to prevent rapid changes."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Launch Template",
+            "definition": "A template stores the configuration parameters needed to launch an EC2 instance \u2014 AMI ID, instance type, key pair, security groups, user data, and more. Unlike the older launch configuration, it supports versioning, mixed instance policies, and can be used with both Auto Scaling groups and direct EC2 launches. Prefer launch templates over launch configurations for all new deployments.",
+            "difficulty": "beginner",
+            "module": "EC2",
+            "category": "compute",
+            "code_example": "aws ec2 create-launch-template --launch-template-name my-template --version-description 'initial' --launch-template-data '{\"ImageId\":\"ami-0abcdef1234567890\",\"InstanceType\":\"t3.micro\"}'",
+            "short_reference": "It's a blueprint for EC2 instances that holds settings like AMI ID, instance type, and security groups, and it's better than old methods because it can be updated and works with auto-scaling groups."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AMI (Amazon Machine Image)",
+            "definition": "A pre-configured template that contains the operating system, application software, and configuration needed to launch an EC2 instance. They can be AWS-provided, community-shared, from AWS Marketplace, or custom-built from a running instance. Building golden images \u2014 hardened, pre-configured images that bake in software \u2014 is a common pattern to speed up Auto Scaling group launches and reduce configuration drift.",
+            "difficulty": "beginner",
+            "module": "EC2",
+            "category": "compute",
+            "code_example": "aws ec2 create-image --instance-id i-1234567890abcdef0 --name 'golden-ami-v1' --description 'Hardened base image' --no-reboot",
+            "short_reference": "It can be provided by AWS, shared by the community, or created as a custom build."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Lambda",
+            "definition": "An event-driven, serverless compute service that runs code in response to triggers without requiring you to provision or manage servers. Functions execute in isolated, ephemeral environments with a configurable timeout (up to 15 minutes), memory (up to 10 GB), and can be triggered by over 200 AWS services. Key constraints to know: 512 MB\u201310 GB ephemeral /tmp storage, 15-minute max duration, and cold-start latency which can be mitigated with Provisioned Concurrency.",
+            "difficulty": "intermediate",
+            "module": "Lambda",
+            "category": "compute",
+            "code_example": "aws lambda create-function --function-name my-function --runtime python3.12 --role arn:aws:iam::123456789012:role/lambda-role --handler handler.lambda_handler --zip-file fileb://function.zip",
+            "short_reference": "It's a serverless service that automatically runs code when triggered by events, so you don't have to manage servers. It has limits like 15 minutes per run and can have delays when starting up, but you can adjust settings to help with that."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Lambda Layers",
+            "definition": "ZIP archives containing libraries, custom runtimes, or other dependencies that can be attached to one or more Lambda functions. They allow you to share code across functions without repackaging it into each deployment artifact, and they reduce deployment package sizes since layers are not counted against the 50 MB (zipped) direct upload limit. A function can use up to five layers simultaneously.",
+            "difficulty": "intermediate",
+            "module": "Lambda",
+            "category": "compute",
+            "code_example": "aws lambda publish-layer-version --layer-name my-deps --zip-file fileb://layer.zip --compatible-runtimes python3.12",
+            "short_reference": "They\u2019re ZIP files with shared libraries or runtimes that multiple Lambda functions can use without repackaging each time, helping keep deployment packages under the 50MB limit."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon ECS (Elastic Container Service)",
+            "definition": "A fully managed container orchestration service that runs Docker containers on a cluster of EC2 instances or on Fargate serverless compute. The core abstractions are task definitions (container specs), services (desired count + placement strategy), and clusters. It integrates natively with IAM task roles, ALB, CloudWatch, and Service Discovery, making it a simpler operational model than Kubernetes for teams not already invested in the K8s ecosystem.",
+            "difficulty": "intermediate",
+            "module": "ECS",
+            "category": "compute",
+            "code_example": "aws ecs create-service --cluster my-cluster --service-name my-service --task-definition my-task:1 --desired-count 2 --launch-type FARGATE --network-configuration 'awsvpcConfiguration={subnets=[subnet-abc],securityGroups=[sg-abc],assignPublicIp=ENABLED}'",
+            "short_reference": "It's a managed service that runs Docker containers on AWS servers, letting you define and manage container tasks and services without handling the underlying infrastructure."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon EKS (Elastic Kubernetes Service)",
+            "definition": "A managed Kubernetes control plane service that removes the operational burden of running, upgrading, and patching the Kubernetes masters. Worker nodes run on EC2 (managed or self-managed node groups) or on Fargate. Choose it over ECS when portability across clouds is required, when you have existing Kubernetes tooling/expertise, or when you need the broader Kubernetes ecosystem (Helm, operators, service meshes).",
+            "difficulty": "advanced",
+            "module": "EKS",
+            "category": "compute",
+            "code_example": "eksctl create cluster --name my-cluster --region us-east-1 --nodegroup-name standard-workers --node-type m5.large --nodes 3 --nodes-min 1 --nodes-max 5",
+            "short_reference": "It's a managed Kubernetes service that handles the control plane so you don't manage masters, and lets you use worker nodes on EC2 or Fargate. Choose it over ECS for cloud portability, existing Kubernetes tools, or needing the full ecosystem."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Fargate",
+            "definition": "A serverless compute engine for containers that eliminates the need to manage EC2 instances in your ECS or EKS cluster. You specify CPU and memory at the task or pod level, and AWS handles provisioning, patching, and scaling the underlying infrastructure. It trades slightly higher per-unit cost for reduced operational overhead \u2014 the right choice when you want containers without cluster management.",
+            "difficulty": "intermediate",
+            "module": "Fargate",
+            "category": "compute",
+            "short_reference": "It's a serverless way to run containers without managing servers, where AWS handles the infrastructure and you just set resource limits, though it costs a bit more per unit."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Elastic Beanstalk",
+            "definition": "A platform-as-a-service that deploys and manages web applications and services without requiring you to manually configure the underlying infrastructure. You upload code, and it provisions EC2 instances, load balancers, Auto Scaling groups, and CloudWatch monitoring. It offers less flexibility than raw CloudFormation/CDK but significantly less complexity \u2014 appropriate for teams that want AWS infrastructure without deep DevOps investment.",
+            "difficulty": "beginner",
+            "module": "ElasticBeanstalk",
+            "category": "compute",
+            "short_reference": "It's a service where you upload your code and AWS automatically sets up servers, load balancing, and scaling, so you don't have to manage the technical details yourself."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Spot Instances",
+            "definition": "Allow you to bid on unused EC2 capacity at discounts of up to 90% compared to On-Demand pricing. The trade-off is that AWS can reclaim the instance with a two-minute warning when capacity is needed elsewhere. They are ideal for fault-tolerant, stateless, or checkpoint-friendly workloads: batch processing, rendering, CI/CD runners, and flexible HPC jobs.",
+            "difficulty": "intermediate",
+            "module": "EC2",
+            "category": "compute",
+            "code_example": "aws ec2 request-spot-instances --instance-count 1 --type one-time --launch-specification '{\"ImageId\":\"ami-0abc\",\"InstanceType\":\"m5.large\",\"MaxPrice\":\"0.05\"}'",
+            "short_reference": "They let you bid on unused EC2 capacity for up to 90% off, but AWS might stop them suddenly if needed. Best for tasks that can handle interruptions, like batch jobs or CI/CD."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Placement Groups",
+            "definition": "They control how EC2 instances are physically positioned within an Availability Zone or across AZs to meet specific latency or fault-tolerance requirements. Cluster placement groups pack instances onto the same physical rack for ultra-low latency (best for HPC/tightly coupled); spread groups distribute across distinct hardware to minimize correlated failure; partition groups separate instances into logical partitions for distributed systems like Hadoop or Cassandra.",
+            "difficulty": "intermediate",
+            "module": "EC2",
+            "category": "compute",
+            "short_reference": "They determine where EC2 instances are placed in a region or across zones to either keep them close for fast communication or spread them out to avoid failures. Different types like cluster, spread, and partition groups handle specific needs like high performance or redundancy."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "EC2 Instance Store",
+            "definition": "Ephemeral block storage physically attached to the host that runs your EC2 instance, providing very high I/O throughput and low latency. The critical limitation is that data is lost when the instance stops, terminates, or fails \u2014 making it unsuitable as a primary data store. It is well-suited for temporary data, caches, scratch disks, and buffers where loss is acceptable.",
+            "difficulty": "beginner",
+            "module": "EC2",
+            "category": "compute",
+            "short_reference": "It's fast temporary storage on the server that disappears if the instance stops or crashes, so it's good for things you don't need to save long-term."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "AWS \u2014 Storage",
+        "description": "Covers AWS storage services including object, block, and file storage, plus backup and gateway solutions for hybrid architectures.",
+        "subject": "aws",
+        "difficulty": "intermediate",
+        "estimated_hours": 10,
+        "prerequisites": [
+          "cloud-fundamentals",
+          "networking-basics"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon S3 (Simple Storage Service)",
+            "definition": "An object storage service that stores data as objects (files + metadata) within buckets, providing 99.999999999% (11 nines) durability by automatically replicating data across multiple devices in multiple AZs. Objects can be up to 5 TB, buckets have effectively unlimited capacity, and it is the backbone of data lakes, static website hosting, backup, and archival. It is not a file system \u2014 there is no directory hierarchy, only key prefixes that simulate folder paths.",
+            "difficulty": "beginner",
+            "module": "S3",
+            "category": "storage",
+            "code_example": "aws s3 cp large-file.zip s3://my-bucket/ --storage-class STANDARD_IA",
+            "short_reference": "It stores files and their details in buckets, copying data across locations for safety. It's used for big data, websites, backups, and doesn't work like a regular file system."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "S3 Storage Classes",
+            "definition": "Multiple storage classes that trade retrieval latency and cost against storage cost: Standard for frequently accessed data, Standard-IA and One Zone-IA for infrequent access, Glacier Instant Retrieval / Flexible Retrieval / Deep Archive for long-term archival (milliseconds to hours retrieval), and Intelligent-Tiering which automatically moves objects between tiers based on access patterns. Mismatched storage class selection is a common source of unexpected cost.",
+            "difficulty": "intermediate",
+            "module": "S3",
+            "category": "storage",
+            "short_reference": "They're different storage options that balance cost and speed, like Standard for frequent use, IA for less frequent, Glacier for long-term, and Intelligent-Tiering that moves data automatically. Choosing the wrong one can cost more than expected."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "S3 Lifecycle Policy",
+            "definition": "Rules that automatically transition objects between storage classes or expire (delete) them after a specified number of days. A common pattern is: transition to Standard-IA after 30 days, to Glacier Flexible Retrieval after 90 days, and delete after 365 days. They can also be scoped to object prefixes or tags, enabling fine-grained cost management without application changes.",
+            "difficulty": "intermediate",
+            "module": "S3",
+            "category": "storage",
+            "code_example": "aws s3api put-bucket-lifecycle-configuration --bucket my-bucket --lifecycle-configuration file://lifecycle.json",
+            "short_reference": "They automatically move files between storage types or delete them after a set time, like moving to cheaper storage after 30 days and deleting after a year. They can also target specific files using tags or folders to save costs."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "S3 Versioning",
+            "definition": "Preserves every version of every object in a bucket, allowing you to recover from unintended deletes and overwrites. When enabled, a delete operation places a delete marker rather than permanently removing the object \u2014 to fully delete, you must specify the version ID. Required for Cross-Region Replication and for MFA Delete protection.",
+            "difficulty": "intermediate",
+            "module": "S3",
+            "category": "storage",
+            "code_example": "aws s3api put-bucket-versioning --bucket my-bucket --versioning-configuration Status=Enabled",
+            "short_reference": "A delete operation just adds a marker instead of removing the object, so you have to specify the version ID to actually delete it."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "S3 Replication",
+            "definition": "Asynchronously copies objects from a source bucket to one or more destination buckets in the same region (Same-Region Replication) or a different region (Cross-Region Replication). Useful for compliance requirements that mandate geographic redundancy, reducing latency for globally distributed users, and maintaining a live backup. Versioning must be enabled on both source and destination buckets.",
+            "difficulty": "intermediate",
+            "module": "S3",
+            "category": "storage",
+            "short_reference": "This helps with backups and compliance, but requires versioning to be enabled on both buckets."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "S3 Transfer Acceleration",
+            "definition": "Speeds up uploads to S3 by routing data through CloudFront edge locations and then over AWS's optimized backbone network to the target bucket. It is beneficial when uploading large files from geographically distant locations but has no benefit for intra-region transfers. There is an additional per-GB charge; AWS recommends testing with the speed comparison tool before enabling it.",
+            "difficulty": "intermediate",
+            "module": "S3",
+            "category": "storage",
+            "short_reference": "While useful for large files from distant locations, it incurs extra charges and provides no benefit for transfers within the same region."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "EBS (Elastic Block Store)",
+            "definition": "Provides persistent block storage volumes that attach to a single EC2 instance (in most configurations) over the network, behaving like a raw block device. Unlike instance store, volumes persist independently of the instance lifecycle and can be detached, snapshotted, and reattached. It is the right choice for databases, file systems, and any workload requiring durable, low-latency block storage that survives instance stop/start.",
+            "difficulty": "beginner",
+            "module": "EBS",
+            "category": "storage",
+            "code_example": "aws ec2 create-volume --availability-zone us-east-1a --size 100 --volume-type gp3 --iops 3000 --throughput 125",
+            "short_reference": "It's a storage service for EC2 instances that keeps data even when the instance stops or starts, and you can save snapshots of it."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "EBS Volume Types",
+            "definition": "Four primary volume types optimized for different workloads: gp3 (general purpose SSD \u2014 baseline 3000 IOPS, independently configurable throughput, replacing gp2 as the default), io2 Block Express (provisioned IOPS SSD \u2014 up to 256,000 IOPS for mission-critical databases), st1 (throughput-optimized HDD \u2014 sequential workloads like log processing), and sc1 (cold HDD \u2014 lowest cost for infrequently accessed sequential data). Choosing the wrong type is a common exam trap.",
+            "difficulty": "intermediate",
+            "module": "EBS",
+            "category": "storage",
+            "short_reference": "They include gp3 for general use with adjustable speed, io2 for high-speed databases, st1 for fast sequential tasks, and sc1 for cheap long-term storage."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "EFS (Elastic File System)",
+            "definition": "A managed NFS file system that can be mounted concurrently by thousands of EC2 instances or Lambda functions across multiple AZs, providing shared file storage with automatic scaling. Unlike EBS (one attachment) or S3 (object API), it presents a POSIX-compliant file system interface \u2014 it is the right choice when multiple compute resources need simultaneous read/write access to the same file hierarchy.",
+            "difficulty": "intermediate",
+            "module": "EFS",
+            "category": "storage",
+            "code_example": "aws efs create-file-system --performance-mode generalPurpose --throughput-mode bursting --encrypted",
+            "short_reference": "It's a shared file system that lets many computers or functions access and edit files at the same time, scaling automatically as needed."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "S3 Glacier",
+            "definition": "A low-cost archival storage service designed for data that is rarely accessed but must be retained for compliance or historical purposes. Three retrieval tiers offer different speed/cost trade-offs: Instant Retrieval (milliseconds, Glacier class), Flexible Retrieval (1\u201312 hours, formerly Glacier), and Deep Archive (12\u201348 hours, lowest cost at ~$1/TB/month). Vault Lock policies allow WORM (write-once-read-many) compliance.",
+            "difficulty": "intermediate",
+            "module": "S3",
+            "category": "storage",
+            "short_reference": "It's a storage service for rarely used data that's kept cheaply, often for legal or historical reasons, with options to retrieve it at different speeds and costs and policies to lock it once written."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Storage Gateway",
+            "definition": "A hybrid storage service that connects on-premises environments to AWS storage through a virtual appliance (or hardware device), enabling low-latency local access backed by durable cloud storage. Three gateway types address different patterns: S3 File Gateway (NFS/SMB access to S3), Volume Gateway (iSCSI block storage backed by S3 and EBS snapshots), and Tape Gateway (virtual tape library for backup applications). It is the primary tool for hybrid storage migration and cloud-backed on-premises workloads.",
+            "difficulty": "intermediate",
+            "module": "StorageGateway",
+            "category": "storage",
+            "short_reference": "It connects local devices to AWS storage using a virtual or physical gateway, letting you access cloud storage quickly while keeping data safe. It has different types for file, block, and backup storage needs, helping move workloads to the cloud."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Backup",
+            "definition": "A centralized backup service that automates and consolidates backup tasks across AWS services \u2014 EC2, EBS, RDS, DynamoDB, EFS, FSx, S3, and more \u2014 via backup plans with configurable schedules, retention rules, and cross-region/cross-account copy rules. Using it simplifies compliance and audit reporting by providing a single pane of glass for backup status across all services in an organization.",
+            "difficulty": "intermediate",
+            "module": "Backup",
+            "category": "storage",
+            "short_reference": "It helps automate backups for AWS services like EC2, S3, and databases by letting you set schedules and rules, making it easier to manage and check backup status all in one place."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "AWS \u2014 Networking",
+        "description": "Covers AWS networking services including VPCs, connectivity options, DNS, content delivery, and load balancing for building secure and scalable network architectures.",
+        "subject": "aws",
+        "difficulty": "advanced",
+        "estimated_hours": 14,
+        "prerequisites": [
+          "networking-basics",
+          "tcp-ip",
+          "cloud-fundamentals"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "VPC (Virtual Private Cloud)",
+            "definition": "A logically isolated virtual network within an AWS region where you define your own IP address range (CIDR block), subnets, route tables, and gateways. It is the fundamental network boundary in AWS \u2014 almost all compute and database services launch inside it. Every AWS account gets a default one, but production workloads should use custom networks designed around your specific security and routing requirements.",
+            "difficulty": "beginner",
+            "module": "VPC",
+            "category": "networking",
+            "code_example": "aws ec2 create-vpc --cidr-block 10.0.0.0/16 --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=prod-vpc}]'",
+            "short_reference": "It's a private network in AWS where you set up your own IP ranges and security rules, letting you control where services like servers or databases run."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Subnet",
+            "definition": "A range of IP addresses within a VPC, scoped to a single Availability Zone. Public ones have a route to an Internet Gateway and are used for resources that need direct internet access (load balancers, bastion hosts); private ones do not have a direct internet route and are used for application servers and databases. A well-designed VPC typically has at least one public and one private one per AZ for high availability.",
+            "difficulty": "beginner",
+            "module": "VPC",
+            "category": "networking",
+            "code_example": "aws ec2 create-subnet --vpc-id vpc-0abc123 --cidr-block 10.0.1.0/24 --availability-zone us-east-1a",
+            "short_reference": "A subnet is like a smaller network within a larger cloud setup, where some parts can connect directly to the internet and others stay private for security. It helps organize resources by location and access needs in a virtual private cloud."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "NAT Gateway",
+            "definition": "Enables instances in private subnets to initiate outbound connections to the internet (for software updates, API calls) while preventing inbound connections from being initiated from the internet. It is deployed in a public subnet and requires an Elastic IP. For high availability, deploy one per AZ and route each AZ's private subnet to its local one \u2014 cross-AZ traffic incurs data transfer charges.",
+            "difficulty": "intermediate",
+            "module": "VPC",
+            "category": "networking",
+            "code_example": "aws ec2 create-nat-gateway --subnet-id subnet-public-1a --allocation-id eipalloc-0abc123",
+            "short_reference": "It lets private network devices connect to the internet for things like updates or API calls while blocking outside access, using a public IP and needing one per zone for reliability."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Security Group",
+            "definition": "A stateful, instance-level virtual firewall that controls inbound and outbound traffic based on protocol, port, and source/destination (IP ranges or other group IDs). Because it is stateful, return traffic for an allowed inbound connection is automatically permitted without an explicit outbound rule. They default to deny all inbound and allow all outbound.",
+            "difficulty": "beginner",
+            "module": "VPC",
+            "category": "networking",
+            "code_example": "aws ec2 authorize-security-group-ingress --group-id sg-0abc123 --protocol tcp --port 443 --cidr 0.0.0.0/0",
+            "short_reference": "It's a virtual firewall that controls traffic by allowing or blocking based on rules like ports or IP addresses, and it automatically lets return traffic through once a connection is made, but blocks all incoming traffic by default while letting outgoing traffic pass."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Network ACL",
+            "definition": "A stateless firewall applied at the subnet boundary that evaluates inbound and outbound rules independently in numbered order. Unlike security groups, they must explicitly allow both the request and the return traffic \u2014 common exam pitfall is forgetting ephemeral port ranges for return traffic. They are most useful for blanket subnet-level blocks (e.g., blocking a known-bad IP range) that complement security-group rules.",
+            "difficulty": "intermediate",
+            "module": "VPC",
+            "category": "networking",
+            "short_reference": "It's a stateless firewall at subnet boundaries that checks rules in order and needs explicit allows for both directions, often missing return traffic because of temporary ports."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "VPC Peering",
+            "definition": "Creates a direct network connection between two VPCs \u2014 in the same account, different accounts, or different regions \u2014 routing traffic privately over the AWS backbone. It is non-transitive: if VPC A peers with B and B peers with C, A cannot reach C through B. For complex hub-and-spoke or full-mesh topologies across many VPCs, Transit Gateway is the scalable alternative.",
+            "difficulty": "intermediate",
+            "module": "VPC",
+            "category": "networking",
+            "short_reference": "It's a direct connection between VPCs that lets them share traffic privately through AWS, but connections aren't automatically shared between them."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Transit Gateway",
+            "definition": "A managed, regional network hub that acts as a central router connecting VPCs, VPNs, and Direct Connect attachments at scale, replacing complex full-mesh VPC peering topologies. Routing is configured via route tables on it, and it supports transitive routing between all attached networks. It is the recommended architecture when you have more than a handful of VPCs that need inter-connectivity.",
+            "difficulty": "advanced",
+            "module": "TransitGateway",
+            "category": "networking",
+            "short_reference": "It connects multiple networks like VPCs and VPNs through a central hub, using routing rules to manage traffic between them without needing direct links between every pair."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Direct Connect",
+            "definition": "Establishes a dedicated private network connection between your on-premises data center and AWS, bypassing the public internet for reduced latency, consistent throughput, and lower data transfer costs on high-volume workloads. It is not inherently redundant \u2014 a resilient architecture uses multiple connections or combines a primary one with a Site-to-Site VPN failover. Lead time is typically weeks due to physical circuit provisioning.",
+            "difficulty": "advanced",
+            "module": "DirectConnect",
+            "category": "networking",
+            "short_reference": "It's a private network link between your company's office and AWS that skips the public internet to make data transfers faster and cheaper for big workloads."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Site-to-Site VPN",
+            "definition": "Creates an encrypted IPSec tunnel between an on-premises network and an AWS VPC over the public internet. Each VPN connection consists of two tunnels for redundancy, terminated on a Virtual Private Gateway (or Transit Gateway) on the AWS side and a customer gateway device on-premises. VPN is faster and cheaper to provision than Direct Connect but provides less predictable latency and throughput.",
+            "difficulty": "intermediate",
+            "module": "VPN",
+            "category": "networking",
+            "short_reference": "It connects a company's network to AWS securely over the internet using two tunnels for backup, avoiding direct hardware costs but with less consistent performance."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon Route 53",
+            "definition": "AWS's authoritative DNS service with built-in health checking and traffic routing policies. Beyond basic DNS resolution, it supports advanced routing: latency-based, geolocation, geoproximity, failover, weighted, and multivalue answer routing. It is the critical component in multi-region active-active and active-passive failover architectures, often evaluated in SAP-C02 scenarios requiring automatic traffic redirection on regional failure.",
+            "difficulty": "intermediate",
+            "module": "Route53",
+            "category": "networking",
+            "code_example": "aws route53 change-resource-record-sets --hosted-zone-id Z123 --change-batch '{\"Changes\":[{\"Action\":\"CREATE\",\"ResourceRecordSet\":{\"Name\":\"api.example.com\",\"Type\":\"A\",\"TTL\":60,\"ResourceRecords\":[{\"Value\":\"1.2.3.4\"}]}}]}'",
+            "short_reference": "It's AWS's DNS service that checks if services are healthy and routes traffic based on location or performance, helping manage traffic during outages."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon CloudFront",
+            "definition": "A global content delivery network (CDN) that caches content at over 400 edge locations worldwide, reducing latency for end users by serving requests from the closest edge rather than the origin. It works with S3 buckets, ALBs, API Gateway, and custom HTTP origins. It is also the delivery layer for AWS WAF and Shield Advanced, making it the standard front-door for DDoS mitigation on web applications.",
+            "difficulty": "intermediate",
+            "module": "CloudFront",
+            "category": "networking",
+            "short_reference": "It's a service that stores website copies in many global locations to speed up loading by sending data from the nearest spot. It also helps protect websites from attacks by working with security tools like AWS WAF."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Elastic Load Balancer",
+            "definition": "Elastic Load Balancing distributes incoming traffic across multiple targets (EC2 instances, containers, Lambda functions, IP addresses) within one or more AZs. Three types serve distinct purposes: Application Load Balancer (layer 7, HTTP/HTTPS, path- and header-based routing), Network Load Balancer (layer 4, ultra-low latency, static IPs, TCP/UDP/TLS), and Gateway Load Balancer (transparent bump-in-the-wire for third-party virtual appliances). Classic Load Balancer is legacy.",
+            "difficulty": "intermediate",
+            "module": "ELB",
+            "category": "networking",
+            "short_reference": "You can choose specific types like Application or Network Load Balancers depending on whether you need HTTP routing or ultra-low latency."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Global Accelerator",
+            "definition": "Routes user traffic to your application endpoints through AWS's private global network using anycast IP addresses, improving availability and performance by avoiding the congested public internet for the majority of the path. Unlike CloudFront (which caches content), it accelerates dynamic, non-cacheable TCP/UDP traffic to EC2, ALBs, NLBs, or Elastic IPs. Use it when you need a fixed IP entry point with automatic failover across regions.",
+            "difficulty": "advanced",
+            "module": "GlobalAccelerator",
+            "category": "networking",
+            "short_reference": "This service handles dynamic TCP/UDP traffic and provides a fixed IP entry point with automatic failover across regions."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "AWS \u2014 Security",
+        "description": "Covers AWS identity, access management, encryption, threat detection, and compliance services essential for building secure cloud architectures.",
+        "subject": "aws",
+        "difficulty": "advanced",
+        "estimated_hours": 16,
+        "prerequisites": [
+          "cloud-fundamentals",
+          "networking-basics",
+          "cryptography-basics"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "IAM (Identity and Access Management)",
+            "definition": "AWS's centralized identity and access management service that controls who (authentication) and what actions they can perform (authorization) on AWS resources. Principals \u2014 users, groups, roles, and service accounts \u2014 are granted permissions through policies. Is global (not region-specific) and is the foundation of AWS security; poor hygiene is the source of most serious cloud security incidents.",
+            "difficulty": "beginner",
+            "module": "IAM",
+            "category": "security",
+            "short_reference": "It's a system that manages who can access AWS resources and what they can do, using policies to set permissions for users and roles, and it's key for security across all regions."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "IAM Policy",
+            "definition": "A JSON document that defines permissions as a collection of statements, each specifying an Effect (Allow or Deny), one or more Actions (e.g., s3:GetObject), and Resources (ARNs). The evaluation logic applies deny-by-default: permissions require an explicit Allow with no overriding Deny. Understanding evaluation order \u2014 explicit Deny wins over explicit Allow, which wins over implicit Deny \u2014 is heavily tested on the SAP-C02.",
+            "difficulty": "intermediate",
+            "module": "IAM",
+            "category": "security",
+            "code_example": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"s3:GetObject\",\"s3:PutObject\"],\"Resource\":\"arn:aws:s3:::my-bucket/*\"}]}",
+            "short_reference": "It's a JSON file that defines permissions by allowing or denying specific actions on resources, with denies overriding allows if both are present."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "IAM Role",
+            "definition": "An identity with associated permission policies that can be assumed by AWS services, applications, or users from other accounts \u2014 providing temporary credentials via STS rather than long-lived access keys. Roles are the preferred credential mechanism for EC2 instances, Lambda functions, ECS tasks, and cross-account access because they eliminate static credentials. Role assumption generates time-limited tokens that are automatically rotated.",
+            "difficulty": "intermediate",
+            "module": "IAM",
+            "category": "security",
+            "code_example": "aws sts assume-role --role-arn arn:aws:iam::123456789012:role/cross-account-role --role-session-name my-session",
+            "short_reference": "It's a way to give temporary access to AWS services or other accounts with specific permissions, avoiding permanent keys by using short-lived tokens instead."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Organizations and Service Control Policies",
+            "definition": "Provides a hierarchical management structure for multiple AWS accounts, with management account at the root and organizational units (OUs) below it. Service Control Policies (SCPs) are guardrails attached to OUs or accounts that restrict the maximum permissions available \u2014 even to account root users \u2014 without granting any permissions themselves. SCPs are evaluated before identity-based policies, making them the primary mechanism for organization-wide mandatory restrictions.",
+            "difficulty": "advanced",
+            "module": "Organizations",
+            "category": "security",
+            "short_reference": "It's a way to manage multiple AWS accounts in a hierarchy, and SCPs are rules that limit what users can do across accounts or groups, even stopping root users from overriding them."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS IAM Identity Center (SSO)",
+            "definition": "Provides centralized single sign-on access to multiple AWS accounts and business applications using a single set of credentials from your corporate identity provider (Active Directory, Okta, Azure AD) or the built-in identity store. It integrates with AWS Organizations to provision permission sets across accounts, replacing the older pattern of maintaining IAM users in every account.",
+            "difficulty": "intermediate",
+            "module": "IAM",
+            "category": "security",
+            "short_reference": "It lets you log in once with your company's credentials and manage access to multiple AWS accounts without creating users in each one."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS KMS (Key Management Service)",
+            "definition": "A managed service for creating, rotating, and controlling cryptographic keys used to encrypt data across AWS services. Keys can be AWS-managed (automatic rotation, no cost), customer-managed (you control rotation and key policy), or customer-provided (imported). Integrates with over 100 AWS services via server-side encryption options, and fine-grained key policies plus grants control who can use each key.",
+            "difficulty": "intermediate",
+            "module": "KMS",
+            "category": "security",
+            "code_example": "aws kms create-key --description 'App encryption key' --key-usage ENCRYPT_DECRYPT --key-spec SYMMETRIC_DEFAULT",
+            "short_reference": "AWS KMS is a service that manages encryption keys for AWS, letting you create, rotate, and control them, and works with many services to secure data."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Secrets Manager",
+            "definition": "Stores, rotates, and retrieves credentials, API keys, and other sensitive configuration values, with native automatic rotation for RDS, Redshift, DocumentDB, and custom Lambda rotation functions. It is the preferred alternative to hardcoding secrets in environment variables or config files. Charges per secret per month; for non-rotating configuration values that don't need the rotation feature, Parameter Store SecureString is a cheaper option.",
+            "difficulty": "intermediate",
+            "module": "SecretsManager",
+            "category": "security",
+            "code_example": "aws secretsmanager get-secret-value --secret-id prod/myapp/db-password --query SecretString --output text",
+            "short_reference": "It helps you store and manage sensitive info like passwords and API keys, automatically rotating them for security. For non-rotating data, there's a cheaper option called Parameter Store SecureString."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS WAF (Web Application Firewall)",
+            "definition": "A web application firewall that inspects HTTP/HTTPS requests and applies rules to allow, block, or count requests based on patterns like SQL injection signatures, XSS patterns, IP reputation lists, rate limits, and custom regex. It integrates with CloudFront, ALB, API Gateway, and AppSync. Uses Web ACLs composed of rule groups \u2014 AWS Managed Rule Groups provide immediate coverage for OWASP Top 10 without custom rule authoring.",
+            "difficulty": "intermediate",
+            "module": "WAF",
+            "category": "security",
+            "short_reference": "It blocks harmful web requests like hacking or malicious code using rules and works with AWS services to protect apps."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Shield",
+            "definition": "Provides DDoS protection: Standard is automatically included at no cost for all AWS customers and defends against common layer 3/4 attacks; Advanced is a paid tier offering enhanced detection, real-time visibility, access to the DDoS Response Team, and cost protection for scaling charges incurred during attacks. Advanced is required for comprehensive DDoS protection of applications using CloudFront, Route 53, ALB, ELB, EC2, and Global Accelerator.",
+            "difficulty": "intermediate",
+            "module": "Shield",
+            "category": "security",
+            "short_reference": "It's AWS's DDoS protection service with a free basic tier for common attacks and a paid advanced tier offering better monitoring and support during big attacks."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon GuardDuty",
+            "definition": "An intelligent threat detection service that continuously analyzes VPC Flow Logs, CloudTrail events, DNS logs, EKS audit logs, and S3 data events using machine learning and threat intelligence feeds to identify suspicious activity. It produces findings categorized by severity without requiring you to configure log analysis rules yourself. Is a detection service \u2014 it does not block traffic; pair it with Lambda-based automated remediation or Security Hub for response workflows.",
+            "difficulty": "intermediate",
+            "module": "GuardDuty",
+            "category": "security",
+            "short_reference": "It's a service that spots suspicious activity in AWS logs and data using AI without needing manual rules, and works with other tools to handle threats instead of blocking them directly."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Security Hub",
+            "definition": "Aggregates, normalizes, and prioritizes security findings from GuardDuty, Inspector, Macie, IAM Access Analyzer, Firewall Manager, and third-party tools into a single dashboard. It performs automated best-practice checks against standards like CIS AWS Foundations Benchmark and AWS Foundational Security Best Practices. Is most valuable in multi-account organizations where you need a consolidated security posture view.",
+            "difficulty": "advanced",
+            "module": "SecurityHub",
+            "category": "security",
+            "short_reference": "It's a tool that pulls security alerts from AWS services and other apps, ranks them by risk, and gives a clear overview of security issues across multiple accounts."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon Macie",
+            "definition": "A data security service that uses machine learning to automatically discover, classify, and protect sensitive data in S3 \u2014 specifically PII (personally identifiable information), financial data, credentials, and custom patterns. It generates findings when sensitive data is discovered in buckets that are publicly accessible, unencrypted, or shared with external accounts. Is the go-to service for S3 data governance and privacy compliance (GDPR, HIPAA, CCPA).",
+            "difficulty": "intermediate",
+            "module": "Macie",
+            "category": "security",
+            "short_reference": "Amazon Macie is a tool that uses AI to find and protect sensitive data like personal info or financial details in Amazon S3, helping meet privacy rules like GDPR."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS CloudHSM",
+            "definition": "Provides dedicated hardware security modules within AWS that meet FIPS 140-2 Level 3 validation, giving you full control over cryptographic keys without sharing the HSM with other customers. Unlike KMS (where AWS manages the underlying HSM), gives you exclusive access to the hardware \u2014 required for certain compliance regimes that mandate sole-tenancy of key material. It integrates with applications via standard PKCS#11, JCE, and Microsoft CNG interfaces.",
+            "difficulty": "advanced",
+            "module": "CloudHSM",
+            "category": "security",
+            "short_reference": "It's a service that gives you dedicated hardware security modules in AWS for full key control without sharing, needed for strict compliance, and works with standard interfaces like PKCS#11 and JCE."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "AWS \u2014 Databases",
+        "description": "Covers AWS managed database services including relational, NoSQL, in-memory, warehouse, and graph databases with their use cases and migration patterns.",
+        "subject": "aws",
+        "difficulty": "intermediate",
+        "estimated_hours": 14,
+        "prerequisites": [
+          "sql-basics",
+          "database-fundamentals",
+          "cloud-fundamentals"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon RDS",
+            "definition": "A managed relational database service supporting MySQL, PostgreSQL, MariaDB, Oracle, SQL Server, and Db2. It handles provisioning, patching, backups, and point-in-time recovery, but unlike Aurora it still runs on single-tenant EC2 instances \u2014 you still choose instance sizes and scale vertically. The right choice when you need a specific engine version, existing application compatibility, or simpler pricing compared to Aurora.",
+            "difficulty": "beginner",
+            "module": "RDS",
+            "category": "databases",
+            "code_example": "aws rds create-db-instance --db-instance-identifier mydb --db-instance-class db.t3.medium --engine postgres --master-username admin --master-user-password secret --allocated-storage 20",
+            "short_reference": "Amazon RDS is a managed database service for engines like MySQL and PostgreSQL, offering vertical scaling and simpler pricing than Aurora but requiring manual instance choices."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "RDS Multi-AZ",
+            "definition": "Creates a synchronously replicated standby instance in a different AZ, providing automatic failover in 60\u2013120 seconds if the primary instance fails. The standby does not serve read traffic \u2014 it exists solely for HA. For read scaling, you need Read Replicas. The key distinction on the exam: for availability/durability, Read Replicas are for read scalability.",
+            "difficulty": "intermediate",
+            "module": "RDS",
+            "category": "databases",
+            "short_reference": "It's a standby database in another availability zone for automatic failover, used only to keep the database running during outages, not for handling read requests."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "RDS Read Replica",
+            "definition": "Asynchronously updated copies of a database that offload read queries from the primary, improving read throughput and reducing primary load. Can be in the same AZ, a different AZ, or a different region (cross-region replicas). They can be promoted to standalone databases \u2014 a common pattern for migrations or disaster recovery when the primary becomes unavailable.",
+            "difficulty": "intermediate",
+            "module": "RDS",
+            "category": "databases",
+            "short_reference": "A read replica is a copy of a database that handles read requests separately from the main database, helping to reduce the load on the primary and improve performance. It can be in the same region or a different one and can be used as a backup or for failover."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon Aurora",
+            "definition": "AWS's cloud-native relational database engine, API-compatible with MySQL and PostgreSQL, that separates storage from compute. Storage automatically grows in 10 GB increments to 128 TB, is replicated six ways across three AZs, and shared across all read replicas \u2014 giving sub-10ms replica lag and 2 copies of data loss protection. Is 2\u20133x faster than standard MySQL/PostgreSQL and is the preferred choice for new relational workloads on AWS when cost is not a primary constraint.",
+            "difficulty": "intermediate",
+            "module": "Aurora",
+            "category": "databases",
+            "short_reference": "It's a cloud-based database from AWS that works like MySQL and PostgreSQL, automatically expands storage, and runs 2-3x faster than standard databases."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Aurora Serverless",
+            "definition": "(v2 is the current production version) automatically scales database compute capacity up and down based on actual workload demand, measured in Aurora Capacity Units (ACUs). It is ideal for unpredictable, intermittent, or cyclical workloads where provisioning a fixed instance size would waste money during idle periods. Unlike v1, this version scales in fine-grained increments without connection drops.",
+            "difficulty": "intermediate",
+            "module": "Aurora",
+            "category": "databases",
+            "short_reference": "It's a database service that automatically adjusts compute power using ACUs to match demand, so you only pay for what you use, especially good for workloads that spike or vary a lot without causing downtime."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon DynamoDB",
+            "definition": "A fully managed, serverless NoSQL key-value and document database that delivers single-digit millisecond performance at any scale through automatic partitioning. The data model requires careful design: a table has a partition key (required) and optional sort key; all queries must include the partition key. Unlike RDS/Aurora, this service scales horizontally without instance sizing decisions and charges for read/write capacity units rather than compute time.",
+            "difficulty": "intermediate",
+            "module": "DynamoDB",
+            "category": "databases",
+            "code_example": "aws dynamodb put-item --table-name Users --item '{\"userId\":{\"S\":\"user123\"},\"email\":{\"S\":\"user@example.com\"},\"createdAt\":{\"S\":\"2025-01-01\"}}'",
+            "short_reference": "You pay for read and write capacity units rather than compute time, and all queries must include the partition key."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "DynamoDB Streams",
+            "definition": "Captures a time-ordered sequence of item-level changes in a table, retaining them for 24 hours. Each stream record contains the before/after image of the modified item. This feature is commonly used to trigger Lambda functions for real-time event processing \u2014 syncing data to Elasticsearch, sending notifications, propagating changes to other tables, or implementing event sourcing patterns.",
+            "difficulty": "intermediate",
+            "module": "DynamoDB",
+            "category": "databases",
+            "short_reference": "It records changes to items in a table over time, keeping a record of what was there before and after each change for up to a day. People often use it to automatically run tasks like updating other systems or sending alerts when changes happen."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "DynamoDB Global Tables",
+            "definition": "Provide fully managed multi-region, multi-active replication, allowing reads and writes in any configured region with automatic conflict resolution. Each region maintains a full replica, making this the foundation of multi-region active-active architectures for NoSQL workloads. Replication lag is typically under 1 second; last-writer-wins conflict resolution is applied automatically.",
+            "difficulty": "advanced",
+            "module": "DynamoDB",
+            "category": "databases",
+            "short_reference": "It lets you replicate data across regions so you can read and write anywhere, with automatic conflict handling and fast updates between regions."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon ElastiCache",
+            "definition": "A managed in-memory caching service offering two engines: Redis (supports persistence, replication, Lua scripting, sorted sets, pub/sub, Cluster Mode for horizontal sharding) and Memcached (simpler, multithreaded, no persistence, no replication). Use to reduce database read load for frequently accessed, rarely changing data \u2014 session caches, leaderboards, rate limiting, and real-time analytics. Choose Redis over Memcached unless you need Memcached's simpler threading model.",
+            "difficulty": "intermediate",
+            "module": "ElastiCache",
+            "category": "databases",
+            "short_reference": "You should generally choose Redis over Memcached unless you specifically need Memcached's simpler threading model."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon Redshift",
+            "definition": "A managed petabyte-scale data warehouse that uses columnar storage, massively parallel query execution (MPP), and result caching to deliver fast analytic queries across large datasets. It is optimized for OLAP (analytical) workloads, not OLTP \u2014 bulk loads via COPY from S3 are far more efficient than row-by-row inserts. Serverless removes cluster management for intermittent workloads.",
+            "difficulty": "intermediate",
+            "module": "Redshift",
+            "category": "databases",
+            "short_reference": "It's a fast, managed system for analyzing huge datasets using column storage and parallel processing, built for analytics instead of daily transactions."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon Neptune",
+            "definition": "A managed graph database service supporting both the Property Graph model (via Gremlin and openCypher) and the RDF model (via SPARQL). It is purpose-built for workloads where relationships between entities are first-class data \u2014 social networks, fraud detection, recommendation engines, and knowledge graphs \u2014 where relational databases require expensive recursive joins.",
+            "difficulty": "advanced",
+            "module": "Neptune",
+            "category": "databases",
+            "short_reference": "It's a cloud service that manages graph data, letting you query relationships between things using different methods, which is good for things like social networks or recommendation systems."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Database Migration Patterns",
+            "definition": "AWS supports several approaches depending on source/target compatibility: homogeneous migrations (same engine, e.g., MySQL to RDS MySQL) are straightforward via DMS; heterogeneous migrations (different engines, e.g., Oracle to Aurora PostgreSQL) require AWS SCT to convert schema and stored procedures first, then DMS to replicate data. The cutover strategy \u2014 typically a replication period with minimal-downtime cutover \u2014 is a common SAP-C02 scenario.",
+            "difficulty": "advanced",
+            "module": "DMS",
+            "category": "databases",
+            "short_reference": "The process typically involves a replication period followed by a minimal-downtime cutover to the new system."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "AWS \u2014 Monitoring",
+        "description": "Covers AWS observability, logging, eventing, and operational intelligence services used to monitor, troubleshoot, and automate responses to system behavior.",
+        "subject": "aws",
+        "difficulty": "intermediate",
+        "estimated_hours": 10,
+        "prerequisites": [
+          "cloud-fundamentals",
+          "aws-compute"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "CloudWatch Metrics",
+            "definition": "Time-series data points published by AWS services and custom applications to CloudWatch are identified by namespace, measurement name, and dimensions. Default data (EC2 CPU, RDS connections, Lambda invocations) are collected automatically; detailed monitoring (1-minute granularity instead of 5) and custom data require explicit configuration. Data are retained at various resolutions and can be aggregated with statistics (Average, Sum, Maximum, Percentile).",
+            "difficulty": "beginner",
+            "module": "CloudWatch",
+            "category": "monitoring",
+            "code_example": "aws cloudwatch put-metric-data --namespace MyApp --metric-name RequestLatency --value 250 --unit Milliseconds --dimensions Service=API",
+            "short_reference": "Identified by namespace, metric name, and dimensions, they are either collected automatically or require explicit configuration."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "CloudWatch Logs",
+            "definition": "CloudWatch provides centralized log aggregation where Lambda, ECS, EC2 (via CloudWatch Agent), and many other services send streaming data. Data are organized into Log Groups (one per application or service) containing Log Streams (one per instance or function invocation). Subscription filters can route data in real-time to Lambda, Elasticsearch, or Kinesis for analysis, while metric filters extract numeric data from log patterns without storing the data twice.",
+            "difficulty": "beginner",
+            "module": "CloudWatch",
+            "category": "monitoring",
+            "short_reference": "You can use filters to extract metrics or route those logs to other services for deeper analysis."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "CloudWatch Alarms",
+            "definition": "A monitoring rule watches a single metric or math expression and transitions between OK, alert, and INSUFFICIENT_DATA states based on threshold conditions evaluated over a configurable period and evaluation window. Rules can trigger Auto Scaling policies, SNS notifications, EC2 instance recovery, or Systems Manager OpsCenter items. Composite rules combine multiple rules with AND/OR logic to reduce alert noise.",
+            "difficulty": "intermediate",
+            "module": "CloudWatch",
+            "category": "monitoring",
+            "code_example": "aws cloudwatch put-metric-alarm --alarm-name high-cpu --metric-name CPUUtilization --namespace AWS/EC2 --threshold 80 --comparison-operator GreaterThanThreshold --evaluation-periods 2 --period 300 --statistic Average --alarm-actions arn:aws:sns:us-east-1:123:ops-alerts",
+            "short_reference": "You can also combine multiple rules to reduce alert noise."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS CloudTrail",
+            "definition": "The trail records API calls made to your AWS account \u2014 who called what action, from which IP, at what time, and with what parameters. Trails can log management events (control plane), data events (S3 object access, Lambda invocations), and Insights events (anomalous API activity). The trail is the primary audit log for security investigations and compliance; enabling a multi-region trail with log file integrity validation is a security best practice.",
+            "difficulty": "intermediate",
+            "module": "CloudTrail",
+            "category": "monitoring",
+            "short_reference": "It tracks API calls in your AWS account, showing who did what, when, and from where, to help with security audits and compliance."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Config",
+            "definition": "The service continuously records setting changes to AWS resources and evaluates them against compliance rules, generating a configuration history and compliance timeline. It answers the question 'what did this resource look like at a given point in time' and 'does it comply with our standards.' Rules can be AWS Managed or custom Lambda-backed, and Conformance Packs bundle many rules for compliance frameworks like PCI DSS or CIS.",
+            "difficulty": "intermediate",
+            "module": "Config",
+            "category": "monitoring",
+            "short_reference": "It tracks AWS resource changes over time and checks if they meet compliance rules, showing how they've evolved and whether they follow set standards."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS X-Ray",
+            "definition": "A distributed tracing service that follows requests through microservice architectures, generating a service map and trace timeline showing latency contributions from each component. Applications instrument themselves with the SDK (or via the daemon/ADOT) to emit segments and subsegments. It is essential for diagnosing latency bottlenecks and error sources in Lambda-heavy or containerized applications where a single user request traverses multiple services.",
+            "difficulty": "intermediate",
+            "module": "XRay",
+            "category": "monitoring",
+            "short_reference": "Tracks how requests move through different services in an app, showing where delays happen so you can fix performance issues."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon EventBridge",
+            "definition": "A serverless event bus that routes events from AWS services, SaaS partners, and custom applications to targets including Lambda, SQS, SNS, Step Functions, and API destinations. Events are matched by content-based rules using JSON pattern matching on event fields. The scheduler extends this with one-time and recurring scheduled events, replacing the older CloudWatch Events service with a richer feature set.",
+            "difficulty": "intermediate",
+            "module": "EventBridge",
+            "category": "monitoring",
+            "code_example": "aws events put-rule --name ec2-state-change --event-pattern '{\"source\":[\"aws.ec2\"],\"detail-type\":[\"EC2 Instance State-change Notification\"],\"detail\":{\"state\":[\"terminated\"]}}' --state ENABLED",
+            "short_reference": "It routes events from AWS services and apps to other tools using rules, and lets you schedule events automatically."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon SNS (Simple Notification Service)",
+            "definition": "A pub/sub messaging service where publishers send messages to topics and the service fans them out to all subscribed endpoints simultaneously. Subscribers can be Lambda functions, SQS queues, HTTP endpoints, email addresses, or mobile push notifications. It is commonly used in fan-out patterns \u2014 one event triggering multiple parallel processing pipelines \u2014 and as the notification layer for CloudWatch alarms.",
+            "difficulty": "beginner",
+            "module": "SNS",
+            "category": "monitoring",
+            "code_example": "aws sns publish --topic-arn arn:aws:sns:us-east-1:123456789012:my-topic --message 'Deploy complete' --subject 'Deployment Notification'",
+            "short_reference": "It's a service that sends messages to multiple subscribers at once, like Lambda functions or email addresses, often used to trigger multiple actions or send notifications."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon SQS (Simple Queue Service)",
+            "definition": "A managed message queue service that decouples producers from consumers, allowing asynchronous processing of work items with durability guarantees. Standard queues offer at-least-once delivery with best-effort ordering; FIFO queues guarantee exactly-once processing and strict ordering at lower throughput. A key design pattern: it buffers spikes in work so that downstream consumers can process at a steady pace, preventing cascade failures.",
+            "difficulty": "beginner",
+            "module": "SQS",
+            "category": "monitoring",
+            "code_example": "aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/123456789012/my-queue --message-body '{\"jobId\":\"abc123\",\"action\":\"process\"}'",
+            "short_reference": "It's a service that manages messages between apps, letting them work independently and handle sudden traffic spikes to keep things running smoothly."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "CloudWatch Dashboards",
+            "definition": "Customizable, shareable visualization panels that display monitoring metrics, alarms, and log insights in widgets (line graphs, stacked area, number, bar, gauge, logs table). They can span multiple accounts and regions when used with cross-account observability. They are the first-stop operational visibility tool before investing in third-party monitoring platforms.",
+            "difficulty": "beginner",
+            "module": "CloudWatch",
+            "category": "monitoring",
+            "short_reference": "CloudWatch Dashboards are customizable panels that show metrics, alarms, and logs in visual formats like graphs and tables, and can be shared across accounts."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "AWS \u2014 AI Services",
+        "description": "Covers AWS managed AI and machine learning services for building, training, deploying, and consuming ML models and pre-built AI capabilities.",
+        "subject": "aws",
+        "difficulty": "intermediate",
+        "estimated_hours": 10,
+        "prerequisites": [
+          "cloud-fundamentals",
+          "python-basics",
+          "ml-fundamentals"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon SageMaker",
+            "definition": "A comprehensive machine learning platform covering the full ML lifecycle: data labeling (Ground Truth), feature engineering (Feature Store), model training (managed training jobs with distributed training support), model evaluation, deployment (real-time endpoints, batch transform, async inference), and MLOps (Pipelines, Model Registry, Model Monitor). Its depth distinguishes it from pre-built AI services \u2014 for custom model development.",
+            "difficulty": "advanced",
+            "module": "SageMaker",
+            "category": "ai-services",
+            "short_reference": "It's a platform for building custom ML models end-to-end, handling data prep, training, and deployment with tools like automated pipelines and monitoring. Unlike pre-built AI services, it lets you create tailored solutions from scratch."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "SageMaker Endpoints",
+            "definition": "Host trained models for real-time inference, auto-scaling compute behind a managed HTTPS endpoint. Configuration parameters define the instance type and model container; multiple models on shared infrastructure to reduce cost. Production variants allow canary deployments and A/B testing by splitting traffic between model versions by percentage.",
+            "difficulty": "intermediate",
+            "module": "SageMaker",
+            "category": "ai-services",
+            "code_example": "aws sagemaker create-endpoint --endpoint-name my-model-endpoint --endpoint-config-name my-endpoint-config",
+            "short_reference": "They let you run trained models for real-time predictions while automatically adjusting resources and sharing infrastructure to cut costs. They also support testing new model versions by splitting traffic between them, like canary deployments or A/B testing."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon Bedrock",
+            "definition": "A fully managed service that provides API access to a curated set of foundation models (FMs) from Anthropic, Meta, Mistral, Stability AI, Amazon, and others without requiring ML infrastructure management. It supports text, image, and embedding generation through a unified API, plus Retrieval Augmented Generation (RAG) via Knowledge Bases and workflow orchestration via Agents. The primary entry point for building generative AI applications on AWS.",
+            "difficulty": "intermediate",
+            "module": "Bedrock",
+            "category": "ai-services",
+            "code_example": "aws bedrock-runtime invoke-model --model-id anthropic.claude-3-sonnet-20240229-v1:0 --body '{\"anthropic_version\":\"bedrock-2023-05-31\",\"max_tokens\":1024,\"messages\":[{\"role\":\"user\",\"content\":\"Hello\"}]}' output.json",
+            "short_reference": "It's a managed AWS service that gives access to various AI models through an API, supporting text, images, and tools for building generative AI apps with features like RAG and workflow automation."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon Rekognition",
+            "definition": "A computer vision service that analyzes images and videos to detect objects, scenes, faces (including facial analysis and comparison), text, and inappropriate content without requiring ML expertise. It also performs celebrity recognition and custom label detection. Common use cases include content moderation at scale, identity verification, and media analysis pipelines.",
+            "difficulty": "beginner",
+            "module": "Rekognition",
+            "category": "ai-services",
+            "code_example": "aws rekognition detect-labels --image '{\"S3Object\":{\"Bucket\":\"my-bucket\",\"Name\":\"photo.jpg\"}}' --max-labels 10 --min-confidence 70",
+            "short_reference": "It's a computer vision tool that analyzes images and videos to spot objects, faces, text, and inappropriate content, and can recognize celebrities or custom labels without needing advanced tech skills."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon Comprehend",
+            "definition": "A natural language processing (NLP) service that extracts insights from text: entity recognition, sentiment analysis, key phrase extraction, language detection, topic modeling, and PII detection. Medical is a specialized variant for clinical text. It is the appropriate choice for text analytics workloads where you need NLP without training a custom model.",
+            "difficulty": "beginner",
+            "module": "Comprehend",
+            "category": "ai-services",
+            "code_example": "aws comprehend detect-sentiment --text 'The product quality was excellent!' --language-code en",
+            "short_reference": "It's an NLP service that automatically finds key phrases, sentiment, and entities in text without needing a custom model, making it good for general text analysis."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon Textract",
+            "definition": "Extracts text, forms, tables, and structured data from scanned documents and images, going beyond simple OCR to understand document structure. It can identify form fields (key-value pairs) and table cells, making it useful for automating processing of PDFs, invoices, tax forms, and medical records. For high-volume asynchronous processing, use the StartDocumentAnalysis/GetDocumentAnalysis API pair.",
+            "difficulty": "beginner",
+            "module": "Textract",
+            "category": "ai-services",
+            "short_reference": "It's a tool that goes beyond basic OCR to extract text, forms, and tables from scanned documents by understanding their structure, helping automate tasks like processing invoices or medical records."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon Lex",
+            "definition": "The service that powers Alexa \u2014 a conversational interface service for building chatbots and voice interfaces using intents, slots, and fulfillment Lambda functions. It handles automatic speech recognition (ASR) and natural language understanding (NLU) in one service. Integrates natively with Connect, Kendra, and Lambda for building production-grade customer service bots.",
+            "difficulty": "intermediate",
+            "module": "Lex",
+            "category": "ai-services",
+            "short_reference": "It's a tool that helps build chatbots and voice assistants by understanding speech and text, and works with other services to handle customer interactions."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon Kendra",
+            "definition": "An intelligent enterprise search service that uses ML to index documents from S3, SharePoint, Salesforce, ServiceNow, and other sources, returning precise answers rather than a list of document links. It understands natural language questions and extracts answer passages from documents. It is the appropriate choice for enterprise search over internal document repositories, contrast with OpenSearch which is better for log analytics and custom search applications.",
+            "difficulty": "intermediate",
+            "module": "Kendra",
+            "category": "ai-services",
+            "short_reference": "It's an intelligent search service that uses machine learning to find precise answers from documents across sources like S3 and SharePoint by understanding natural language questions, making it better for enterprise document searches than OpenSearch."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon Transcribe",
+            "definition": "Converts speech to text, supporting batch processing of audio files from S3 and real-time streaming transcription. It includes speaker diarization (identifying who said what), custom vocabulary for domain-specific terms, and content redaction for PII. Medical is a specialized variant trained on clinical terminology.",
+            "difficulty": "beginner",
+            "module": "Transcribe",
+            "category": "ai-services",
+            "short_reference": "Amazon Transcribe converts spoken language into text, handling both pre-recorded audio files and live streams while identifying speakers and adapting to specific vocabulary or sensitive content."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "SageMaker Pipelines",
+            "definition": "A CI/CD orchestration service for ML workflows, defining directed acyclic graphs (DAGs) of steps including data processing, training, evaluation, model registration, and conditional branching. Enable reproducible, versioned ML workflows and integrate with the Model Registry for deployment approval gates. It is the answer to MLOps automation \u2014 automating the path from data to production model.",
+            "difficulty": "advanced",
+            "module": "SageMaker",
+            "category": "ai-services",
+            "short_reference": "It's a tool that automates ML workflows by organizing steps like data prep, training, and deployment into a flexible, versioned system with branching options, ensuring consistent results and linking to model approval checks."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "AWS \u2014 Migration and Transfer",
+        "description": "Covers AWS services for migrating databases, servers, applications, and large data sets from on-premises or other cloud environments into AWS.",
+        "subject": "aws",
+        "difficulty": "intermediate",
+        "estimated_hours": 8,
+        "prerequisites": [
+          "cloud-fundamentals",
+          "networking-basics",
+          "database-fundamentals"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS DMS (Database Migration Service)",
+            "definition": "Migrates databases to AWS with minimal downtime using ongoing replication: it reads from the source, converts data, and writes to the target while the source remains live, enabling a low-impact cutover window. Supports homogeneous migrations (same engine family) and heterogeneous migrations (different engines), in which case AWS SCT should handle schema conversion first. It is also used for ongoing data lake ingestion from OLTP databases.",
+            "difficulty": "intermediate",
+            "module": "DMS",
+            "category": "migration-transfer",
+            "code_example": "aws dms create-replication-task --replication-task-identifier my-migration --source-endpoint-arn arn:... --target-endpoint-arn arn:... --replication-instance-arn arn:... --migration-type full-load-and-cdc --table-mappings file://mappings.json",
+            "short_reference": "AWS DMS moves databases to AWS with little downtime by copying data in real-time. It handles both similar and different database types and can also send data to a data lake."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS SCT (Schema Conversion Tool)",
+            "definition": "The Schema Conversion Tool analyzes a source database schema, assesses conversion complexity, and automatically converts as much of the schema, views, stored procedures, and functions to the target engine as possible, flagging items requiring manual remediation. A prerequisite for heterogeneous DMS migrations \u2014 never attempt converting Oracle to PostgreSQL or SQL Server to Aurora without running it first to understand the scope of conversion work.",
+            "difficulty": "intermediate",
+            "module": "DMS",
+            "category": "migration-transfer",
+            "short_reference": "It automatically converts compatible parts of a database schema between different systems and identifies what needs manual adjustment, which is essential for migrations between different databases."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Snowball",
+            "definition": "A ruggedized physical appliance for transferring large data sets (terabytes to petabytes) to AWS when network transfer is impractical due to bandwidth limitations, cost, or latency. Edge adds local compute capability (EC2-compatible instances, Lambda) for edge processing in disconnected environments. Data is encrypted on-device, physically shipped to an AWS facility, and loaded into S3.",
+            "difficulty": "intermediate",
+            "module": "SnowFamily",
+            "category": "migration-transfer",
+            "short_reference": "It's a physical device that transfers huge data sets to AWS by shipping them securely, encrypting the data on the device and storing it in S3."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Snowmobile",
+            "definition": "A 45-foot long shipping container on a semi-trailer truck that can transfer up to 100 petabytes of data to AWS in a single shipment, with 256-bit encryption and GPS tracking. It is appropriate only for extreme-scale migrations (100+ PB) where even dozens of Snowball appliances would be impractical. AWS drives the truck to your data center and you copy data via a 100 Gbps network connection to the container.",
+            "difficulty": "beginner",
+            "module": "SnowFamily",
+            "category": "migration-transfer",
+            "short_reference": "A 45-foot container on a truck that moves huge data amounts to AWS securely, used for massive migrations where smaller methods don't work."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS DataSync",
+            "definition": "An online data transfer service that automates moving large amounts of data between on-premises storage (NFS, SMB, HDFS) and AWS storage services (S3, EFS, FSx) or between AWS storage services. It handles scheduling, bandwidth throttling, data validation, and network optimization. It is the right choice for recurring, scheduled data transfers or one-time migrations where network connectivity is adequate; use Snowball for transfers that would take weeks over the wire.",
+            "difficulty": "intermediate",
+            "module": "DataSync",
+            "category": "migration-transfer",
+            "short_reference": "It's a service that automatically moves large data between your local storage and AWS, handling schedules and network stuff to make transfers efficient for regular or big migrations."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Transfer Family",
+            "definition": "A managed file transfer service that enables SFTP, FTPS, and FTP protocol access directly to S3 buckets or EFS file systems, without requiring custom server infrastructure. It is used to maintain legacy file-transfer integrations (partner EDI, financial data feeds) while backend storage migrates to AWS. Authentication integrates with IAM, Cognito, or custom Lambda authorizers.",
+            "difficulty": "intermediate",
+            "module": "TransferFamily",
+            "category": "migration-transfer",
+            "short_reference": "It's a service that lets you transfer files using FTP, SFTP, or FTPS to AWS storage without setting up your own servers, and it uses AWS security tools to manage access for old systems."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Application Migration Service (MGN)",
+            "definition": "The primary recommended service for lift-and-shift server migrations. It installs an agent on source servers that continuously replicates block-level disk data to AWS, enabling fast, low-RPO cutovers with minimal downtime. It replaces the older Server Migration Service (SMS) and is preferred for rehosting migrations at scale.",
+            "difficulty": "intermediate",
+            "module": "MGN",
+            "category": "migration-transfer",
+            "short_reference": "It helps move servers to AWS by copying disk data with an agent, allowing fast migrations with little downtime. It replaced an older service for handling large-scale server moves."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Server Migration Service (SMS)",
+            "definition": "Automates incremental replication of on-premises VMware vSphere, Microsoft Hyper-V, and Azure VMs to AWS as AMIs, with configurable replication frequency. It is the older service, now superseded by Application Migration Service (MGN) for most use cases \u2014 AWS recommends new migrations use MGN, but SMS knowledge remains relevant for legacy environments and exam scenarios.",
+            "difficulty": "intermediate",
+            "module": "SMS",
+            "category": "migration-transfer",
+            "short_reference": "It automates copying VMs from on-premises systems to AWS as AMIs with set schedules, but it's an older service mostly replaced by another tool now, though still relevant for legacy setups or exams."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "AWS \u2014 Cost Management",
+        "description": "Covers AWS cost visibility, optimization tools, pricing models, and governance mechanisms for controlling and right-sizing cloud spending.",
+        "subject": "aws",
+        "difficulty": "intermediate",
+        "estimated_hours": 8,
+        "prerequisites": [
+          "cloud-fundamentals",
+          "aws-compute",
+          "aws-storage"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Cost Explorer",
+            "definition": "An interactive visualization and reporting tool that lets you analyze AWS spending and usage patterns over time, filter by service, account, region, tag, or usage type, and forecast future costs. It shows granular daily or monthly data and includes a rightsizing recommendation feature that suggests cheaper instance types based on CloudWatch utilization metrics. The primary tool for understanding where your AWS spend is going.",
+            "difficulty": "beginner",
+            "module": "CostManagement",
+            "category": "cost-management",
+            "short_reference": "It helps track and analyze AWS spending by letting you filter data by service, account, or region and forecast future costs while suggesting cheaper options based on usage patterns."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Budgets",
+            "definition": "Lets you set cost, usage, reservation, and Savings Plans budgets with configurable alerts that trigger when actual or forecasted spending reaches defined thresholds. Budget actions can automatically apply IAM policies or SCP restrictions to limit spending when thresholds are breached, enabling automated cost governance. For enterprise accounts, these should be configured at both the consolidated billing and individual account levels.",
+            "difficulty": "beginner",
+            "module": "CostManagement",
+            "category": "cost-management",
+            "code_example": "aws budgets create-budget --account-id 123456789012 --budget '{\"BudgetName\":\"monthly-limit\",\"BudgetLimit\":{\"Amount\":\"500\",\"Unit\":\"USD\"},\"BudgetType\":\"COST\",\"TimeUnit\":\"MONTHLY\"}' --notifications-with-subscribers file://notifications.json",
+            "short_reference": "It helps manage spending by setting limits, sending alerts when you exceed them, and automatically restricting access to control costs."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Reserved Instances",
+            "definition": "Provide significant discounts (up to 72%) on EC2, RDS, ElastiCache, Redshift, and OpenSearch in exchange for a commitment to a specific instance configuration for 1 or 3 years, with All Upfront / Partial Upfront / No Upfront payment options. Standard RIs offer the largest discount but cannot be modified; Convertible RIs allow exchange for different configurations at a smaller discount. They are a billing construct \u2014 they automatically apply to matching usage.",
+            "difficulty": "intermediate",
+            "module": "CostManagement",
+            "category": "cost-management",
+            "short_reference": "They're discounted cloud services where you commit to using specific instances for a year or three, paying upfront or in parts to get big savings."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Savings Plans",
+            "definition": "Provide flexible discounts (up to 66%) in exchange for a commitment to a minimum spend ($/hour) rather than a specific instance configuration. Compute Savings Plans apply across EC2 (any region, OS, size), Lambda, and Fargate; EC2 Instance Savings Plans apply to a specific instance family and region for the deepest discount. They are generally preferred over Reserved Instances for their flexibility.",
+            "difficulty": "intermediate",
+            "module": "CostManagement",
+            "category": "cost-management",
+            "short_reference": "They offer discounts up to 66% by committing to a minimum spending amount instead of specific setups, covering services like EC2, Lambda, and Fargate, and are more flexible than Reserved Instances."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Spot Instances (Cost Optimization)",
+            "definition": "Access unused EC2 capacity at discounts of 60\u201390% over On-Demand pricing, with the trade-off that AWS can interrupt them with a 2-minute warning. The cost optimization pattern is to architect stateless, fault-tolerant workloads \u2014 CI runners, batch jobs, rendering, big data processing \u2014 to run entirely on unused capacity, using instance pools across multiple instance types and AZs to minimize interruption frequency.",
+            "difficulty": "intermediate",
+            "module": "EC2",
+            "category": "cost-management",
+            "short_reference": "To optimize costs, you should run stateless, fault-tolerant workloads like batch jobs across multiple instance types and availability zones."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Trusted Advisor",
+            "definition": "Inspects your AWS environment and provides recommendations across five categories: cost optimization, performance, security, fault tolerance, and service limits. Basic checks are available to all accounts; Business and Enterprise support plans unlock all checks including cost optimization recommendations (idle load balancers, underutilized EC2 instances, unassociated Elastic IPs). It is the starting point for a cost and security audit.",
+            "difficulty": "beginner",
+            "module": "TrustedAdvisor",
+            "category": "cost-management",
+            "short_reference": "It's a tool that checks your AWS setup and gives advice on saving money, making things faster, keeping it secure, ensuring reliability, and avoiding limits, with basic checks free and more detailed tips available for paid plans."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Cost Allocation Tags",
+            "definition": "Are key-value metadata attached to AWS resources that flow through to Cost Explorer, billing reports, and Budgets, enabling you to slice costs by project, environment, team, or cost center. AWS provides built-in tags (aws:createdBy, aws:cloudformation:stack-name); user-defined tags require activation in the Billing console before they appear in reports. A consistent approach to tagging is the foundation of any meaningful cost visibility program.",
+            "difficulty": "intermediate",
+            "module": "CostManagement",
+            "category": "cost-management",
+            "code_example": "aws ec2 create-tags --resources i-1234567890abcdef0 --tags Key=Environment,Value=production Key=Project,Value=ai-tutor Key=Team,Value=backend",
+            "short_reference": "They're metadata tags in AWS that help categorize costs by things like projects or teams, and you can add custom ones after enabling them in the billing settings."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Compute Optimizer",
+            "definition": "Analyzes CloudWatch metrics for EC2 instances, Auto Scaling groups, EBS volumes, Lambda functions, and ECS services on Fargate and recommends optimal resource configurations to reduce cost or improve performance. It uses ML to identify over-provisioned resources and suggests specific instance types or memory sizes. Enhanced Infrastructure Metrics (paid) extends the lookback period from 14 days to 3 months for more reliable recommendations.",
+            "difficulty": "intermediate",
+            "module": "ComputeOptimizer",
+            "category": "cost-management",
+            "short_reference": "It analyzes your AWS resource usage with machine learning to find over-provisioned setups and suggests better configurations to cut costs or boost performance."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "S3 Intelligent-Tiering",
+            "definition": "Automatically moves objects between Frequent Access, Infrequent Access, Archive Instant Access, and Archive Access tiers based on observed access patterns, without retrieval fees or performance impact for the active tiers. A small per-object monitoring fee applies. It is the right choice when access patterns are unknown or variable \u2014 it eliminates the cost risk of manually choosing the wrong storage class.",
+            "difficulty": "intermediate",
+            "module": "S3",
+            "category": "cost-management",
+            "short_reference": "It automatically moves files between storage tiers based on usage, saving money when you don't know how often they'll be accessed."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "On-Demand Pricing",
+            "definition": "Charges for AWS resources by the second (EC2, Fargate) or hour with no upfront commitment, making it the most flexible but most expensive sustained option. It is appropriate for short-lived, unpredictable, or development/test workloads where the operational simplicity of no commitment outweighs the higher per-unit cost. The baseline for all cost comparisons \u2014 Reserved Instances and Savings Plans are priced as discounts from this pricing model.",
+            "difficulty": "beginner",
+            "module": "CostManagement",
+            "category": "cost-management",
+            "short_reference": "On-Demand Pricing charges for AWS resources by the second or hour without upfront payment, making it flexible but costly. It's ideal for short-term or unpredictable workloads where simplicity is more important than saving money."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "AWS \u2014 Architectural Patterns",
+        "description": "Covers cloud architecture patterns and frameworks for designing resilient, scalable, cost-effective, and secure systems on AWS.",
+        "subject": "aws",
+        "difficulty": "advanced",
+        "estimated_hours": 16,
+        "prerequisites": [
+          "cloud-fundamentals",
+          "aws-compute",
+          "aws-networking",
+          "aws-databases"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Event-Driven Architecture",
+            "definition": "Decouples services by having producers emit events to a bus or queue, and consumers react to those events independently \u2014 each service knows nothing about the others. In AWS, the canonical stack is EventBridge (routing), SQS (buffering), SNS (fan-out), and Lambda (processing). This pattern dramatically reduces direct service dependencies, enables horizontal scaling of consumers, and allows new consumers to be added without modifying producers.",
+            "difficulty": "intermediate",
+            "module": "architectural-pattern",
+            "category": "architectural-patterns",
+            "short_reference": "It's when services communicate by sending events to a shared system so they don't need to know each other, making it easy to add new services or scale without changing existing ones."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Serverless Architecture",
+            "definition": "Builds applications entirely from managed services that auto-scale to zero, with no persistent server instances to manage or pay for when idle. The AWS serverless stack typically combines API Gateway (HTTP ingress), Lambda (compute), DynamoDB (data), S3 (storage/static hosting), and EventBridge (event routing). The trade-offs are cold-start latency, 15-minute function duration limits, and debugging complexity \u2014 managed through Provisioned Concurrency, Step Functions for long workflows, and X-Ray for tracing.",
+            "difficulty": "intermediate",
+            "module": "architectural-pattern",
+            "category": "architectural-patterns",
+            "short_reference": "It's a way to build apps using managed services that automatically scale down when not in use, so you don't have to handle servers or pay for idle time, though it can have delays when starting and time limits on tasks."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Blue/Green Deployment",
+            "definition": "Maintains two identical production environments (blue = current, green = new version), with traffic switched from blue to green only after green is fully validated. On AWS, traffic shifting uses Route 53 weighted records, ALB target group weights, or API Gateway canary deployments. The key benefit is instant rollback by redirecting traffic back to blue, eliminating the need for in-place rollback procedures.",
+            "difficulty": "intermediate",
+            "module": "architectural-pattern",
+            "category": "architectural-patterns",
+            "short_reference": "It's a way to test a new version in a separate environment and switch traffic to it only after it works, so if it fails, you can instantly go back to the old version without downtime."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Canary Deployment",
+            "definition": "Routes a small percentage of production traffic to a new version while the majority continues to the current version, allowing real-world validation with limited blast radius. In AWS, CodeDeploy supports canary deployments for Lambda and ECS with automatic alarm-based rollback; API Gateway supports canary releases natively. Canary differs from blue/green in that both versions serve production traffic simultaneously rather than a full cutover.",
+            "difficulty": "intermediate",
+            "module": "architectural-pattern",
+            "category": "architectural-patterns",
+            "short_reference": "It's a way to slowly roll out a new version by sending just a little traffic to it first, while most users still get the old version, so you can test it safely without messing up everything. Both versions run at the same time, unlike blue/green deployments which switch all traffic at once."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Multi-Region Active-Active",
+            "definition": "Runs full application stacks in multiple AWS regions simultaneously, with all regions serving live traffic. This provides the lowest possible latency for global users and near-zero RTO/RPO if a region fails. The key challenges are data consistency (DynamoDB Global Tables or Aurora Global Database for near-synchronous replication) and request routing (Route 53 latency-based or geolocation routing, Global Accelerator). This is the most complex and expensive HA pattern.",
+            "difficulty": "advanced",
+            "module": "architectural-pattern",
+            "category": "architectural-patterns",
+            "short_reference": "It's when an app runs in multiple regions at once so users get fast responses and the app stays up even if one region fails. The main challenges are keeping data consistent across regions and making sure requests go to the right location."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Disaster Recovery (RTO/RPO)",
+            "definition": "Strategies are evaluated by Recovery Time Objective (RTO: maximum acceptable downtime) and Recovery Point Objective (RPO: maximum acceptable data loss). AWS DR patterns in increasing cost and decreasing RTO/RPO: Backup & Restore (hours RTO, cheapest), Pilot Light (minutes RTO, minimal always-on infra), Warm Standby (minutes RTO, reduced-capacity live copy), and Multi-Region Active-Active (near-zero RTO/RPO, most expensive). Choosing the right tier requires understanding the business cost of downtime versus the infrastructure cost.",
+            "difficulty": "advanced",
+            "module": "architectural-pattern",
+            "category": "architectural-patterns",
+            "short_reference": "It's about balancing how much downtime and data loss a business can tolerate versus the cost of keeping systems running or backed up. Choosing the right approach depends on what's more expensive for the business: losing data or spending on recovery."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Well-Architected Framework Pillars",
+            "definition": "The framework defines six pillars for evaluating cloud architectures: Operational Excellence (observability, automation, iterative improvement), Security (defense in depth, least privilege, encryption), Reliability (redundancy, automatic recovery, DR), Performance Efficiency (right-sizing, serverless, benchmarking), Cost Optimization (consumption model, right-sizing, commit discounts), and Sustainability (minimizing environmental impact). SAP-C02 scenarios frequently ask you to identify which pillar is being addressed by a design decision.",
+            "difficulty": "intermediate",
+            "module": "WellArchitected",
+            "category": "architectural-patterns",
+            "short_reference": "The AWS Well-Architected Framework breaks cloud designs into six key areas\u2014like security, reliability, and cost control\u2014each focusing on specific practices such as automation, redundancy, or reducing waste to evaluate how well a system is built."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Strangler Fig Pattern",
+            "definition": "Incrementally replaces a legacy monolithic application by routing individual features or endpoints to new microservices while the monolith continues to handle the rest, progressively 'strangling' it until it can be decommissioned. In AWS, an ALB or API Gateway in front of both the monolith and new services routes traffic based on path or header rules. This is the risk-reduced alternative to a big-bang rewrite.",
+            "difficulty": "advanced",
+            "module": "architectural-pattern",
+            "category": "architectural-patterns",
+            "short_reference": "It's a way to slowly replace an old system by moving parts to new services, using tools like ALB or API Gateway to direct traffic, so the old system can eventually be removed without a big rewrite."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "CQRS (Command Query Responsibility Segregation)",
+            "definition": "Separates write operations (commands that change state) from read operations (queries that return data) into distinct models, datastores, or services, allowing each to be optimized independently. In AWS, a common implementation uses DynamoDB Streams or EventBridge to propagate write-model changes to a read-optimized store (OpenSearch, read replica, ElastiCache). CQRS adds complexity but enables read scalability and complex query capabilities without burdening the write path.",
+            "difficulty": "advanced",
+            "module": "architectural-pattern",
+            "category": "architectural-patterns",
+            "short_reference": "It splits commands that change data from queries that fetch data into separate systems so each can be optimized for speed or complexity. This helps handle lots of reads efficiently while keeping writes simple."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Fan-Out Pattern",
+            "definition": "Distributes a single event or message to multiple parallel consumers simultaneously, enabling parallel processing of the same event by different services. In AWS, SNS \u2192 multiple SQS queues is the canonical fan-out implementation: one SNS publish triggers independent processing by analytics, notification, and audit services in parallel. This decouples producers from consumers and allows each consumer to scale independently.",
+            "difficulty": "intermediate",
+            "module": "architectural-pattern",
+            "category": "architectural-patterns",
+            "short_reference": "This decouples the producer from the consumers and allows each service to scale independently."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Saga Pattern",
+            "definition": "Manages distributed transactions across microservices by breaking them into a sequence of local transactions with compensating transactions for rollback on failure, since two-phase commit is impractical across independent services. AWS Step Functions implements the choreography or orchestration variant of sagas: an orchestrator state machine coordinates service calls and triggers compensating steps if any step fails, providing eventual consistency across services.",
+            "difficulty": "advanced",
+            "module": "architectural-pattern",
+            "category": "architectural-patterns",
+            "short_reference": "It's a way to handle transactions across different services by breaking them into smaller steps and having backup actions if something fails, using a coordinator to manage the process and ensure things eventually work out."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "AWS \u2014 IaC and DevOps",
+        "description": "Covers AWS infrastructure-as-code, CI/CD pipeline, container registry, and configuration management services for automating cloud deployments.",
+        "subject": "aws",
+        "difficulty": "intermediate",
+        "estimated_hours": 12,
+        "prerequisites": [
+          "cloud-fundamentals",
+          "git-basics",
+          "linux-basics"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS CloudFormation",
+            "definition": "Is AWS's native infrastructure-as-code service that provisions and manages AWS resources through declarative JSON or YAML templates. A stack is a collection of resources managed as a single unit \u2014 when a template is deployed, it determines the dependency order and handles creates, updates, and deletes with rollback on failure. It is the foundation of repeatable, auditable infrastructure and is required knowledge for the SAP-C02 exam.",
+            "difficulty": "intermediate",
+            "module": "CloudFormation",
+            "category": "iac-devops",
+            "code_example": "aws cloudformation deploy --template-file template.yaml --stack-name my-stack --parameter-overrides Env=prod --capabilities CAPABILITY_IAM",
+            "short_reference": "It's a service that lets you code your cloud setup using templates, managing resources automatically and rolling back if something fails. It's key for the SAP-C02 exam."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "CloudFormation StackSets",
+            "definition": "Extend the service to deploy the same template across multiple AWS accounts and regions simultaneously, with configurable deployment order, failure tolerance, and concurrency. They are used to enforce baseline infrastructure (security guardrails, centralized logging, VPC defaults) across an AWS Organization. Integration with AWS Organizations enables automatic deployment to new accounts as they are added.",
+            "difficulty": "advanced",
+            "module": "CloudFormation",
+            "category": "iac-devops",
+            "short_reference": "It's a way to deploy the same cloud setup across many AWS accounts and regions at once, making sure security and logging rules stay consistent. It automatically applies these setups to new accounts when they join an AWS Organization."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS CDK (Cloud Development Kit)",
+            "definition": "Lets you define cloud infrastructure using familiar programming languages (TypeScript, Python, Java, C#, Go) that compile down to CloudFormation templates. Higher-level constructs encode opinionated defaults and best practices, allowing you to express complex infrastructure in fewer lines than raw YAML. It is the preferred IaC tool for developers comfortable with code \u2014 it enables IDE autocompletion, unit testing of infrastructure, and reusable component libraries.",
+            "difficulty": "intermediate",
+            "module": "CDK",
+            "category": "iac-devops",
+            "code_example": "cdk deploy --require-approval never --context env=prod",
+            "short_reference": "It's a tool that lets developers use code in languages like Python or Java to build cloud setups, turning that code into templates with best practices baked in, so you write less than YAML and get features like testing and auto-complete."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS CodePipeline",
+            "definition": "Is a fully managed CI/CD orchestration service that models a release pipeline as a series of stages (Source, Build, Test, Deploy, Approval), each containing actions. It integrates natively with GitHub, CodeCommit, CodeBuild, CodeDeploy, CloudFormation, ECS, and Lambda for each stage type. It itself does not execute build or deploy logic \u2014 it orchestrates other services that do.",
+            "difficulty": "intermediate",
+            "module": "CodePipeline",
+            "category": "iac-devops",
+            "short_reference": "It's a tool that automates code releases by organizing steps like testing and deployment into stages, using other AWS services to handle the actual work."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS CodeBuild",
+            "definition": "Is a managed build service that compiles source code, runs tests, and produces deployable artifacts in ephemeral, fully managed build environments defined by buildspec.yml files. Build environments come in standard (Amazon Linux, Ubuntu, Windows) or custom Docker image variants, with configurable compute sizes. It eliminates Jenkins infrastructure maintenance and integrates natively with CodePipeline, ECR, and S3.",
+            "difficulty": "intermediate",
+            "module": "CodeBuild",
+            "category": "iac-devops",
+            "code_example": "# buildspec.yml snippet\nphases:\n  install:\n    commands: [pip install -r requirements.txt]\n  build:\n    commands: [pytest tests/ -v]\nartifacts:\n  files: ['**/*']",
+            "short_reference": "It automatically builds and tests code using a setup file, then packages the output into deployable files using pre-configured environments. It works with other AWS tools to handle the whole process without needing extra setup."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS CodeDeploy",
+            "definition": "Automates application deployments to EC2 instances, on-premises servers, Lambda functions, and ECS services. For EC2 deployments, the agent on each instance executes lifecycle event hooks defined in appspec.yml (BeforeInstall, AfterInstall, ApplicationStart, ApplicationStop). For Lambda and ECS, it handles canary, linear, and all-at-once traffic shifting strategies with automatic rollback on CloudWatch alarm violations.",
+            "difficulty": "intermediate",
+            "module": "CodeDeploy",
+            "category": "iac-devops",
+            "short_reference": "This automates deploying apps to EC2, Lambda, and ECS by managing the deployment process and handling traffic shifts with automatic rollbacks if issues arise."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Amazon ECR (Elastic Container Registry)",
+            "definition": "This is a managed Docker and OCI container image registry that stores, manages, and deploys container images in AWS. Images are stored with AES-256 encryption at rest and access is controlled via IAM resource policies. It integrates directly with ECS, EKS, and CodeBuild. Lifecycle policies automatically clean up untagged or old images to control storage costs \u2014 a common oversight that leads to substantial bills.",
+            "difficulty": "beginner",
+            "module": "ECR",
+            "category": "iac-devops",
+            "code_example": "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 123456789012.dkr.ecr.us-east-1.amazonaws.com && docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/my-app:latest",
+            "short_reference": "It's a service that stores and manages container images securely in AWS, using encryption and permissions, and works with tools like ECS and EKS to handle deployments and clean up old images to save costs."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Systems Manager Parameter Store",
+            "definition": "This is a hierarchical key-value store for configuration data and secrets within AWS Systems Manager. Standard parameters are free; Advanced parameters support larger values and parameter policies (expiration, notifications). SecureString parameters are encrypted with KMS. Compared to Secrets Manager, it is less expensive and lacks automatic rotation \u2014 use Secrets Manager for credentials that must rotate, this service for static configuration that needs secure storage.",
+            "difficulty": "intermediate",
+            "module": "SystemsManager",
+            "category": "iac-devops",
+            "code_example": "aws ssm put-parameter --name '/myapp/prod/db-host' --value 'mydb.cluster.us-east-1.rds.amazonaws.com' --type String --overwrite",
+            "short_reference": "It's a storage system in AWS for keeping settings and secrets safe, using encryption for sensitive info. It's cheaper than another service but doesn't automatically update secrets, so it's good for things that don't change much."
+          },
+          "metadata": {
+            "has_examples": true
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS Service Catalog",
+            "definition": "Allows organizations to create and manage catalogs of approved IT service templates that end users can self-service deploy, without requiring direct AWS console or API access to provision raw resources. Portfolio administrators define products (CloudFormation templates) with constraints (launch roles, tag enforcement, resource limits), and users deploy pre-approved, compliant infrastructure. It enforces governance without blocking developer velocity.",
+            "difficulty": "advanced",
+            "module": "ServiceCatalog",
+            "category": "iac-devops",
+            "short_reference": "It's a tool that lets admins set up pre-approved IT services with rules, so users can deploy them without needing direct AWS access, keeping things secure while letting developers work faster."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS OpsWorks",
+            "definition": "This is a configuration management service offering managed instances of Chef and Puppet. It handles the operational work of running Chef/Puppet masters in AWS. The older layer-based model for defining application stacks uses Chef recipes. It is largely superseded by Systems Manager and CDK for new projects but remains relevant for organizations with existing Chef/Puppet investment.",
+            "difficulty": "intermediate",
+            "module": "OpsWorks",
+            "category": "iac-devops",
+            "short_reference": "It's a service that automates server setups using Chef or Puppet in AWS, handling server management tasks. It's mostly replaced by newer tools but still used by teams already invested in Chef or Puppet."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AWS CodeCommit",
+            "definition": "This is a managed Git repository service hosted within AWS, providing private Git repositories with IAM-based authentication and no storage or bandwidth limits. It integrates natively with CodePipeline, CodeBuild, and other developer tools. Note: AWS announced in 2024 that it is no longer accepting new customers, signaling a shift toward GitHub/GitLab integrations \u2014 existing customers continue to use it but new architectures should use GitHub Actions or GitLab CI with CodeBuild/CodePipeline integrations.",
+            "difficulty": "beginner",
+            "module": "CodeCommit",
+            "category": "iac-devops",
+            "short_reference": "It's a managed Git service on AWS for private repositories with IAM login and unlimited storage, working well with tools like CodePipeline and CodeBuild."
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1642 @@
+{
+  "domains": [
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Java \u2014 Collections",
+        "description": "Covers the java.util collections framework including List, Map, Set, Queue, Deque implementations and their supporting utilities.",
+        "subject": "java",
+        "difficulty": "intermediate",
+        "estimated_hours": 6,
+        "prerequisites": [
+          "type-system",
+          "oop"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "ArrayList",
+            "definition": "A resizable array implementation of the List interface backed by an Object array. It provides O(1) random access by index but O(n) insertions and deletions in the middle because elements must be shifted. When the internal array fills, it is replaced with a new one typically 1.5x larger, making amortized add() O(1).",
+            "difficulty": "beginner",
+            "module": "java.util",
+            "category": "collections",
+            "code_example": "List<String> list = new ArrayList<>(); list.add(\"a\"); String s = list.get(0);"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "LinkedList",
+            "definition": "A doubly-linked list implementation of both List and Deque, where each element is stored in a separate node holding references to its neighbors. Unlike ArrayList, it offers O(1) insertions and deletions at either end but O(n) random access by index. It is preferred when frequent insertions/removals at arbitrary positions outweigh the overhead of pointer chasing.",
+            "difficulty": "beginner",
+            "module": "java.util",
+            "category": "collections",
+            "code_example": "Deque<String> deque = new LinkedList<>(); deque.addFirst(\"head\"); deque.addLast(\"tail\");"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "HashMap",
+            "definition": "A hash-table implementation of the Map interface that stores key-value pairs and provides average O(1) get and put by computing a hash of the key. It does not guarantee insertion order and permits one null key. Under high load factor or hash collisions, buckets degrade from linked lists to balanced trees (Java 8+) to maintain acceptable worst-case performance.",
+            "difficulty": "beginner",
+            "module": "java.util",
+            "category": "collections",
+            "code_example": "Map<String, Integer> map = new HashMap<>(); map.put(\"x\", 1); int v = map.getOrDefault(\"x\", 0);"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "LinkedHashMap",
+            "definition": "Extends HashMap and maintains a doubly-linked list through all its entries, preserving the order in which keys were inserted (or, optionally, access order). This makes it a natural building block for LRU caches when constructed with accessOrder=true and overriding removeEldestEntry. It has slightly higher memory overhead than HashMap due to the extra pointers.",
+            "difficulty": "intermediate",
+            "module": "java.util",
+            "category": "collections",
+            "code_example": "Map<String, Integer> lru = new LinkedHashMap<>(16, 0.75f, true);"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "TreeMap",
+            "definition": "A Red-Black tree implementation of NavigableMap that keeps keys sorted in their natural order or by a supplied Comparator. All basic operations (get, put, remove) are O(log n), making it slower than HashMap for simple lookups but uniquely capable of range queries via subMap, headMap, and tailMap. It does not permit null keys.",
+            "difficulty": "intermediate",
+            "module": "java.util",
+            "category": "collections",
+            "code_example": "NavigableMap<Integer, String> m = new TreeMap<>(); m.put(3, \"c\"); m.headMap(3).forEach((k,v) -> {});"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "HashSet",
+            "definition": "A Set implementation backed by a HashMap where stored elements serve as map keys and a constant dummy value is the value. It offers O(1) average-case add, remove, and contains, with no guarantee of iteration order. It is the default choice when you need uniqueness guarantees without caring about order.",
+            "difficulty": "beginner",
+            "module": "java.util",
+            "category": "collections",
+            "code_example": "Set<String> seen = new HashSet<>(); if (seen.add(token)) { /* first time */ }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "TreeSet",
+            "definition": "A NavigableSet backed by a TreeMap, storing elements in sorted order according to their natural ordering or a Comparator. Operations run in O(log n) time, and it supports range-view operations like headSet and tailSet. Unlike HashSet, it disallows null elements and imposes an ordering contract on stored objects.",
+            "difficulty": "intermediate",
+            "module": "java.util",
+            "category": "collections",
+            "code_example": "TreeSet<Integer> ts = new TreeSet<>(); ts.add(5); ts.add(1); System.out.println(ts.first()); // 1"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "ArrayDeque",
+            "definition": "A resizable circular array implementation of the Deque interface supporting O(1) amortized push and pop at both ends. It is generally faster than LinkedList when used as a stack or queue because it avoids per-node heap allocation. It does not permit null elements and is not thread-safe.",
+            "difficulty": "intermediate",
+            "module": "java.util",
+            "category": "collections",
+            "code_example": "Deque<Integer> stack = new ArrayDeque<>(); stack.push(1); int top = stack.pop();"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "PriorityQueue",
+            "definition": "A min-heap implementation of the Queue interface that dequeues the smallest element (by natural order or Comparator) in O(log n) time. Insertion is also O(log n), while peeking at the minimum is O(1). It is the standard choice for algorithms like Dijkstra's shortest path that need efficient minimum extraction.",
+            "difficulty": "intermediate",
+            "module": "java.util",
+            "category": "collections",
+            "code_example": "PriorityQueue<Integer> pq = new PriorityQueue<>(); pq.offer(5); pq.offer(1); pq.poll(); // returns 1"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Collections utility class",
+            "definition": "A final class of static methods that operate on or return collections, covering sorting, searching, shuffling, reversing, frequency counting, and creating unmodifiable or synchronized wrappers. It fills the gap between the collection classes and common algorithms without requiring subclassing. Key methods include sort, binarySearch, unmodifiableList, synchronizedMap, and nCopies.",
+            "difficulty": "beginner",
+            "module": "java.util",
+            "category": "collections",
+            "code_example": "List<Integer> list = new ArrayList<>(Arrays.asList(3,1,2)); Collections.sort(list); Collections.reverse(list);"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Comparator",
+            "definition": "A functional interface with a single compare(T o1, T o2) method used to impose a total ordering on objects independent of their natural order. Unlike Comparable, it is external to the class being compared, enabling multiple sort strategies without modifying the class. Static factory methods like comparing and thenComparing allow fluent chaining of sort keys.",
+            "difficulty": "intermediate",
+            "module": "java.util",
+            "category": "collections",
+            "code_example": "list.sort(Comparator.comparing(Person::getLastName).thenComparing(Person::getFirstName));"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Iterator",
+            "definition": "An interface with hasNext(), next(), and optional remove() methods that provides a uniform way to traverse any Iterable collection without exposing its internal structure. The enhanced for-loop desugars to an iterator under the hood. Calling remove() on an iterator safely removes the last element returned without throwing ConcurrentModificationException, unlike Collection.remove() during iteration.",
+            "difficulty": "beginner",
+            "module": "java.util",
+            "category": "collections",
+            "code_example": "Iterator<String> it = list.iterator(); while (it.hasNext()) { if (it.next().isEmpty()) it.remove(); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "EnumMap",
+            "definition": "A Map implementation specialized for enum keys that stores values in an array indexed by the enum's ordinal, giving it O(1) operations with extremely low overhead compared to HashMap. Because the key universe is known at compile time, no hashing or collision handling is needed. It is the preferred map type when keys are members of a single enum.",
+            "difficulty": "intermediate",
+            "module": "java.util",
+            "category": "collections",
+            "code_example": "EnumMap<Day, String> schedule = new EnumMap<>(Day.class); schedule.put(Day.MONDAY, \"Meeting\");"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Java \u2014 Type System",
+        "description": "Covers Java's type system including primitives, wrapper classes, autoboxing, generics, wildcards, bounded types, type erasure, and modern additions like pattern matching and records.",
+        "subject": "java",
+        "difficulty": "intermediate",
+        "estimated_hours": 7,
+        "prerequisites": [
+          "oop"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "primitive types",
+            "definition": "Java's eight types (byte, short, int, long, float, double, char, boolean) are not objects and are stored by value directly on the stack or in object fields rather than on the heap. They are faster and more memory-efficient than their wrapper counterparts but cannot be used as generic type arguments or stored in collections directly. Each primitive has a corresponding wrapper class in java.lang.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "type-system",
+            "code_example": "int x = 42; double pi = 3.14; boolean flag = true; char c = 'A';"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "wrapper classes",
+            "definition": "These classes (Integer, Long, Double, Float, Short, Byte, Character, Boolean) are immutable objects in java.lang that box a corresponding primitive value, enabling primitives to be used where Object is required. They also provide utility methods like Integer.parseInt, Integer.toBinaryString, and constants like Integer.MAX_VALUE. The JVM caches Integer instances for values -128 to 127, so == comparisons on those cached values can yield true while failing for values outside that range.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "type-system",
+            "code_example": "Integer a = Integer.valueOf(100); int parsed = Integer.parseInt(\"255\"); String hex = Integer.toHexString(255);"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "autoboxing",
+            "definition": "The automatic compiler-driven conversion between a primitive and its corresponding wrapper class, with unboxing as the reverse. This lets you assign an int directly to an Integer variable or pass a primitive where an Object is expected without explicit calls to valueOf or intValue. Careless use in tight loops or null-unboxing scenarios can cause performance issues or NullPointerExceptions.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "type-system",
+            "code_example": "List<Integer> nums = new ArrayList<>(); nums.add(42); // autoboxing int n = nums.get(0); // unboxing"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "generic class",
+            "definition": "A class parameterized with one or more type parameters declared in angle brackets (e.g., class Box<T>) that act as placeholders for actual types supplied at instantiation. Generics enable the compiler to enforce type safety at compile time, eliminating the need for explicit casts and catching type mismatches before runtime. The type parameter is erased at runtime due to type erasure but exists fully in bytecode metadata.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "type-system",
+            "code_example": "class Box<T> { private T value; Box(T v){this.value=v;} T get(){return value;} } Box<String> b = new Box<>(\"hi\");"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "generic method",
+            "definition": "A method that declares its own type parameter(s) in angle brackets before the return type, making the method independently parameterized from any class-level type parameter. This is useful for static utility methods and for methods that establish type relationships between arguments and return values. The compiler can usually infer the type argument from the method's arguments without explicit specification.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "type-system",
+            "code_example": "public static <T> List<T> listOf(T a, T b) { return Arrays.asList(a, b); } List<String> s = listOf(\"x\",\"y\");"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "bounded type parameter",
+            "definition": "A type parameter that restricts the types that can be used as a generic argument by specifying an upper bound with extends (e.g., <T extends Comparable<T>>), ensuring the type supports certain operations. Multiple bounds can be combined with & (e.g., <T extends Serializable & Cloneable>). Lower bounds are only available on wildcards, not on named type parameters.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "type-system",
+            "code_example": "public static <T extends Comparable<T>> T max(T a, T b) { return a.compareTo(b) >= 0 ? a : b; }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "upper-bounded wildcard",
+            "definition": "A wildcard of the form (? extends T) allows a generic structure to accept a parameterized type with T or any subtype of T, enabling reading from the structure safely. The PECS principle (Producer Extends, Consumer Super) guides usage: use ? extends T when the collection is a source of T values to be read. You cannot add elements to a collection with this kind of wildcard (except null) because the exact subtype is unknown.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "type-system",
+            "code_example": "double sum(List<? extends Number> nums) { double s=0; for(Number n : nums) s+=n.doubleValue(); return s; }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "lower-bounded wildcard",
+            "definition": "A wildcard of the form (? super T) allows a generic structure to accept a parameterized type with T or any supertype of T, enabling safe writing of T values into the structure. Per PECS, use ? super T when the collection is a consumer of T values to be written. Reading from such a structure returns Object because the exact supertype is unknown at compile time.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "type-system",
+            "code_example": "void addNumbers(List<? super Integer> list) { for(int i=1; i<=5; i++) list.add(i); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "type erasure",
+            "definition": "The process by which the Java compiler removes all generic type information and replaces type parameters with their bounds (or Object if unbounded) when generating bytecode. This preserves backward compatibility with pre-generics code but means generic type information is unavailable at runtime through normal means. Consequences include the inability to use instanceof with parameterized types and the requirement to use Class<T> tokens or super-type tokens for runtime type information.",
+            "difficulty": "advanced",
+            "module": "java.lang",
+            "category": "type-system",
+            "code_example": "// List<String> and List<Integer> are the same type at runtime: List.class"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "instanceof pattern matching",
+            "definition": "A feature introduced in Java 16 that combines the type check and cast into a single expression by binding the tested value to a new variable if the check succeeds. This eliminates the redundant explicit cast that previously followed every instanceof test. The binding variable's scope is limited to the branch where the pattern matches, making code more concise and less error-prone.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "type-system",
+            "code_example": "if (obj instanceof String s) { System.out.println(s.toUpperCase()); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "record type",
+            "definition": "A special class declaration (Java 16+) that generates an immutable data carrier with a canonical constructor, accessor methods, equals, hashCode, and toString automatically derived from its components. These are implicitly final and cannot extend other classes, though they can implement interfaces. They are ideal for plain data aggregates like DTOs or value objects where the boilerplate of a full class would obscure the intent.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "type-system",
+            "code_example": "record Point(double x, double y) {} Point p = new Point(1.0, 2.0); System.out.println(p.x());"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "var (local variable type inference)",
+            "definition": "A keyword introduced in Java 10 that instructs the compiler to infer the type of a local variable from its initializer, reducing verbosity without sacrificing static typing. It only works for local variables with an initializer, for-loop variables, and try-with-resources variables \u2014 never for fields, parameters, or return types. The inferred type is still static and fully checked at compile time; this feature is purely syntactic sugar.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "type-system",
+            "code_example": "var list = new ArrayList<String>(); var entry = map.entrySet().iterator().next();"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Java \u2014 Control Flow",
+        "description": "Covers Java control flow constructs including conditionals, loops, switch expressions, exception handling with try-catch-finally and try-with-resources.",
+        "subject": "java",
+        "difficulty": "beginner",
+        "estimated_hours": 4,
+        "prerequisites": [
+          "type-system"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "switch expression",
+            "definition": "Extend the classic switch statement to produce a value, using arrow labels (case X ->) to eliminate fall-through and the need for break statements. They can be used anywhere an expression is expected and must be exhaustive \u2014 covering all possible inputs \u2014 or the compiler will report an error. The yield keyword returns a value from a multi-statement case block within such a construct.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "control-flow",
+            "code_example": "String label = switch (day) { case MONDAY, FRIDAY -> \"Workday\"; case SATURDAY, SUNDAY -> \"Weekend\"; default -> \"Midweek\"; };"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "enhanced for loop",
+            "definition": "The for-each variant iterates over any Iterable or array without managing an index variable, making iteration code cleaner and less error-prone. Under the hood it calls iterator() on an Iterable or uses an index counter for arrays; modifying the source collection during iteration will throw ConcurrentModificationException. It cannot be used when the index is needed or when elements must be removed during traversal.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "control-flow",
+            "code_example": "for (String s : list) { System.out.println(s); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "try-with-resources",
+            "definition": "Automatically closes any AutoCloseable resources declared in the try header when the block exits, whether normally or via exception. This eliminates the verbose null-check finally blocks previously needed for streams, connections, and readers. If both the body and close() throw, the close exception is suppressed and attached to the primary exception via getSuppressed().",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "control-flow",
+            "code_example": "try (BufferedReader br = new BufferedReader(new FileReader(path))) { return br.readLine(); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "checked vs unchecked exception",
+            "definition": "Exceptions that extend Exception (but not RuntimeException) must be declared in the method signature with throws or caught explicitly, forcing callers to acknowledge fallible operations at compile time. Those that extend RuntimeException or Error require no declaration, representing programming errors or unrecoverable JVM conditions. The debate in Java community centers on whether the former are worth the verbosity they impose on call stacks.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "control-flow",
+            "code_example": "// Checked: void read() throws IOException {} // Unchecked: throw new IllegalArgumentException(\"bad input\");"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "try-catch-finally",
+            "definition": "The construct separates normal code from error-handling code: the try block runs the guarded code, catch blocks handle specific exception types in order, and the finally block always executes regardless of whether an exception occurred or was caught. The finally block runs even if the try block returns, making it suitable for cleanup \u2014 though try-with-resources is preferred for AutoCloseable resources. If the finally block itself throws or returns, it overrides any exception or return value from try or catch.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "control-flow",
+            "code_example": "try { riskyOp(); } catch (IOException e) { log(e); } finally { cleanup(); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "multi-catch",
+            "definition": "Java 7+ allows a single catch block to handle multiple exception types by separating them with a pipe (|), reducing duplicated handling code when different exception types need the same response. The caught variable is implicitly final in such a block, preventing reassignment. The listed types must not be in a subtype relationship with each other.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "control-flow",
+            "code_example": "try { op(); } catch (IOException | SQLException e) { logger.error(\"Operation failed\", e); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "exception chaining",
+            "definition": "Preserves the original cause when re-throwing an exception at a higher abstraction level, by passing the original exception as the cause argument to the new exception's constructor. This enables callers to inspect the full causal chain via getCause() without exposing low-level implementation details in the method signature. It is a best practice when translating checked exceptions into domain-specific or unchecked exceptions across architectural boundaries.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "control-flow",
+            "code_example": "try { repo.save(data); } catch (SQLException e) { throw new RepositoryException(\"Save failed\", e); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "break/continue/labeled break",
+            "definition": "Exits the nearest enclosing loop or switch, while the other skips the current iteration and proceeds to the next. Labeled variants extend this to multi-level nesting by specifying which enclosing statement to break out of or continue, using a label identifier before the loop. The labeled variant is particularly useful for short-circuiting nested search loops without introducing boolean flag variables.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "control-flow",
+            "code_example": "outer: for (int i=0; i<m; i++) { for (int j=0; j<n; j++) { if (grid[i][j]==target) break outer; } }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Java \u2014 I/O",
+        "description": "Covers Java's I/O APIs including java.io streams and readers/writers, java.nio.file path and file utilities, serialization, and character encoding.",
+        "subject": "java",
+        "difficulty": "intermediate",
+        "estimated_hours": 5,
+        "prerequisites": [
+          "control-flow",
+          "type-system"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "InputStream/OutputStream",
+            "definition": "Abstract base classes in java.io for reading and writing raw bytes respectively. All byte-oriented I/O classes (FileInputStream, ByteArrayInputStream, etc.) extend one of these two, establishing a decorator-friendly hierarchy. They work at the lowest level of abstraction and require wrapping with BufferedInputStream or character-encoding bridges when performance or text handling is needed.",
+            "difficulty": "beginner",
+            "module": "java.io",
+            "category": "i/o",
+            "code_example": "try (InputStream in = new FileInputStream(\"data.bin\")) { int b; while ((b = in.read()) != -1) process(b); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "BufferedReader/BufferedWriter",
+            "definition": "Wrap character streams (Reader/Writer) with an internal buffer, dramatically reducing the number of underlying read/write system calls by batching I/O. The readLine() convenience method is added for line-by-line text processing. Both are AutoCloseable and should be used in try-with-resources; closing the wrapper also closes the underlying stream.",
+            "difficulty": "beginner",
+            "module": "java.io",
+            "category": "i/o",
+            "code_example": "try (BufferedReader br = Files.newBufferedReader(Path.of(\"file.txt\"))) { br.lines().forEach(System.out::println); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Files (java.nio.file)",
+            "definition": "The utility class in java.nio.file provides static methods for common file system operations: reading, writing, copying, moving, deleting files, and walking directory trees. Methods like readAllBytes, writeString, copy, and walk are significantly more ergonomic than the old java.io.File API. It integrates with Path and supports StandardOpenOption flags for fine-grained control over file creation and write behavior.",
+            "difficulty": "intermediate",
+            "module": "java.nio.file",
+            "category": "i/o",
+            "code_example": "String content = Files.readString(Path.of(\"notes.txt\")); Files.writeString(Path.of(\"out.txt\"), content, StandardOpenOption.CREATE);"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Path",
+            "definition": "An interface in java.nio.file representing an abstract, OS-independent file or directory path that replaces the legacy java.io.File class. It supports composition (resolve, relativize), normalization, and symbolic link handling. Instances are created via Path.of() or Paths.get() and passed to Files methods for actual file system operations.",
+            "difficulty": "beginner",
+            "module": "java.nio.file",
+            "category": "i/o",
+            "code_example": "Path base = Path.of(\"/home/user\"); Path config = base.resolve(\"app/config.json\"); Path parent = config.getParent();"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "ObjectInputStream/ObjectOutputStream (serialization)",
+            "definition": "Serialize Java objects to and from a binary format by implementing the Serializable marker interface. They write the full object graph (including referenced objects) and reconstruct it on deserialization. This mechanism has well-known security vulnerabilities (arbitrary code execution via gadget chains), so alternatives like JSON, Protobuf, or records with explicit encoding are strongly preferred for new code.",
+            "difficulty": "intermediate",
+            "module": "java.io",
+            "category": "i/o",
+            "code_example": "try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(\"obj.ser\"))) { oos.writeObject(myObj); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "ByteBuffer",
+            "definition": "A java.nio buffer that holds a fixed-capacity array of bytes with explicit position, limit, and capacity markers, enabling efficient bulk operations without stream-based overhead. It is central to non-blocking I/O with Channels and supports both heap-backed and direct (off-heap) allocation modes. Callers must manually flip() between writing and reading modes, which is a common source of bugs.",
+            "difficulty": "advanced",
+            "module": "java.nio",
+            "category": "i/o",
+            "code_example": "ByteBuffer buf = ByteBuffer.allocate(1024); channel.read(buf); buf.flip(); while (buf.hasRemaining()) process(buf.get());"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "StandardCharsets",
+            "definition": "A class in java.nio.charset providing compile-time constants for the seven charset implementations guaranteed to be available on all Java platforms, most importantly UTF_8, US_ASCII, and ISO_8859_1. Using UTF_8 avoids the checked UnsupportedEncodingException thrown by the older string-based charset APIs. It makes character encoding explicit and portable, preventing silent data corruption from platform-default charset assumptions.",
+            "difficulty": "beginner",
+            "module": "java.nio.charset",
+            "category": "i/o",
+            "code_example": "byte[] bytes = str.getBytes(StandardCharsets.UTF_8); String s = new String(bytes, StandardCharsets.UTF_8);"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "FileChannel",
+            "definition": "A java.nio channel for reading, writing, and manipulating a file, supporting position-based random access, file locking, and memory-mapped file I/O via map(). It integrates with ByteBuffer for high-throughput bulk transfers and supports the transferTo/transferFrom methods for efficient file-to-file or file-to-socket copies at the OS level. Unlike stream-based I/O, this is designed for NIO's selector-based and memory-mapped patterns.",
+            "difficulty": "advanced",
+            "module": "java.nio.channels",
+            "category": "i/o",
+            "code_example": "try (FileChannel fc = FileChannel.open(path, StandardOpenOption.READ)) { MappedByteBuffer mbb = fc.map(READ_ONLY, 0, fc.size()); }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Java \u2014 Concurrency",
+        "description": "Covers Java concurrency primitives and high-level abstractions including threads, executor services, CompletableFuture, synchronization, locks, concurrent data structures, and virtual threads.",
+        "subject": "java",
+        "difficulty": "advanced",
+        "estimated_hours": 10,
+        "prerequisites": [
+          "oop",
+          "functional"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Thread",
+            "definition": "The fundamental unit of concurrency in Java, representing an independent execution path within a JVM process sharing the same heap memory. They are created by extending the class or passing a Runnable to its constructor, then started with start() \u2014 not run(). Platform threads are expensive OS-level constructs; for I/O-bound work at scale, virtual threads (Java 21+) are preferred.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "concurrency",
+            "code_example": "Thread t = new Thread(() -> System.out.println(\"Hello from thread\")); t.start(); t.join();",
+            "short_reference": "java.lang.Thread"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "ExecutorService",
+            "definition": "A higher-level concurrency abstraction that decouples task submission from thread management, maintaining a pool of reusable threads. Tasks (Runnable or Callable) are submitted via submit() or execute(), returning Futures for result retrieval. It must be shut down via shutdown() or shutdownNow() to release its threads; failure to do so is a common thread-leak bug.",
+            "difficulty": "intermediate",
+            "module": "java.util.concurrent",
+            "category": "concurrency",
+            "code_example": "ExecutorService pool = Executors.newFixedThreadPool(4); Future<String> f = pool.submit(() -> compute()); pool.shutdown();",
+            "short_reference": "java.util.concurrent.ExecutorService"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "CompletableFuture",
+            "definition": "A Future implementation that supports non-blocking composition of asynchronous computations through a rich fluent API of chaining methods. Methods like thenApply, thenCompose, thenCombine, and exceptionally allow building async pipelines without callback hell. It can be completed manually via complete() or failed via completeExceptionally(), making it useful both as a promise and as a pipeline orchestrator.",
+            "difficulty": "advanced",
+            "module": "java.util.concurrent",
+            "category": "concurrency",
+            "code_example": "CompletableFuture.supplyAsync(() -> fetchData()).thenApply(this::transform).thenAccept(System.out::println);",
+            "short_reference": "java.util.concurrent.CompletableFuture"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "synchronized keyword",
+            "definition": "The intrinsic monitor lock of an object is acquired before executing a block or method, ensuring mutual exclusion and establishing happens-before guarantees between threads. Synchronized methods lock on this (or the Class object for static methods), while synchronized blocks lock on an explicitly specified object for finer granularity. The keyword is simple but inflexible \u2014 it blocks indefinitely and provides no way to try-lock or interrupt waiting threads.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "concurrency",
+            "code_example": "synchronized (this) { if (count > 0) count--; } // or: public synchronized void decrement() { count--; }",
+            "short_reference": "java.lang"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "volatile keyword",
+            "definition": "Declaring a field guarantees that reads and writes to it are directly from/to main memory rather than a thread's local CPU cache, preventing stale reads across threads. It also establishes a happens-before relationship: a write to the field happens-before any subsequent read of that same field. It is not sufficient for compound operations (check-then-act, read-modify-write) \u2014 those still require synchronization or atomic classes.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "concurrency",
+            "code_example": "private volatile boolean running = true; void stop() { running = false; } void run() { while(running) tick(); }",
+            "short_reference": "java.lang"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "ReentrantLock",
+            "definition": "An explicit, reentrant mutual exclusion lock in java.util.concurrent.locks that provides the same semantics as synchronized but with additional capabilities: timed lock acquisition, interruptible waiting, and fairness policies. Unlike synchronized, it requires explicit unlock() in a finally block to guarantee release. It is preferred when you need try-lock semantics, multiple condition variables, or fairness guarantees.",
+            "difficulty": "advanced",
+            "module": "java.util.concurrent.locks",
+            "category": "concurrency",
+            "code_example": "lock.lock(); try { criticalSection(); } finally { lock.unlock(); }",
+            "short_reference": "java.util.concurrent.locks.ReentrantLock"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "CountDownLatch",
+            "definition": "A one-time synchronization barrier initialized with a count; threads call await() to block until the count reaches zero, and other threads call countDown() to decrement it. It is used to make one thread wait for N events (worker completions, service initializations) before proceeding. Unlike CyclicBarrier, it cannot be reset \u2014 once the count reaches zero, it stays open permanently.",
+            "difficulty": "intermediate",
+            "module": "java.util.concurrent",
+            "category": "concurrency",
+            "code_example": "CountDownLatch latch = new CountDownLatch(3); workers.forEach(w -> pool.submit(() -> { w.run(); latch.countDown(); })); latch.await();",
+            "short_reference": "java.util.concurrent.CountDownLatch"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "ConcurrentHashMap",
+            "definition": "A thread-safe Map implementation optimized for high-concurrency access, using segment-level (Java 7) or node-level (Java 8+) locking so that reads never block and writes only lock affected buckets. Unlike Hashtable or Collections.synchronizedMap, it does not lock the entire map for operations, yielding significantly better throughput under contention. It does not permit null keys or values and provides atomic compound operations like computeIfAbsent and merge.",
+            "difficulty": "intermediate",
+            "module": "java.util.concurrent",
+            "category": "concurrency",
+            "code_example": "ConcurrentHashMap<String, Integer> freq = new ConcurrentHashMap<>(); freq.merge(word, 1, Integer::sum);",
+            "short_reference": "java.util.concurrent.ConcurrentHashMap"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "virtual threads (Project Loom)",
+            "definition": "Introduced in Java 21, these are lightweight JVM-managed threads that are cheap to create (millions at a time) and are automatically unmounted from carrier OS threads when blocking on I/O, allowing a small thread pool to multiplex many concurrent tasks. They use the same Thread API as platform threads, enabling existing blocking code to scale without rewriting to reactive/async patterns. They are ideal for I/O-bound server workloads but provide no benefit for CPU-bound work.",
+            "difficulty": "advanced",
+            "module": "java.lang",
+            "category": "concurrency",
+            "code_example": "try (var executor = Executors.newVirtualThreadPerTaskExecutor()) { executor.submit(() -> handleRequest(req)); }",
+            "short_reference": "java.lang.Thread"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "AtomicInteger",
+            "definition": "A java.util.concurrent.atomic class that wraps an int value and provides lock-free, thread-safe operations using CPU-level compare-and-swap (CAS) instructions. Methods like incrementAndGet, compareAndSet, and getAndAdd are atomic without requiring synchronized blocks. It is significantly faster than synchronized under low to moderate contention and is the standard building block for non-blocking counters and state machines.",
+            "difficulty": "intermediate",
+            "module": "java.util.concurrent.atomic",
+            "category": "concurrency",
+            "code_example": "AtomicInteger counter = new AtomicInteger(0); int newVal = counter.incrementAndGet(); // thread-safe, no lock",
+            "short_reference": "java.util.concurrent.atomic.AtomicInteger"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Java \u2014 Functional",
+        "description": "Covers Java's functional programming features including lambda expressions, method references, functional interfaces from java.util.function, Optional, and default interface methods.",
+        "subject": "java",
+        "difficulty": "intermediate",
+        "estimated_hours": 5,
+        "prerequisites": [
+          "type-system",
+          "oop"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "lambda expression",
+            "definition": "An anonymous function defined inline with the syntax (parameters) -> body, assignable to any functional interface type that matches its signature. These can capture effectively final local variables from the enclosing scope but cannot modify them. They are the primary mechanism enabling functional-style programming in Java and are widely used with the Streams API, collections sorting, and event handling.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "functional",
+            "code_example": "list.removeIf(s -> s.isEmpty()); Runnable r = () -> System.out.println(\"hello\"); Function<Integer,Integer> sq = x -> x*x;"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "method reference",
+            "definition": "A shorthand syntax (ClassName::methodName or instance::methodName) for a lambda that simply calls an existing method, improving readability when the lambda does nothing beyond delegating to a named method. The four forms are: static (String::valueOf), instance on arbitrary receiver (String::toUpperCase), instance on fixed receiver (str::contains), and constructor (ArrayList::new). The compiler matches the reference to the functional interface's signature.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "functional",
+            "code_example": "list.forEach(System.out::println); list.stream().map(String::toUpperCase).collect(Collectors.toList());"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "functional interface",
+            "definition": "An interface with exactly one abstract method, making it a valid target type for lambda expressions and method references. The annotation is optional but recommended \u2014 it instructs the compiler to verify that the interface qualifies and produce an error if a second abstract method is added. Default and static methods do not count toward the single abstract method requirement.",
+            "difficulty": "intermediate",
+            "module": "java.util.function",
+            "category": "functional",
+            "code_example": "@FunctionalInterface interface Transformer<T> { T transform(T input); } Transformer<String> upper = s -> s.toUpperCase();"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Predicate",
+            "definition": "A functional interface representing a boolean-valued function of one argument, with the single abstract method test(T t). It provides default methods and(), or(), and negate() for composing them, and a static not() factory (Java 11+) for logical negation. It is heavily used in Stream.filter() and Collection.removeIf() to express filtering logic as a reusable function.",
+            "difficulty": "intermediate",
+            "module": "java.util.function",
+            "category": "functional",
+            "code_example": "Predicate<String> nonEmpty = s -> !s.isEmpty(); Predicate<String> shortStr = s -> s.length() < 5; list.stream().filter(nonEmpty.and(shortStr)).collect(Collectors.toList());"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Function",
+            "definition": "A functional interface representing a function that accepts one argument of type T and produces a result of type R, with the single abstract method apply(T t). It supports composition via andThen (apply this, then apply another) and compose (apply another, then apply this). BiFunction<T, U, R> extends this to accept two arguments.",
+            "difficulty": "intermediate",
+            "module": "java.util.function",
+            "category": "functional",
+            "code_example": "Function<String, Integer> len = String::length; Function<Integer, String> toStr = i -> \"len=\" + i; len.andThen(toStr).apply(\"hello\"); // \"len=5\""
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Optional",
+            "definition": "A container object that may or may not hold a non-null value, designed to make the possible absence of a value explicit in a method's return type instead of returning null. It encourages defensive programming through its API: orElse, orElseGet, orElseThrow, map, flatMap, and filter allow chaining operations without null checks. It should be used as a return type only, not as a field, parameter, or collection element.",
+            "difficulty": "intermediate",
+            "module": "java.util",
+            "category": "functional",
+            "code_example": "Optional<User> user = repo.findById(id); String name = user.map(User::getName).orElse(\"Anonymous\");"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Consumer",
+            "definition": "A functional interface representing an operation that accepts a single T argument and returns no result (void), with the abstract method accept(T t). It is used for side-effecting operations like printing, storing, or modifying state. The default andThen method chains two of these sequentially. BiConsumer<T, U> accepts two arguments.",
+            "difficulty": "intermediate",
+            "module": "java.util.function",
+            "category": "functional",
+            "code_example": "Consumer<String> print = System.out::println; Consumer<String> save = db::store; list.forEach(print.andThen(save));"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Supplier",
+            "definition": "A functional interface representing a factory or lazy value provider with no arguments and a return type T, via the abstract method get(). It defers computation until the value is actually needed, making it useful for lazy initialization, default value factories, and Optional.orElseGet(). Unlike Callable, this does not declare a checked exception.",
+            "difficulty": "intermediate",
+            "module": "java.util.function",
+            "category": "functional",
+            "code_example": "Supplier<List<String>> listFactory = ArrayList::new; Optional<String> val = Optional.empty(); val.orElseGet(() -> computeDefault());"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "default interface method",
+            "definition": "Methods (Java 8+) allow interfaces to provide a concrete method implementation using the default keyword, enabling new methods to be added to existing interfaces without breaking all implementing classes. They are the mechanism that made the Collections and Stream API retrofitting possible without requiring implementors to update every class. When a class implements multiple interfaces with the same method signature, the class must override it to resolve the ambiguity.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "functional",
+            "code_example": "interface Printable { void print(); default void printUpperCase() { System.out.println(toString().toUpperCase()); } }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Java \u2014 String Operations",
+        "description": "Covers Java's string manipulation APIs including String methods, StringBuilder, formatting, regular expressions, text blocks, and interning.",
+        "subject": "java",
+        "difficulty": "beginner",
+        "estimated_hours": 3,
+        "prerequisites": [
+          "type-system"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "StringBuilder",
+            "definition": "A mutable sequence of characters designed for efficient string construction via repeated append, insert, delete, and replace operations without creating intermediate String objects. Unlike String, which is immutable and creates a new object on every concatenation, this class modifies its internal buffer in place, making it O(n) total for building a string from n pieces versus O(n\u00b2) for naive String concatenation in a loop. StringBuffer is the thread-safe but slower equivalent.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "string-ops",
+            "code_example": "StringBuilder sb = new StringBuilder(); for (String part : parts) sb.append(part).append(\",\"); String result = sb.toString();"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "String.format",
+            "definition": "Produces a formatted string using a printf-style format string with conversion specifiers like %s, %d, %f, and %n. It is useful for building messages with mixed types but is more verbose than string concatenation for simple cases; an instance method equivalent (Java 15+) is also available. For performance-critical logging, prefer SLF4J-style {} placeholders over this method to avoid building the string when the log level is disabled.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "string-ops",
+            "code_example": "String msg = String.format(\"User %s has %d credits (%.2f%%)\", name, credits, pct);"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "String.split",
+            "definition": "Splits a string around matches of the given regular expression, returning a String array of the parts between delimiters. The regex argument is a full regular expression, so characters like . | ( ) * + must be escaped when used as literal delimiters. When the limit argument is omitted, trailing empty strings are discarded; passing a negative limit retains them.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "string-ops",
+            "code_example": "String[] parts = \"a,b,,c\".split(\",\"); // [\"a\",\"b\",\"\",\"c\"] String[] kvPair = line.split(\"=\", 2); // split on first = only"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "String.join",
+            "definition": "Concatenates all elements with the specified delimiter between them, returning the result as a String. It accepts varargs or an Iterable, making it a clean alternative to StringBuilder loops for joining lists of strings. It is equivalent to using Collectors.joining(delimiter) in a Stream pipeline.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "string-ops",
+            "code_example": "String csv = String.join(\", \", \"Alice\", \"Bob\", \"Carol\"); String joined = String.join(\" | \", nameList);"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "text blocks (Java 15+)",
+            "definition": "Multiline string literals delimited by triple double-quotes (\"\") that preserve the indentation of the content while stripping the common leading whitespace, making embedded JSON, HTML, SQL, or XML readable without escape sequences. The content begins after the opening newline and the closing \"\"\" sets the indentation baseline for trimming. They are ordinary String values at runtime with no special performance characteristics.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "string-ops",
+            "code_example": "String sql = \"\"\"\n            SELECT *\n            FROM users\n            WHERE active = true\n            \"\"\";"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "regular expressions (Pattern/Matcher)",
+            "definition": "Java's regex support in java.util.regex is centered on a compiled regex class and an engine that applies the compiled pattern to an input string. Pre-compiling with Pattern.compile() is important when the same regex is used many times, as compilation is expensive. This engine provides fine-grained control: find() searches for the next match, group() retrieves captured groups, and replaceAll/replaceFirst perform substitution.",
+            "difficulty": "intermediate",
+            "module": "java.util.regex",
+            "category": "string-ops",
+            "code_example": "Pattern pat = Pattern.compile(\"(\\\\d{4})-(\\\\d{2})-(\\\\d{2})\"); Matcher m = pat.matcher(date); if (m.matches()) String year = m.group(1);"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "String.strip/trim",
+            "definition": "This method (Java 11+) removes leading and trailing whitespace as defined by Character.isWhitespace(), which respects Unicode whitespace characters beyond the ASCII range handled by the older trim() method. Leading and trailing variants are one-sided. Prefer this method over the older method in new code to correctly handle non-ASCII whitespace in internationalized applications.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "string-ops",
+            "code_example": "String clean = \"  hello  \".strip(); // \"hello\" String left = \"  hello  \".stripLeading(); // \"hello  \""
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "String.intern",
+            "definition": "This method returns a canonical reference from the JVM's string pool for the given string value, so that two interned strings with equal content will be == (reference equal). This approach was historically used to reduce memory overhead from duplicate strings, but the JVM's string deduplication (G1GC) and string pool changes in modern JVMs make explicit use rarely necessary or beneficial in new code. Excessive use can cause OutOfMemoryError in older JVMs due to PermGen pressure.",
+            "difficulty": "advanced",
+            "module": "java.lang",
+            "category": "string-ops",
+            "code_example": "String a = new String(\"hello\").intern(); String b = new String(\"hello\").intern(); System.out.println(a == b); // true"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Java \u2014 Memory",
+        "description": "Covers Java memory management including heap and stack layout, garbage collection algorithms, reference types, and patterns that cause memory leaks.",
+        "subject": "java",
+        "difficulty": "advanced",
+        "estimated_hours": 6,
+        "prerequisites": [
+          "oop",
+          "type-system"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "heap memory",
+            "definition": "The runtime data area where all object instances and arrays are allocated by the JVM, shared across all threads. It is managed by the garbage collector and is divided into generational regions (Young, Old/Tenured, Metaspace) in most collectors. The size is controlled by -Xms (initial) and -Xmx (maximum) JVM flags; exceeding the maximum causes OutOfMemoryError: Java heap space.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "memory",
+            "code_example": "// -Xms256m -Xmx1g // set initial heap 256MB, max 1GB at JVM startup"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "stack memory",
+            "definition": "Each JVM thread has its own private area that stores stack frames for method calls, with each frame holding local variables, the operand stack, and a reference to the runtime constant pool. Primitive local variables and object references (not the objects themselves) live on it and are automatically freed when the method returns. Deep recursion without a base case causes StackOverflowError when the thread area is exhausted.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "memory",
+            "code_example": "// Stack depth is controlled by -Xss (e.g., -Xss512k per thread)"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "generational GC",
+            "definition": "This exploits the empirical observation that most objects die young, dividing the heap into Young (Eden + Survivor spaces) and Old (Tenured) generations. New objects are allocated in Eden; surviving minor collections are promoted to Survivor spaces and eventually to Old Gen. Minor collections collect Young Gen cheaply and frequently, while major collections (or full collections) collect Old Gen less often but with greater pause impact.",
+            "difficulty": "advanced",
+            "module": "java.lang",
+            "category": "memory",
+            "code_example": "// Tuning example: -XX:NewRatio=2 (Old:Young = 2:1), -XX:SurvivorRatio=8"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "G1 garbage collector",
+            "definition": "Garbage First (default since Java 9) divides the heap into equal-sized regions rather than fixed-size generational areas, allowing it to collect the regions most full of garbage first and predict pause times. It targets a configurable maximum garbage collection pause time (-XX:MaxGCPauseMillis) by adjusting how many regions it collects per cycle. This is well-suited for large heaps (4GB+) requiring predictable pause times, though ZGC and Shenandoah offer sub-millisecond pauses for even stricter latency requirements.",
+            "difficulty": "advanced",
+            "module": "java.lang",
+            "category": "memory",
+            "code_example": "// Enable G1: -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "WeakReference",
+            "definition": "A reference type holds a reference to an object that the garbage collector is permitted to collect at any time when no strong references exist, making it useful for caches where entries should be evicted under memory pressure rather than preventing GC. Unlike a SoftReference (which the JVM tends to retain until memory is low), this is collected more eagerly \u2014 the next GC cycle after the referent becomes weakly reachable. WeakHashMap uses weak keys to implement automatically evicting maps.",
+            "difficulty": "advanced",
+            "module": "java.lang.ref",
+            "category": "memory",
+            "code_example": "WeakReference<ExpensiveObject> ref = new WeakReference<>(obj); obj = null; ExpensiveObject o = ref.get(); // may be null"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "SoftReference",
+            "definition": "A reference type holds an object reference that the garbage collector will retain as long as sufficient memory is available, only clearing it before throwing OutOfMemoryError. This makes this reference type appropriate for memory-sensitive caches that should stay populated during normal operation but gracefully release under heap pressure. This reference type is retained longer than WeakReferences, which are collected more aggressively regardless of heap pressure.",
+            "difficulty": "advanced",
+            "module": "java.lang.ref",
+            "category": "memory",
+            "code_example": "SoftReference<byte[]> cache = new SoftReference<>(loadData()); byte[] data = cache.get(); if (data == null) data = reload();"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "memory leak patterns",
+            "definition": "Leaks occur when objects are unintentionally kept reachable through long-lived references, preventing the garbage collector from reclaiming them. Common patterns include: storing objects in static collections without removal, anonymous inner classes capturing outer class references, listeners registered but never deregistered, and ThreadLocal values not cleaned up in thread pools. Tools like heap dumps, jmap, and profilers (VisualVM, YourKit) are used to diagnose these issues by identifying unexpectedly large object retained sizes.",
+            "difficulty": "advanced",
+            "module": "java.lang",
+            "category": "memory",
+            "code_example": "// Leak: static List<byte[]> cache = new ArrayList<>(); // never trimmed\n// Fix: use WeakHashMap or bounded Guava Cache"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "OutOfMemoryError",
+            "definition": "This is a JVM Error (not Exception) thrown when the runtime cannot allocate an object because the heap is exhausted and GC cannot free enough space. Common subtypes include: Java heap space (heap full), GC overhead limit exceeded (GC spending >98% of time reclaiming <2% of heap), and Metaspace (class metadata space exhausted). It typically indicates a memory leak, insufficient heap sizing, or unbounded data loading.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "memory",
+            "code_example": "// Diagnose: -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/dump.hprof"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Java \u2014 OOP",
+        "description": "Covers Java's object-oriented programming model including classes, interfaces, inheritance, polymorphism, encapsulation, enums, records, and sealed classes.",
+        "subject": "java",
+        "difficulty": "beginner",
+        "estimated_hours": 8,
+        "prerequisites": [
+          "type-system"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "interface",
+            "definition": "A Java construct that defines a contract of abstract methods that implementing classes must fulfill, without providing implementation details (prior to Java 8). Since Java 8, such constructs may contain default and static methods with implementations; since Java 9, private methods as well. They enable multiple inheritance of type and are the idiomatic mechanism for dependency inversion and polymorphism in Java design.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "oop",
+            "code_example": "interface Drawable { void draw(); default String describe() { return \"A drawable shape\"; } }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "abstract class",
+            "definition": "A class that cannot be instantiated directly and may contain a mix of abstract methods (no implementation, must be overridden) and concrete methods. Unlike interfaces, such classes can have instance fields, constructors, and any access modifier on methods. They are appropriate when related classes share state or non-trivial shared behavior, and when the template method pattern \u2014 providing a skeleton algorithm \u2014 is needed.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "oop",
+            "code_example": "abstract class Shape { abstract double area(); String describe() { return \"Shape with area \" + area(); } }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "method overriding",
+            "definition": "This occurs when a subclass provides a new implementation of a method inherited from a superclass, with the same signature (name, parameters) and a covariant or same return type. The JVM dispatches to the overridden method at runtime based on the actual object type (dynamic dispatch), enabling polymorphism. The @Override annotation is strongly recommended to catch typos and signature mismatches at compile time.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "oop",
+            "code_example": "@Override public String toString() { return \"Point(\" + x + \", \" + y + \")\"; }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "method overloading",
+            "definition": "This allows a class to define multiple methods with the same name but different parameter lists (different type, number, or order of parameters). The compiler selects the correct method at compile time based on the argument types, making it a form of static (ad-hoc) polymorphism. This is easily confused with overriding but is resolved entirely at compile time rather than runtime.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "oop",
+            "code_example": "void print(int i) { } void print(String s) { } void print(int i, String s) { } // three overloads"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "encapsulation",
+            "definition": "This is the OOP principle of bundling data (fields) and the methods that operate on that data within a class, and controlling access to the data via visibility modifiers (private, protected, public). Exposing only a public API while hiding internal representation allows the implementation to change without breaking callers. In practice it means making fields private and providing getters/setters or richer behavioral methods.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "oop",
+            "code_example": "class BankAccount { private double balance; public void deposit(double amt) { if(amt>0) balance+=amt; } public double getBalance(){return balance;} }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "enum",
+            "definition": "A special class type in Java that defines a fixed set of named constants, each of which is a singleton instance of the class. Such types can have fields, methods, and constructors, making them far more powerful than simple integer constants. They work seamlessly with switch statements/expressions and are intrinsically serializable and comparable, making them the idiomatic choice for representing a closed set of domain values.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "oop",
+            "code_example": "enum Planet { MERCURY(3.303e+23, 2.4397e6), EARTH(5.976e+24, 6.37814e6); final double mass, radius; Planet(double m, double r){mass=m;radius=r;} }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "sealed class (Java 17+)",
+            "definition": "A class or interface that restricts which other classes may extend or implement it by explicitly listing permitted subtypes in a permits clause. This gives the compiler complete knowledge of all possible subtypes, enabling exhaustive pattern matching in switch expressions without a default case. Such classes are ideal for modeling closed algebraic data types (like AST nodes or result types) where the full set of variants is fixed.",
+            "difficulty": "advanced",
+            "module": "java.lang",
+            "category": "oop",
+            "code_example": "sealed interface Shape permits Circle, Rectangle, Triangle {} final class Circle implements Shape { double radius; }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "inner class",
+            "definition": "A non-static nested class is a class defined within another class that has access to all members (including private) of its enclosing instance. Each such class instance implicitly holds a reference to its enclosing instance, which is a common source of memory leaks when such instances are passed to external contexts that outlive the outer object. Static nested classes do not hold this reference and are generally preferred unless the class specifically needs access to enclosing instance state.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "oop",
+            "code_example": "class Outer { private int x = 10; class Inner { void print() { System.out.println(x); } } }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "final keyword",
+            "definition": "This keyword has three distinct uses in Java: a variable marked with it cannot be reassigned after initialization, a method marked with it cannot be overridden in subclasses, and a class marked with it cannot be subclassed. Making a class marked with it (like String) guarantees its behavior cannot be changed by subclassing, which is important for security and caching assumptions. Note that when applied to a reference variable, it prevents reassignment of the reference, not mutation of the referenced object.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "oop",
+            "code_example": "final int MAX = 100; final class ImmutablePoint { final double x, y; ImmutablePoint(double x, double y){this.x=x;this.y=y;} }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Java \u2014 Streams API",
+        "description": "Covers the java.util.stream API including stream creation, intermediate operations (filter, map, flatMap, sorted), terminal operations (collect, reduce, forEach), collectors, and parallel streams.",
+        "subject": "java",
+        "difficulty": "intermediate",
+        "estimated_hours": 6,
+        "prerequisites": [
+          "functional",
+          "collections"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "filter",
+            "definition": "An intermediate operation that returns a new stream containing only the elements for which the predicate returns true, discarding the rest. It is lazy \u2014 no elements are processed until a terminal operation is invoked. Multiple such calls can be chained and will be fused by the JVM into a single pass over the data.",
+            "difficulty": "beginner",
+            "module": "java.util.stream",
+            "category": "streams-api",
+            "code_example": "List<String> longWords = words.stream().filter(w -> w.length() > 5).collect(Collectors.toList());"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "map",
+            "definition": "An intermediate operation that transforms each element by applying a function, producing a new stream of the results of type R. It is a one-to-one transformation \u2014 each input element produces exactly one output element. For transformations that produce a stream per element (one-to-many), flatMap is used instead.",
+            "difficulty": "beginner",
+            "module": "java.util.stream",
+            "category": "streams-api",
+            "code_example": "List<Integer> lengths = words.stream().map(String::length).collect(Collectors.toList());"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "flatMap",
+            "definition": "An intermediate operation that applies a function producing a Stream for each element and then flattens all those streams into a single stream. It is used for one-to-many transformations, such as splitting each string into words or expanding each order into its line items. Without this operation, the result would be a Stream<Stream<R>> rather than a Stream<R>.",
+            "difficulty": "intermediate",
+            "module": "java.util.stream",
+            "category": "streams-api",
+            "code_example": "List<String> allWords = sentences.stream().flatMap(s -> Arrays.stream(s.split(\" \"))).distinct().collect(Collectors.toList());"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "collect",
+            "definition": "A terminal operation that accumulates stream elements into a mutable result container using the provided Collector. Collectors.toList(), toSet(), toMap(), groupingBy(), and joining() are the most commonly used pre-built collectors. This operation triggers the entire lazy pipeline to execute.",
+            "difficulty": "intermediate",
+            "module": "java.util.stream",
+            "category": "streams-api",
+            "code_example": "Map<String, List<Employee>> byDept = employees.stream().collect(Collectors.groupingBy(Employee::getDepartment));"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "reduce",
+            "definition": "Combines all stream elements into a single result by repeatedly applying a BinaryOperator \u2014 for example, summing all integers or concatenating strings. The two-argument form takes an identity value as the seed, guaranteeing a non-Optional result even for empty streams. The one-argument form returns an Optional<T> because there is no valid identity to return for an empty stream.",
+            "difficulty": "intermediate",
+            "module": "java.util.stream",
+            "category": "streams-api",
+            "code_example": "int total = numbers.stream().reduce(0, Integer::sum); Optional<Integer> max = numbers.stream().reduce(Integer::max);"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Collectors.groupingBy",
+            "definition": "A downstream collector that partitions stream elements into a Map<K, List<T>> by applying a classification function. A second argument can supply a downstream collector to apply to each group \u2014 for example, counting elements per group or summing a field. It is the streaming equivalent of a SQL GROUP BY clause.",
+            "difficulty": "intermediate",
+            "module": "java.util.stream",
+            "category": "streams-api",
+            "code_example": "Map<String, Long> countByDept = employees.stream().collect(Collectors.groupingBy(Employee::getDept, Collectors.counting()));"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "parallel stream",
+            "definition": "Calling parallelStream() or stream().parallel() creates a stream that splits its source into segments and processes them concurrently on the ForkJoinPool.commonPool(). It can significantly speed up CPU-bound operations on large datasets but introduces overhead for small collections, and requires that the pipeline be free of shared mutable state and ordering side effects. These streams are not always faster \u2014 profiling is essential before committing to them.",
+            "difficulty": "advanced",
+            "module": "java.util.stream",
+            "category": "streams-api",
+            "code_example": "long count = hugeList.parallelStream().filter(this::isMatch).count();"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "Stream.generate/iterate",
+            "definition": "Stream.generate(Supplier<T>) creates an infinite stream by calling the supplier repeatedly, while Stream.iterate(seed, UnaryOperator<T>) creates an infinite stream by repeatedly applying a function to the previous value. Both must be combined with limit() or a predicate-based variant (Java 9+) to produce a finite stream. They are useful for generating sequences, test data, or modeling state machines.",
+            "difficulty": "intermediate",
+            "module": "java.util.stream",
+            "category": "streams-api",
+            "code_example": "Stream<Double> randoms = Stream.generate(Math::random).limit(100); Stream<Integer> powers = Stream.iterate(1, n -> n * 2).limit(10);"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "findFirst/findAny",
+            "definition": "findFirst() returns an Optional<T> containing the first element of the stream in encounter order, or empty if the stream is empty. findAny() returns any element and is allowed to return a different element on each invocation, enabling optimizations in parallel streams where returning the first thread's result avoids coordination overhead. On sequential streams, findAny() behaves identically to findFirst().",
+            "difficulty": "intermediate",
+            "module": "java.util.stream",
+            "category": "streams-api",
+            "code_example": "Optional<User> admin = users.stream().filter(u -> u.hasRole(\"ADMIN\")).findFirst();"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "anyMatch/allMatch/noneMatch",
+            "definition": "These are short-circuiting terminal operations that test whether any, all, or no elements of a stream satisfy a predicate. The first returns true as soon as one match is found; the second returns false as soon as one non-match is found; the third returns false as soon as one match is found. All three return false/true/true respectively for empty streams and do not consume the whole stream when short-circuiting.",
+            "difficulty": "beginner",
+            "module": "java.util.stream",
+            "category": "streams-api",
+            "code_example": "boolean hasAdmin = users.stream().anyMatch(u -> u.isAdmin()); boolean allActive = users.stream().allMatch(User::isActive);"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    },
+    {
+      "node_type": "domain",
+      "data": {
+        "name": "Java \u2014 Annotations",
+        "description": "Covers Java's annotation system including built-in annotations, custom annotation declaration, meta-annotations, annotation processors, and reflection-based annotation access.",
+        "subject": "java",
+        "difficulty": "intermediate",
+        "estimated_hours": 4,
+        "prerequisites": [
+          "oop",
+          "type-system"
+        ]
+      },
+      "terms": [
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@Override",
+            "definition": "A built-in marker annotation that instructs the compiler to verify that the annotated method actually overrides a superclass or interface method. If no matching method exists in the hierarchy (due to a typo or signature mismatch), the compiler reports an error rather than silently creating an unrelated new method. It is considered best practice to always annotate overriding methods with this annotation.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "annotations",
+            "code_example": "@Override public boolean equals(Object o) { return o instanceof MyClass mc && this.id == mc.id; }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@Deprecated",
+            "definition": "Marks an API element (class, method, field, constructor) as obsolete, causing the compiler to emit a warning when the element is used and IDEs to display it with strikethrough. The since attribute documents which version introduced the deprecation, and forRemoval=true (Java 9+) signals that removal is planned. It is distinct from simply removing the API \u2014 such APIs remain functional to preserve backward compatibility.",
+            "difficulty": "beginner",
+            "module": "java.lang",
+            "category": "annotations",
+            "code_example": "@Deprecated(since = \"11\", forRemoval = true) public void legacyMethod() { }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "custom annotation declaration (@interface)",
+            "definition": "Annotation types are declared using a special keyword, creating a syntax similar to an interface but generating a special type. Annotation elements are declared as method stubs with optional default values; elements without defaults must be supplied at every usage site. These types can only have primitive, String, Class, enum, annotation, or 1-D array types as element types.",
+            "difficulty": "intermediate",
+            "module": "java.lang",
+            "category": "annotations",
+            "code_example": "@Retention(RetentionPolicy.RUNTIME) @Target(ElementType.METHOD) public @interface Timed { String value() default \"\"; }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@Retention",
+            "definition": "This meta-annotation specifies how long an annotation's data is retained: SOURCE (discarded by compiler), CLASS (stored in .class but not available at runtime, the default), or RUNTIME (available via reflection at runtime). Most framework annotations (Spring @Component, JUnit @Test) use RUNTIME so that the framework can inspect them reflectively. Processor-only annotations typically use SOURCE.",
+            "difficulty": "intermediate",
+            "module": "java.lang.annotation",
+            "category": "annotations",
+            "code_example": "@Retention(RetentionPolicy.RUNTIME) // available via reflection\n@Retention(RetentionPolicy.SOURCE) // compile-time only, e.g. @Override"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@Target",
+            "definition": "This meta-annotation restricts where a custom annotation may be applied, accepting one or more ElementType constants (TYPE, METHOD, FIELD, PARAMETER, CONSTRUCTOR, LOCAL_VARIABLE, ANNOTATION_TYPE, PACKAGE, TYPE_PARAMETER, TYPE_USE, RECORD_COMPONENT). If omitted, the annotation may be applied to any declaration element. Specifying a tight target prevents misapplication and documents intent clearly.",
+            "difficulty": "intermediate",
+            "module": "java.lang.annotation",
+            "category": "annotations",
+            "code_example": "@Target({ElementType.METHOD, ElementType.FIELD}) public @interface Validate { }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "@Repeatable",
+            "definition": "This feature (Java 8+) allows the same annotation to be applied multiple times to the same element by declaring a container annotation type that holds an array of the annotation. Without it, applying the same annotation twice is a compile-time error. The containing annotation must have a value() element of array type matching the annotation.",
+            "difficulty": "advanced",
+            "module": "java.lang.annotation",
+            "category": "annotations",
+            "code_example": "@Repeatable(Roles.class) @interface Role { String value(); } @Retention(RUNTIME) @interface Roles { Role[] value(); } @Role(\"ADMIN\") @Role(\"USER\") class Service {}"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "annotation processor (javax.annotation.processing)",
+            "definition": "Compiler plugins that run during javac compilation to inspect annotated source elements and generate new source files, class files, or resources. They extend AbstractProcessor and register via the Processor service file. Well-known uses include Lombok (generating boilerplate), MapStruct (generating mappers), and Dagger (generating DI code) \u2014 all enabling compile-time code generation with zero runtime overhead.",
+            "difficulty": "advanced",
+            "module": "javax.annotation.processing",
+            "category": "annotations",
+            "code_example": "@SupportedAnnotationTypes(\"com.example.Builder\") @SupportedSourceVersion(SourceVersion.RELEASE_17) public class BuilderProcessor extends AbstractProcessor { ... }"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "reflection-based annotation access",
+            "definition": "Annotations with RUNTIME retention can be read at runtime via the java.lang.reflect API by calling getAnnotation(Class<A>) or getAnnotationsByType(Class<A>) on Class, Method, Field, or other AnnotatedElement objects. This is the mechanism frameworks use to implement dependency injection, routing, and validation by scanning annotated classes. This carries a small performance overhead and requires the annotation to have RetentionPolicy.RUNTIME.",
+            "difficulty": "intermediate",
+            "module": "java.lang.reflect",
+            "category": "annotations",
+            "code_example": "Method m = MyService.class.getMethod(\"handle\"); Timed t = m.getAnnotation(Timed.class); if (t != null) recordTiming(t.value(), () -> m.invoke(svc));"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        },
+        {
+          "node_type": "term",
+          "data": {
+            "term": "RetentionPolicy",
+            "definition": "This enum is used as the value for the @Retention meta-annotation, with three constants: SOURCE (annotation stripped by compiler), CLASS (stored in bytecode but not loaded into JVM at runtime), and RUNTIME (loaded and accessible via reflection). Choosing the right policy is important for both correctness (RUNTIME for framework scanning) and performance (SOURCE or CLASS for build-time-only metadata).",
+            "difficulty": "intermediate",
+            "module": "java.lang.annotation",
+            "category": "annotations",
+            "code_example": "// RetentionPolicy.SOURCE: @SuppressWarnings, @Override\n// RetentionPolicy.RUNTIME: @Transactional, @Autowired, @Test"
+          },
+          "metadata": {
+            "has_examples": false
+          }
+        }
+      ]
+    }
+  ]
+}
