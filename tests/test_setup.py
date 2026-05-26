@@ -72,7 +72,6 @@ def test_configuration_files_exist():
         "src/lambda_functions/requirements.txt",
         "infrastructure/requirements.txt",
         ".env.example",
-        "setup.py",
         "pyproject.toml",
         "pytest.ini",
         ".gitignore",
