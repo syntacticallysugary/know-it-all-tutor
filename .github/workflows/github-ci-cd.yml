@@ -128,6 +128,10 @@ jobs:
           psql "$DATABASE_URL" -f src/lambda_functions/migration_runner/migrations/001_dsql_full_schema.sql
 
       - name: Run backend tests
+        env:
+          AWS_DEFAULT_REGION: us-east-1
+          AWS_ACCESS_KEY_ID: mock-key-id
+          AWS_SECRET_ACCESS_KEY: mock-secret-key
         run: |
           export DATABASE_URL="postgresql://testuser:testpassword@localhost:5432/tutor_system_test"
           export PYTHONPATH="${PYTHONPATH}:$(pwd)/src"
