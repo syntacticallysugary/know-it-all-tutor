@@ -140,10 +140,12 @@ The answer evaluator uses a cross-encoder model fine-tuned from NLI → STSB, ex
 - **Model:** Cross-encoder (NLI pre-trained → STSB fine-tuned), int8 quantized ONNX (~79 MB)
 - **Runtime:** `onnxruntime` + `tokenizers` (no PyTorch, no `transformers`) → ~112MB Docker image
 - **Deployment:** Docker Lambda (`lambda/answer-evaluator/`) with the model baked in
-- **Scoring:** sigmoid(logit) → min-max normalized over an empirical calibration range; pass threshold 0.50
+- **Scoring:** sigmoid(logit) → min-max normalized over an empirical calibration range; pass threshold 0.45
 - **Result:** Semantic similarity scoring that recognizes synonyms and paraphrases — "rapid" matches "fast" matches "quick". Supports single-pair and batch evaluation.
 
 Dropping PyTorch and `transformers` kept the container well under the 10 GB Lambda image limit and cut cold-start time significantly.
+
+The pass threshold was initially calibrated on synthetic paraphrase pairs rather than real student answers — the right way to tune it is a labeled corpus of actual quiz responses, which requires users. The architecture anticipates this: the same evaluation pipeline accepts a fine-tuned replacement model and a recalibrated threshold without changes elsewhere. A solo developer working for free gets one shot at a reasonable initial guess; the feedback loop closes once people are actually using it.
 
 ### Content Pipeline: Domain Generation
 

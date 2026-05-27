@@ -33,7 +33,7 @@ def _similarity(a, b):
     sig = float(1.0 / (1.0 + np.exp(-logits[0])))
     return float(np.clip((sig - 0.0347) / (0.1689 - 0.0347), 0.0, 1.0))
 
-PASS_THRESHOLD = 0.50
+PASS_THRESHOLD = 0.45
 
 def _feedback(score):
     if score >= PASS_THRESHOLD: return "Excellent! Your answer matches the expected response."
