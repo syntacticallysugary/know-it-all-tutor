@@ -6,6 +6,48 @@ A serverless web application that transforms terminology-heavy subjects into int
 
 ---
 
+## Try It
+
+The application is live at [https://d3awlgby2429wc.cloudfront.net/](https://d3awlgby2429wc.cloudfront.net/).
+
+If you'd like to explore it, you can register for an account at the link above. Accounts aren't provisioned automatically — registration lands in a review queue and access is granted manually.
+
+Why the gate? Two reasons, both honest: bots are a real nuisance, and the free-tier cost model described below depends on keeping traffic predictable. Automated signups solve neither problem and create new ones. So a human reviews each request. If you're a real person who wants to poke around, you'll hear back.
+
+---
+
+## Engineering for Zero Fixed Costs, or Jim is sooo cheap
+
+A deliberate constraint shaped this project's architecture: every component with a fixed monthly charge was either eliminated or replaced with a pay-per-use equivalent. At low traffic the effective AWS bill is pennies per month. That produced several tradeoffs that don't appear in standard architecture guides.
+
+**ML model: CPU inference within ECR's free storage ceiling**
+Lambda runs on CPU only, and ECR's always-free tier covers 500 MB/month of private image storage. The answer evaluator started as a PyTorch sentence-transformers model (container well over 1 GB) and was progressively compressed:
+- Replaced PyTorch + `transformers` with `onnxruntime` + `tokenizers` (no PyTorch at runtime)
+- Applied int8 quantization to the cross-encoder weights
+- Final image: ~112 MB — well under ECR's 500 MB always-free ceiling and Lambda's 10 GB cap
+
+Cross-encoders are slower than bi-encoders, but each quiz answer requires only a single pair comparison (not retrieval over a corpus), so CPU latency is acceptable.
+
+**Networking: staying off the VPC cost surface**
+VPC Interface Endpoints, NAT gateways, and cross-AZ data transfer all carry charges. Two decisions keep the network bill near zero:
+- Only `db_proxy` sits inside the VPC with database access. Every other Lambda invokes it by name over the Lambda control plane — no VPC attachment, no NAT gateway required.
+- VPC Interface Endpoints were removed. At this traffic level, the cost (~$14.40/month per endpoint) isn't justified.
+
+**Database: replacing RDS's fixed cost with DSQL's free tier**
+RDS PostgreSQL (`t4g.micro`) has no always-free tier and costs roughly $15–18/month regardless of traffic. Aurora DSQL includes a permanent free tier — 100,000 DPUs and 1 GB of storage per month — which comfortably covers a low-traffic application like this one.
+
+The migration required removing every feature DSQL doesn't support: foreign key constraints, triggers, PL/pgSQL functions, sequences, and synchronous DDL. Application code now enforces referential integrity, the migration runner issues one DDL statement per transaction with `CREATE INDEX ASYNC`, and the DB proxy layer adds OCC retry logic for the optimistic concurrency model.
+
+**Storage: keeping S3 to static assets**
+S3 has no always-free storage tier — after the 12-month introductory period, storage and per-request charges accumulate with usage. To keep this surface small:
+- Generated domain content and quiz data live in DSQL rather than S3; every quiz-question load avoids a per-object GET charge.
+- The ML model is baked into the Lambda container image rather than fetched from S3 at cold start, trading a one-time ECR storage cost for zero per-invocation object reads.
+- CloudFront caching keeps origin fetches to the S3 frontend bucket low, minimizing both data transfer and GET request counts.
+
+That is pinching your development pennies until they scream.  
+
+---
+
 ## Live Environment
 
 | Resource | URL |
@@ -96,7 +138,7 @@ The Lambda Layer (`infrastructure/lambda_layer/python/`) provides shared code to
 The answer evaluator uses a cross-encoder model fine-tuned from NLI → STSB, exported to int8-quantized ONNX for Lambda deployment:
 
 - **Model:** Cross-encoder (NLI pre-trained → STSB fine-tuned), int8 quantized ONNX (~79 MB)
-- **Runtime:** `onnxruntime` + `tokenizers` (no PyTorch, no `transformers`) → ~456MB Docker image
+- **Runtime:** `onnxruntime` + `tokenizers` (no PyTorch, no `transformers`) → ~112MB Docker image
 - **Deployment:** Docker Lambda (`lambda/answer-evaluator/`) with the model baked in
 - **Scoring:** sigmoid(logit) → min-max normalized over an empirical calibration range; pass threshold 0.50
 - **Result:** Semantic similarity scoring that recognizes synonyms and paraphrases — "rapid" matches "fast" matches "quick". Supports single-pair and batch evaluation.
@@ -262,7 +304,7 @@ cdk deploy --all
 VPC-attached Lambdas have cold start overhead and each needs a connection pool slot. The proxy pattern centralizes DB access, keeps non-DB Lambdas outside the VPC (faster cold starts), and prevents connection exhaustion.
 
 **Why ONNX instead of PyTorch for the ML model?**
-PyTorch adds ~1.5GB to a Lambda container. Using `onnxruntime` + `tokenizers` (no `transformers`) keeps the image at ~456MB — well under Lambda's 10 GB limit and meaningfully cheaper in both ECR storage and cold-start time.
+PyTorch adds ~1.5GB to a Lambda container. Using `onnxruntime` + `tokenizers` (no `transformers`) keeps the image at ~112MB — well under Lambda's 10 GB limit and meaningfully cheaper in both ECR storage and cold-start time.
 
 **Why 6 CDK stacks instead of one?**
 Separation of concerns in deployment. Network and database changes are rare and risky — having them in separate stacks means a backend code change doesn't trigger a network stack update. It also enables faster targeted deploys (`cdk deploy BackendStack-dev`).
