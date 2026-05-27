@@ -164,20 +164,23 @@ PostgreSQL on Amazon RDS (single-instance, not Aurora Serverless — cost-optimi
 
 ## CI/CD
 
-```
-.github/workflows/github-ci-cd.yml   ← security scans + unit tests (on push/PR)
-.github/workflows/rollback.yml       ← manual rollback trigger
-```
+The project supports two parallel, fully automated CI/CD pipelines that handle the entire build, test, and deploy lifecycle:
 
-GitHub Actions pipeline stages (runs on every push to `main` and on PRs):
-1. **Security scans** — Bandit (SAST), Checkov (IaC), TruffleHog (secrets), pip-audit (dependencies)
-2. **Unit tests** — pytest with Moto (AWS mocking, no real AWS calls)
+* **GitHub Actions** (`.github/workflows/github-ci-cd.yml`) — Runs on push/PR to `main` and manually via `workflow_dispatch`.
+* **Gitea Actions** (`.gitea/workflows/gitea-ci.yml`) — Runs on push/PR to `main` and `develop` on the local Gitea instance.
 
-CDK deployment is triggered separately via a self-hosted Gitea CI pipeline, which handles:
-- `cdk deploy --all --require-approval never`
-- `npm run build` → S3 sync → CloudFront invalidation
+### Pipeline Stages
+1. **Security Scans:** Runs Bandit (SAST), Checkov (IaC), TruffleHog (secrets detection), and pip-audit (dependencies).
+2. **Backend Unit Tests:** Runs `pytest` in a test environment with a local PostgreSQL service container, mocking AWS calls using Moto.
+3. **Frontend Build:** Builds the React application with production environment parameters.
+4. **AWS CDK Deployment:** Deploys all 6 stacks sequentially (`AuthStack-dev`, `BackendStack-dev`, `DatabaseStack-dev`, `FrontendStack-dev`, `MonitoringStack-dev`, and `NetworkStack-dev`) to avoid CloudFormation dependency blockages.
+5. **Post-Deployment Tasks:** Triggers database migrations via AWS Lambda invocation, invalidates the CloudFront CDN cache, and sets up ECR container lifecycle policies.
 
-Tests use [Moto](https://github.com/getmoto/moto) for AWS mocking rather than LocalStack — faster, no Docker required in CI, and runs in-process.
+### Required GitHub Secrets
+To enable deployment from the GitHub Actions pipeline, you must configure the following repository secrets under `Settings -> Secrets and variables -> Actions`:
+* `AWS_ACCESS_KEY_ID` & `AWS_SECRET_ACCESS_KEY` — AWS IAM credentials for deployment.
+* `VITE_API_BASE_URL` — The base URL of the deployed API Gateway.
+* `VITE_COGNITO_USER_POOL_ID` & `VITE_COGNITO_USER_POOL_CLIENT_ID` — Cognito authentication settings.
 
 ---
 
