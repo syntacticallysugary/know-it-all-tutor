@@ -9,6 +9,7 @@ from aws_cdk import (
     aws_s3_deployment as s3deploy,
     aws_cloudfront as cloudfront,
     aws_cloudfront_origins as origins,
+    aws_certificatemanager as acm,
     Duration,
     RemovalPolicy,
     CfnOutput
@@ -54,6 +55,19 @@ class FrontendStack(Stack):
             auto_delete_objects=True  # Clean up on stack deletion
         )
         
+        # Optional custom domain — supply both context vars to enable:
+        #   cdk deploy -c custom_domain=tutor.syntacticallysugary.dev \
+        #              -c certificate_arn=arn:aws:acm:us-east-1:...
+        custom_domain: str | None = self.node.try_get_context("custom_domain")
+        certificate_arn: str | None = self.node.try_get_context("certificate_arn")
+
+        custom_domain_kwargs = {}
+        if custom_domain and certificate_arn:
+            custom_domain_kwargs["domain_names"] = [custom_domain]
+            custom_domain_kwargs["certificate"] = acm.Certificate.from_certificate_arn(
+                self, "CustomDomainCert", certificate_arn
+            )
+
         # Create CloudFront distribution
         self.distribution = cloudfront.Distribution(
             self,
@@ -81,8 +95,9 @@ class FrontendStack(Stack):
                     ttl=Duration.minutes(5)
                 )
             ],
-            price_class=cloudfront.PriceClass.PRICE_CLASS_100,  # Use only North America and Europe
-            comment="Know-It-All Tutor Frontend - Multi-Stack Dev"
+            price_class=cloudfront.PriceClass.PRICE_CLASS_100,
+            comment="Know-It-All Tutor Frontend - Multi-Stack Dev",
+            **custom_domain_kwargs
         )
         
         # Deploy frontend build to S3
@@ -97,6 +112,15 @@ class FrontendStack(Stack):
         )
         
         # CloudFormation Outputs
+        if custom_domain and certificate_arn:
+            CfnOutput(
+                self,
+                "CustomDomainURL",
+                value=f"https://{custom_domain}",
+                description="Custom domain URL for frontend application",
+                export_name=f"{construct_id}-CustomDomainURL"
+            )
+
         CfnOutput(
             self,
             "CloudFrontURL",

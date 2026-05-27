@@ -18,7 +18,7 @@ const Navbar = () => {
 
         <div className="flex items-center space-x-4">
           <span className="text-sm" style={{ color: '#94A3B8' }}>
-            Welcome, {user?.username || user?.email || 'User'}
+            Welcome, {user?.given_name || user?.email || 'User'}
           </span>
 
           <Link

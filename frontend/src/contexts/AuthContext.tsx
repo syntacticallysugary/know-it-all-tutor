@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
 import { Hub } from 'aws-amplify/utils'
 import { fetchAuthSession } from 'aws-amplify/auth'
 import { AuthService } from '../services/auth'
@@ -55,7 +56,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser({
           userId: result.user.userId,
           username: result.user.username,
-          email: result.user.signInDetails?.loginId,
+          email: (payload['email'] as string | undefined) ?? result.user.signInDetails?.loginId,
+          given_name: payload['given_name'] as string | undefined,
+          family_name: payload['family_name'] as string | undefined,
           isAdmin: groups.includes('admin'),
         })
       } else {

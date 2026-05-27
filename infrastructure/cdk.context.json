@@ -9,5 +9,7 @@
     "us-east-1d",
     "us-east-1e",
     "us-east-1f"
-  ]
+  ],
+  "custom_domain": "tutor.syntacticallysugary.dev",
+  "certificate_arn": "arn:aws:acm:us-east-1:257949588978:certificate/4e3b5a3e-a59e-4830-986c-dfedd0f64aa1"
 }
