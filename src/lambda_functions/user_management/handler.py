@@ -31,7 +31,7 @@ def _require_admin(event: dict[str, Any]) -> bool:
     """Returns True if the caller is in the admin Cognito group."""
     claims = event.get("requestContext", {}).get("authorizer", {}).get("claims", {})
     groups_str = claims.get("cognito:groups", "")
-    groups = groups_str.split(",") if groups_str else []
+    groups = [g.strip() for g in groups_str.split(",")] if groups_str else []
     return "admin" in groups
 
 
