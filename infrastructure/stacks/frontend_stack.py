@@ -38,21 +38,15 @@ class FrontendStack(Stack):
         self.user_pool_id = auth_stack.user_pool.user_pool_id
         self.user_pool_client_id = auth_stack.user_pool_client.user_pool_client_id
         
-        # Create S3 bucket for static website hosting
+        # Private bucket — CloudFront accesses it via OAC over HTTPS (IAM auth).
+        # No public access; SPA routing handled by CloudFront error_responses below.
         self.frontend_bucket = s3.Bucket(
             self,
             "FrontendBucket",
-            website_index_document="index.html",
-            website_error_document="index.html",  # SPA routing
-            public_read_access=True,
-            block_public_access=s3.BlockPublicAccess(
-                block_public_acls=False,
-                block_public_policy=False,
-                ignore_public_acls=False,
-                restrict_public_buckets=False
-            ),
-            removal_policy=RemovalPolicy.DESTROY,  # For dev environment
-            auto_delete_objects=True  # Clean up on stack deletion
+            block_public_access=s3.BlockPublicAccess.BLOCK_ALL,
+            enforce_ssl=True,
+            removal_policy=RemovalPolicy.DESTROY,
+            auto_delete_objects=True
         )
         
         # Optional custom domain — supply both context vars to enable:
@@ -73,7 +67,7 @@ class FrontendStack(Stack):
             self,
             "FrontendDistribution",
             default_behavior=cloudfront.BehaviorOptions(
-                origin=origins.S3StaticWebsiteOrigin(self.frontend_bucket),
+                origin=origins.S3BucketOrigin.with_origin_access_control(self.frontend_bucket),
                 viewer_protocol_policy=cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
                 allowed_methods=cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
                 cached_methods=cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,

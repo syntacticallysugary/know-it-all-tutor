@@ -69,6 +69,8 @@ class AuthStack(Stack):
             refresh_token_validity=Duration.days(30),
             # Don't generate a client secret (for web apps)
             generate_secret=False,
+            # Prevent revealing whether an email address is registered
+            prevent_user_existence_errors=True,
         )
 
         # Create Pre-SignUp Lambda Trigger (auto-confirm + notify admin via SES)
