@@ -13,6 +13,7 @@ from aws_cdk import (
     aws_apigateway as apigateway,
     aws_iam as iam,
     aws_ecr_assets as ecr_assets,
+    aws_logs as logs,
     custom_resources as cr,
     Duration,
     CfnOutput
@@ -75,9 +76,7 @@ class BackendStack(Stack):
         self.user_pool = auth_stack.user_pool
         self.user_pool_client = auth_stack.user_pool_client
 
-        # Wildcard ARN — grants DbConnectAdmin on all DSQL clusters in this
-        # account/region. Tighten to a specific cluster ARN once stable.
-        self.cluster_arn = f"arn:aws:dsql:{self.region}:{self.account}:cluster/*"
+        self.cluster_arn = "arn:aws:dsql:us-east-1:257949588978:cluster/tftzoi6mgpzund3w7meydefblq"
         
         # Create Lambda Layer for shared utilities
         self.shared_layer = _lambda.LayerVersion(
@@ -312,7 +311,10 @@ class BackendStack(Stack):
             rest_api_name="know-it-all-tutor-api-multistack-dev",
             description="API for Know-It-All Tutor System",
             default_cors_preflight_options=apigateway.CorsOptions(
-                allow_origins=["https://d3awlgby2429wc.cloudfront.net"],
+                allow_origins=[
+                    "https://d3awlgby2429wc.cloudfront.net",
+                    "https://tutor.syntacticallysugary.dev",
+                ],
                 allow_methods=apigateway.Cors.ALL_METHODS,
                 allow_headers=[
                     "Content-Type",
@@ -326,14 +328,33 @@ class BackendStack(Stack):
             deploy_options=apigateway.StageOptions(
                 stage_name="prod",
                 throttling_rate_limit=100,
-                throttling_burst_limit=200
+                throttling_burst_limit=200,
+                logging_level=apigateway.MethodLoggingLevel.ERROR,
+                access_log_destination=apigateway.LogGroupLogDestination(
+                    logs.LogGroup(
+                        self,
+                        "ApiAccessLogs",
+                        retention=logs.RetentionDays.ONE_MONTH,
+                    )
+                ),
+                access_log_format=apigateway.AccessLogFormat.json_with_standard_fields(
+                    caller=True,
+                    http_method=True,
+                    ip=True,
+                    protocol=True,
+                    request_time=True,
+                    resource_path=True,
+                    response_length=True,
+                    status=True,
+                    user=True,
+                ),
             )
         )
         
         # Add CORS headers to error responses (401, 403, 500, etc.)
         cors_headers = {
             "Access-Control-Allow-Origin": "'https://d3awlgby2429wc.cloudfront.net'",
-            "Access-Control-Allow-Credentials": "'true'"
+            "Access-Control-Allow-Credentials": "'true'",
         }
         
         self.api.add_gateway_response(
@@ -388,6 +409,46 @@ class BackendStack(Stack):
         # Domain routes (with authorization)
         domains_resource = self.api.root.add_resource("domains")
         domains_resource.add_method(
+            "GET",
+            apigateway.LambdaIntegration(self.domain_lambda),
+            authorizer=authorizer,
+            authorization_type=apigateway.AuthorizationType.COGNITO
+        )
+        domains_resource.add_method(
+            "POST",
+            apigateway.LambdaIntegration(self.domain_lambda),
+            authorizer=authorizer,
+            authorization_type=apigateway.AuthorizationType.COGNITO
+        )
+
+        domain_id_resource = domains_resource.add_resource("{domain_id}")
+        domain_id_resource.add_method(
+            "GET",
+            apigateway.LambdaIntegration(self.domain_lambda),
+            authorizer=authorizer,
+            authorization_type=apigateway.AuthorizationType.COGNITO
+        )
+        domain_id_resource.add_method(
+            "PUT",
+            apigateway.LambdaIntegration(self.domain_lambda),
+            authorizer=authorizer,
+            authorization_type=apigateway.AuthorizationType.COGNITO
+        )
+        domain_id_resource.add_method(
+            "DELETE",
+            apigateway.LambdaIntegration(self.domain_lambda),
+            authorizer=authorizer,
+            authorization_type=apigateway.AuthorizationType.COGNITO
+        )
+
+        domain_terms_resource = domain_id_resource.add_resource("terms")
+        domain_terms_resource.add_method(
+            "POST",
+            apigateway.LambdaIntegration(self.domain_lambda),
+            authorizer=authorizer,
+            authorization_type=apigateway.AuthorizationType.COGNITO
+        )
+        domain_terms_resource.add_method(
             "GET",
             apigateway.LambdaIntegration(self.domain_lambda),
             authorizer=authorizer,
@@ -463,14 +524,6 @@ class BackendStack(Stack):
         quiz_question.add_method(
             "GET",
             apigateway.LambdaIntegration(self.quiz_engine_lambda),
-            authorizer=authorizer,
-            authorization_type=apigateway.AuthorizationType.COGNITO
-        )
-        
-        # POST /quiz/evaluate - Direct answer evaluation (for testing)
-        quiz_resource.add_resource("evaluate").add_method(
-            "POST",
-            apigateway.LambdaIntegration(self.answer_evaluator_lambda),
             authorizer=authorizer,
             authorization_type=apigateway.AuthorizationType.COGNITO
         )

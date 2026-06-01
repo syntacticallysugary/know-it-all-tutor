@@ -54,9 +54,13 @@ def handler(event, context):
 
         if '/batch' in path or body.get('batch'):
             pairs = body.get('answer_pairs', [])
+            if len(pairs) > 100:
+                return {'statusCode': 400, 'body': json.dumps({'error': 'Batch size exceeds limit of 100'})}
             results = []
             for p in pairs:
-                score = _similarity(p['answer'], p['correct_answer'])
+                answer = str(p['answer'])[:5000]
+                correct = str(p['correct_answer'])[:5000]
+                score = _similarity(answer, correct)
                 results.append({'similarity': round(score, 4), 'feedback': _feedback(score)})
             return {
                 'statusCode': 200,
@@ -64,7 +68,9 @@ def handler(event, context):
                 'body': json.dumps({'results': results})
             }
 
-        score = _similarity(body['answer'], body['correct_answer'])
+        answer = str(body['answer'])[:5000]
+        correct = str(body['correct_answer'])[:5000]
+        score = _similarity(answer, correct)
         return {
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},

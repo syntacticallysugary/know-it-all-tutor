@@ -6,6 +6,7 @@ import json
 import sys
 import os
 import logging
+import uuid
 from typing import Dict, Any
 
 # Add shared modules to path
@@ -20,6 +21,16 @@ logger.setLevel(logging.INFO)
 
 # Initialize DB Proxy client
 db_proxy = DBProxyClient(os.environ.get('DB_PROXY_FUNCTION_NAME'))
+
+
+def _extract_and_validate_uuid(path: str, segment: str) -> str | None:
+    """Extract a UUID segment from a path and validate its format. Returns None if invalid."""
+    raw = path.split(segment)[-1].split('/')[0]
+    try:
+        uuid.UUID(raw)
+        return raw
+    except ValueError:
+        return None
 
 
 def lambda_handler(event, context):
@@ -196,7 +207,9 @@ def handle_get_domain(event, user_id):
     try:
         # Extract domain_id from path
         path = event.get('path', '')
-        domain_id = path.split('/domains/')[-1].split('/')[0]
+        domain_id = _extract_and_validate_uuid(path, '/domains/')
+        if not domain_id:
+            return create_error_response(400, 'Invalid domain ID format')
         
         domain = db_proxy.execute_query(
             """
@@ -242,7 +255,9 @@ def handle_update_domain(event, user_id):
     """Update domain"""
     try:
         path = event.get('path', '')
-        domain_id = path.split('/domains/')[-1].split('/')[0]
+        domain_id = _extract_and_validate_uuid(path, '/domains/')
+        if not domain_id:
+            return create_error_response(400, 'Invalid domain ID format')
         
         body = json.loads(event.get('body', '{}'))
         
@@ -324,7 +339,9 @@ def handle_delete_domain(event, user_id):
     """Delete domain (cascades to terms)"""
     try:
         path = event.get('path', '')
-        domain_id = path.split('/domains/')[-1].split('/')[0]
+        domain_id = _extract_and_validate_uuid(path, '/domains/')
+        if not domain_id:
+            return create_error_response(400, 'Invalid domain ID format')
         
         # Verify ownership
         existing = db_proxy.execute_query(
@@ -355,7 +372,9 @@ def handle_add_terms(event, user_id):
     """Add terms to domain"""
     try:
         path = event.get('path', '')
-        domain_id = path.split('/domains/')[-1].split('/terms')[0]
+        domain_id = _extract_and_validate_uuid(path, '/domains/')
+        if not domain_id:
+            return create_error_response(400, 'Invalid domain ID format')
         
         body = json.loads(event.get('body', '{}'))
         terms = body.get('terms', [])
@@ -421,7 +440,9 @@ def handle_get_terms(event, user_id):
     """Get terms for domain"""
     try:
         path = event.get('path', '')
-        domain_id = path.split('/domains/')[-1].split('/terms')[0]
+        domain_id = _extract_and_validate_uuid(path, '/domains/')
+        if not domain_id:
+            return create_error_response(400, 'Invalid domain ID format')
         
         # Verify domain ownership
         domain = db_proxy.execute_query(

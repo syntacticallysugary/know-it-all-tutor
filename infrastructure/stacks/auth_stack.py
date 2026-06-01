@@ -83,9 +83,9 @@ class AuthStack(Stack):
             timeout=Duration.seconds(10),
             memory_size=128,
             environment={
-                "ADMIN_EMAIL": "huschlej@comcast.net",
-                "SES_FROM_EMAIL": "noreply@syntacticallysugary.dev",
-                "APP_URL": "https://d3awlgby2429wc.cloudfront.net",
+                "ADMIN_EMAIL": self.node.try_get_context("admin_email") or "huschlej@comcast.net",
+                "SES_FROM_EMAIL": self.node.try_get_context("ses_from_email") or "noreply@syntacticallysugary.dev",
+                "APP_URL": self.node.try_get_context("app_url") or "https://d3awlgby2429wc.cloudfront.net",
             },
             description="Cognito Pre-SignUp trigger - auto-confirms users and notifies admin",
         )

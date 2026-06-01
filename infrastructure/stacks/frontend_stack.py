@@ -14,6 +14,17 @@ from aws_cdk import (
     RemovalPolicy,
     CfnOutput
 )
+from aws_cdk.aws_cloudfront import (
+    ResponseHeadersPolicy,
+    ResponseSecurityHeadersBehavior,
+    ResponseHeadersStrictTransportSecurity,
+    ResponseHeadersXSSProtection,
+    ResponseHeadersFrameOptions,
+    ResponseHeadersContentTypeOptions,
+    ResponseHeadersReferrerPolicy,
+    HeadersFrameOption,
+    HeadersReferrerPolicy,
+)
 from constructs import Construct
 
 
@@ -62,6 +73,33 @@ class FrontendStack(Stack):
                 self, "CustomDomainCert", certificate_arn
             )
 
+        # Security response headers applied to all CloudFront responses
+        security_headers_policy = ResponseHeadersPolicy(
+            self,
+            "SecurityHeadersPolicy",
+            security_headers_behavior=ResponseSecurityHeadersBehavior(
+                strict_transport_security=ResponseHeadersStrictTransportSecurity(
+                    access_control_max_age=Duration.days(365),
+                    include_subdomains=True,
+                    override=True,
+                ),
+                xss_protection=ResponseHeadersXSSProtection(
+                    protection=True,
+                    mode_block=True,
+                    override=True,
+                ),
+                frame_options=ResponseHeadersFrameOptions(
+                    frame_option=HeadersFrameOption.DENY,
+                    override=True,
+                ),
+                content_type_options=ResponseHeadersContentTypeOptions(override=True),
+                referrer_policy=ResponseHeadersReferrerPolicy(
+                    referrer_policy=HeadersReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN,
+                    override=True,
+                ),
+            ),
+        )
+
         # Create CloudFront distribution
         self.distribution = cloudfront.Distribution(
             self,
@@ -72,6 +110,7 @@ class FrontendStack(Stack):
                 allowed_methods=cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
                 cached_methods=cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
                 cache_policy=cloudfront.CachePolicy.CACHING_OPTIMIZED,
+                response_headers_policy=security_headers_policy,
                 compress=True
             ),
             default_root_object="index.html",

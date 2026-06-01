@@ -159,16 +159,23 @@ def handle_register(event: Dict[str, Any]) -> Dict[str, Any]:
         body = event.get('sanitized_body', {})
         if not body:
             return create_secure_response(400, {'error': 'Request body is required'})
-        
+
+        raw_body = event.get('body', '')
+        if raw_body and len(raw_body) > 4096:
+            return create_secure_response(400, {'error': 'Request body too large'})
+
         email = body.get('email', '').strip().lower()
         password = body.get('password', '')
         first_name = body.get('first_name', '').strip()
         last_name = body.get('last_name', '').strip()
-        
+
         # Enhanced validation
         if not email:
             return create_secure_response(400, {'error': 'Email is required'})
-        
+
+        if len(email) > 254:
+            return create_secure_response(400, {'error': 'Email address too long'})
+
         if not validate_email(email):
             return create_secure_response(400, {'error': 'Invalid email format'})
         

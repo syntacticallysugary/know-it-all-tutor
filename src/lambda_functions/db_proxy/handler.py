@@ -72,8 +72,7 @@ def lambda_handler(event, context):
         return {
             'statusCode': 500,
             'body': json.dumps({
-                'error': 'Database operation failed',
-                'message': str(e)
+                'error': 'Database operation failed'
             }, default=json_serial)
         }
 
