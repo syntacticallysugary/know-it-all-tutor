@@ -22,7 +22,8 @@ from shared.response_utils import (
     handle_error,
     parse_request_body,
     get_path_parameters,
-    get_query_parameters
+    get_query_parameters,
+    init_request,
 )
 
 
@@ -31,14 +32,31 @@ class TestCreateResponse:
     """Test basic response creation"""
     
     def test_create_response_basic(self):
-        """Test creating basic response"""
+        """Test creating basic response — default origin is the first entry in ALLOWED_ORIGINS."""
         response = create_response(200, {'message': 'success'})
-        
+
         assert response['statusCode'] == 200
         assert 'headers' in response
         assert 'body' in response
         assert response['headers']['Content-Type'] == 'application/json'
-        assert response['headers']['Access-Control-Allow-Origin'] == '*'
+        assert response['headers']['Access-Control-Allow-Origin'] == 'https://d3awlgby2429wc.cloudfront.net'
+
+    def test_create_response_reflects_allowed_origin(self):
+        """Test that init_request causes the response to reflect the request origin when allowed."""
+        init_request({'headers': {'origin': 'https://tutor.syntacticallysugary.dev'}})
+        with patch.dict(os.environ, {'ALLOWED_ORIGINS': 'https://d3awlgby2429wc.cloudfront.net,https://tutor.syntacticallysugary.dev'}):
+            response = create_response(200, {'message': 'ok'})
+        assert response['headers']['Access-Control-Allow-Origin'] == 'https://tutor.syntacticallysugary.dev'
+        # Reset context for other tests
+        init_request({})
+
+    def test_create_response_rejects_unknown_origin(self):
+        """Test that an unrecognised origin falls back to the first allowed origin."""
+        init_request({'headers': {'origin': 'https://evil.example.com'}})
+        with patch.dict(os.environ, {'ALLOWED_ORIGINS': 'https://d3awlgby2429wc.cloudfront.net'}):
+            response = create_response(200, {'message': 'ok'})
+        assert response['headers']['Access-Control-Allow-Origin'] == 'https://d3awlgby2429wc.cloudfront.net'
+        init_request({})
     
     def test_create_response_custom_headers(self):
         """Test creating response with custom headers"""
