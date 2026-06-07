@@ -219,9 +219,10 @@ jobs:
 
       - name: Install CDK CLI and add to PATH
         run: |
-          echo "$HOME/.npm-global/bin" >> $GITHUB_PATH
-          npm install -g aws-cdk
-          "$HOME/.npm-global/bin/cdk" --version
+          npm install -g aws-cdk@latest
+          CDK_BIN="$(npm config get prefix)/bin"
+          echo "${CDK_BIN}" >> $GITHUB_PATH
+          "${CDK_BIN}/cdk" --version
 
       - name: Create Python venv and add to PATH
         run: |
