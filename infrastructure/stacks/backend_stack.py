@@ -77,6 +77,7 @@ class BackendStack(Stack):
         self.user_pool_client = auth_stack.user_pool_client
 
         self.cluster_arn = "arn:aws:dsql:us-east-1:257949588978:cluster/tftzoi6mgpzund3w7meydefblq"
+        self.allowed_origins = "https://d3awlgby2429wc.cloudfront.net,https://tutor.syntacticallysugary.dev"
         
         # Create Lambda Layer for shared utilities
         self.shared_layer = _lambda.LayerVersion(
@@ -157,6 +158,7 @@ class BackendStack(Stack):
                 "STAGE": "prod",
                 "DB_PROXY_FUNCTION_NAME": self.db_proxy_lambda.function_name,
                 "AWS_CA_BUNDLE": "/etc/pki/tls/certs/ca-bundle.crt",
+                "ALLOWED_ORIGINS": self.allowed_origins,
             },
             description="Auth Lambda - handles Cognito, invokes DB proxy"
         )
@@ -176,6 +178,7 @@ class BackendStack(Stack):
             environment={
                 "DB_PROXY_FUNCTION_NAME": self.db_proxy_lambda.function_name,
                 "AWS_CA_BUNDLE": "/etc/pki/tls/certs/ca-bundle.crt",
+                "ALLOWED_ORIGINS": self.allowed_origins,
             },
             description="User profile management"
         )
@@ -194,6 +197,7 @@ class BackendStack(Stack):
             environment={
                 "DB_PROXY_FUNCTION_NAME": self.db_proxy_lambda.function_name,
                 "AWS_CA_BUNDLE": "/etc/pki/tls/certs/ca-bundle.crt",
+                "ALLOWED_ORIGINS": self.allowed_origins,
             },
             description="Domain management operations"
         )
@@ -212,6 +216,7 @@ class BackendStack(Stack):
             environment={
                 "DB_PROXY_FUNCTION_NAME": self.db_proxy_lambda.function_name,
                 "AWS_CA_BUNDLE": "/etc/pki/tls/certs/ca-bundle.crt",
+                "ALLOWED_ORIGINS": self.allowed_origins,
             },
             description="Domain generation job queue — create and poll async generation jobs",
         )
@@ -230,6 +235,7 @@ class BackendStack(Stack):
             environment={
                 "DB_PROXY_FUNCTION_NAME": self.db_proxy_lambda.function_name,
                 "AWS_CA_BUNDLE": "/etc/pki/tls/certs/ca-bundle.crt",
+                "ALLOWED_ORIGINS": self.allowed_origins,
             },
             description="Progress tracking operations"
         )
@@ -248,6 +254,7 @@ class BackendStack(Stack):
             environment={
                 "DB_PROXY_FUNCTION_NAME": self.db_proxy_lambda.function_name,
                 "AWS_CA_BUNDLE": "/etc/pki/tls/certs/ca-bundle.crt",
+                "ALLOWED_ORIGINS": self.allowed_origins,
             },
             description="Batch upload validation and processing"
         )
@@ -266,6 +273,7 @@ class BackendStack(Stack):
             environment={
                 "DB_PROXY_FUNCTION_NAME": self.db_proxy_lambda.function_name,
                 "AWS_CA_BUNDLE": "/etc/pki/tls/certs/ca-bundle.crt",
+                "ALLOWED_ORIGINS": self.allowed_origins,
             },
             description="Quiz engine - manages quiz sessions"
         )
@@ -352,9 +360,11 @@ class BackendStack(Stack):
         )
         
         # Add CORS headers to error responses (401, 403, 500, etc.)
+        # Gateway responses are static — use * so they work from both allowed origins.
+        # Access-Control-Allow-Credentials is omitted here; credentials headers only
+        # matter on successful Lambda responses, which use origin reflection via response_utils.
         cors_headers = {
-            "Access-Control-Allow-Origin": "'https://d3awlgby2429wc.cloudfront.net'",
-            "Access-Control-Allow-Credentials": "'true'",
+            "Access-Control-Allow-Origin": "'*'",
         }
         
         self.api.add_gateway_response(
@@ -616,8 +626,9 @@ class BackendStack(Stack):
             environment={
                 "USER_POOL_ID": self.user_pool.user_pool_id,
                 "SES_FROM_EMAIL": "noreply@syntacticallysugary.dev",
-                "APP_URL": "https://d3awlgby2429wc.cloudfront.net",
+                "APP_URL": "https://tutor.syntacticallysugary.dev",
                 "AWS_CA_BUNDLE": "/etc/pki/tls/certs/ca-bundle.crt",
+                "ALLOWED_ORIGINS": self.allowed_origins,
             },
             description="Admin user management - list, approve, deny pending registrations",
         )

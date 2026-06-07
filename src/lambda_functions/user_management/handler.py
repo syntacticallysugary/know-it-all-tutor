@@ -14,7 +14,7 @@ from botocore.exceptions import ClientError
 
 sys.path.append("/opt/python")
 
-from response_utils import create_response, handle_error
+from response_utils import create_response, handle_error, init_request
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -37,6 +37,7 @@ def _require_admin(event: dict[str, Any]) -> bool:
 
 def lambda_handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
     """Route dispatcher for admin user management endpoints."""
+    init_request(event)
     try:
         if not _require_admin(event):
             return create_response(403, {"error": "Admin access required"})

@@ -17,7 +17,7 @@ from typing import Any
 sys.path.append("/opt/python")
 
 from db_proxy_client import DBProxyClient
-from response_utils import create_response, create_error_response
+from response_utils import create_response, create_error_response, init_request
 from auth_utils import extract_user_from_cognito_event
 
 logger = logging.getLogger(__name__)
@@ -218,6 +218,7 @@ def _approve_job(job_id: str, sub: str, is_admin: bool) -> dict[str, Any]:
 
 
 def lambda_handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
+    init_request(event)
     sub = _cognito_sub(event)
     if not sub:
         return create_error_response(401, "Unauthorized")

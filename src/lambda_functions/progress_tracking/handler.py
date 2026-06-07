@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 sys.path.append('/opt/python')
 
 from db_proxy_client import DBProxyClient
-from response_utils import create_success_response, create_error_response
+from response_utils import create_success_response, create_error_response, init_request
 from auth_utils import extract_user_from_cognito_event
 
 logger = logging.getLogger(__name__)
@@ -29,6 +29,7 @@ def lambda_handler(event, context):
     Routes:
     - GET /progress/dashboard - Get dashboard data with stats and recent activity
     """
+    init_request(event)
     try:
         http_method = event.get('httpMethod')
         path = event.get('path', '')

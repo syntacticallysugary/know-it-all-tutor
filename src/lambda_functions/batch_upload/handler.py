@@ -18,7 +18,7 @@ from response_utils import (
     create_success_response, create_created_response, create_error_response,
     create_validation_error_response, create_not_found_response,
     parse_request_body, get_path_parameters, get_query_parameters,
-    handle_error
+    handle_error, init_request
 )
 from auth_utils import extract_user_from_cognito_event
 from authorization_utils import validate_api_access, AuthorizationError
@@ -34,8 +34,9 @@ def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     """
     Main handler for batch upload operations with role-based authorization
     """
+    init_request(event)
     logger.info(f"Batch upload handler invoked: {event.get('httpMethod')} {event.get('path')}")
-    
+
     try:
         http_method = event.get('httpMethod')
         path = event.get('path', '')

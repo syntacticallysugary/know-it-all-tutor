@@ -13,7 +13,7 @@ from typing import Dict, Any
 sys.path.append('/opt/python')
 
 from db_proxy_client import DBProxyClient
-from response_utils import create_success_response, create_created_response, create_error_response
+from response_utils import create_success_response, create_created_response, create_error_response, init_request
 from auth_utils import extract_user_from_cognito_event
 
 logger = logging.getLogger(__name__)
@@ -45,27 +45,28 @@ def lambda_handler(event, context):
     - POST /domains/{id}/terms - Add terms to domain
     - GET /domains/{id}/terms - Get domain terms
     """
+    init_request(event)
     try:
         http_method = event.get('httpMethod')
         path = event.get('path', '')
-        
+
         auth_result = extract_user_from_cognito_event(event)
         if not auth_result['valid']:
             return create_error_response(401, 'Unauthorized - No user identity found')
         cognito_sub = auth_result['user_id']
-        
+
         # Get user_id from database
         user_result = db_proxy.execute_query(
             "SELECT id FROM users WHERE cognito_sub = %s",
             params=[cognito_sub],
             return_dict=True
         )
-        
+
         if not user_result or len(user_result) == 0:
             return create_error_response(404, 'User not found')
-        
+
         user_id = user_result[0]['id']
-        
+
         # Route to appropriate handler
         if http_method == 'POST' and path.endswith('/domains'):
             return handle_create_domain(event, user_id)

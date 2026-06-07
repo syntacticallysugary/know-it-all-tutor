@@ -2,8 +2,27 @@
 HTTP response utilities for Lambda functions
 """
 import json
+import threading
 from typing import Dict, Any, Optional
 import os
+
+_request_context = threading.local()
+
+
+def init_request(event: dict) -> None:
+    """Extract and store request origin for CORS. Call at the top of each lambda_handler."""
+    headers = event.get('headers') or {}
+    _request_context.origin = headers.get('origin') or headers.get('Origin') or ''
+
+
+def _get_cors_origin() -> str:
+    """Return the request origin if it is in the ALLOWED_ORIGINS list, else the first allowed origin."""
+    allowed_str = os.environ.get('ALLOWED_ORIGINS', 'https://d3awlgby2429wc.cloudfront.net')
+    allowed = [o.strip() for o in allowed_str.split(',') if o.strip()]
+    origin = getattr(_request_context, 'origin', None) or ''
+    if origin in allowed:
+        return origin
+    return allowed[0]
 
 
 def create_response(
@@ -12,12 +31,12 @@ def create_response(
     headers: Optional[Dict[str, str]] = None
 ) -> Dict[str, Any]:
     """Create standardized HTTP response for API Gateway"""
-    
-    # Default headers with CORS — allow localhost in local dev, CloudFront in production
+
+    # Default headers with CORS — allow localhost in local dev, reflect allowed origin in production
     cors_origin = (
         'http://localhost:5173'
         if os.environ.get('LOCAL_DEV') == 'true'
-        else 'https://d3awlgby2429wc.cloudfront.net'
+        else _get_cors_origin()
     )
     default_headers = {
         'Content-Type': 'application/json',

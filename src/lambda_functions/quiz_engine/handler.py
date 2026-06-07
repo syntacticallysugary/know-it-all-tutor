@@ -14,7 +14,7 @@ import sys
 sys.path.append('/opt/python')
 
 import boto3
-from response_utils import create_response, handle_error
+from response_utils import create_response, handle_error, init_request
 from auth_utils import extract_user_from_cognito_event
 from db_proxy_client import DBProxyClient
 
@@ -98,6 +98,7 @@ def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     """
     Main handler for quiz engine operations
     """
+    init_request(event)
     try:
         http_method = event.get('httpMethod')
         path = event.get('path', '')

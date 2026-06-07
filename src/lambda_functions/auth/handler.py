@@ -15,7 +15,7 @@ from botocore.exceptions import ClientError
 sys.path.append('/opt/python')
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
 
-from response_utils import create_response, handle_error
+from response_utils import create_response, handle_error, init_request
 from security_controls import extract_client_info
 from security_monitoring import SecurityMonitor
 from security_middleware import security_middleware, create_secure_response, validate_email
@@ -119,6 +119,7 @@ def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     """
     Main handler for Cognito authentication operations
     """
+    init_request(event)
     try:
         http_method = event.get('httpMethod')
         path = event.get('path', '')

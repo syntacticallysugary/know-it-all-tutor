@@ -12,7 +12,7 @@ import logging
 sys.path.append('/opt/python')
 
 from db_proxy_client import DBProxyClient
-from response_utils import create_success_response, create_error_response
+from response_utils import create_success_response, create_error_response, init_request
 from auth_utils import extract_user_from_cognito_event
 
 logger = logging.getLogger(__name__)
@@ -25,11 +25,12 @@ db_proxy = DBProxyClient(os.environ.get('DB_PROXY_FUNCTION_NAME'))
 def lambda_handler(event, context):
     """
     Handle user profile requests
-    
+
     Routes:
     - GET /profile - Get current user's profile
     - PUT /profile - Update current user's profile
     """
+    init_request(event)
     try:
         http_method = event.get('httpMethod')
         
