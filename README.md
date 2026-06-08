@@ -190,6 +190,8 @@ The project supports two parallel, fully automated CI/CD pipelines that handle t
 4. **AWS CDK Deployment:** Deploys all 6 stacks sequentially (`AuthStack-dev`, `BackendStack-dev`, `DatabaseStack-dev`, `FrontendStack-dev`, `MonitoringStack-dev`, and `NetworkStack-dev`) to avoid CloudFormation dependency blockages.
 5. **Post-Deployment Tasks:** Triggers database migrations via AWS Lambda invocation, invalidates the CloudFront CDN cache, and sets up ECR container lifecycle policies.
 
+> **Note — SecurityMonitoringStack:** A fully implemented seventh stack ([`infrastructure/stacks/security_monitoring_stack.py`](infrastructure/stacks/security_monitoring_stack.py)) exists in the codebase but is intentionally not wired into the deployment. It provisions CloudTrail (multi-region API logging with 7-year S3 retention), GuardDuty (threat detection with high/critical findings routed to SNS), AWS Config (continuous compliance rules), and CloudWatch alarms (root account usage via metric filter, failed logins, Lambda errors, unusual traffic). It is excluded from the live deployment solely to avoid the recurring per-event costs of GuardDuty and AWS Config on a personal account — the implementation is complete and production-ready.
+
 ### Required GitHub Secrets
 To enable deployment from the GitHub Actions pipeline, you must configure the following repository secrets under `Settings -> Secrets and variables -> Actions`:
 * `AWS_ACCESS_KEY_ID` & `AWS_SECRET_ACCESS_KEY` — AWS IAM credentials for deployment.

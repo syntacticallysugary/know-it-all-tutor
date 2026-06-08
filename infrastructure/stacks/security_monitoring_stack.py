@@ -139,8 +139,7 @@ class SecurityMonitoringStack(Stack):
             send_to_cloud_watch_logs=True,
             cloud_watch_logs_group=log_group,
             management_events=cloudtrail.ReadWriteType.ALL,
-            
-            # Data events for S3 and Lambda
+
             s3_bucket_events=[
                 cloudtrail.S3EventSelector(
                     bucket=self.cloudtrail_bucket,
@@ -150,13 +149,13 @@ class SecurityMonitoringStack(Stack):
                 )
             ]
         )
-        
-        # Add Lambda data events
+
         trail.add_lambda_event_selector(
             include_management_events=True,
             read_write_type=cloudtrail.ReadWriteType.ALL
         )
-        
+
+        self.cloudtrail_log_group = log_group
         return trail
     
     def _create_guardduty(self) -> guardduty.CfnDetector:
@@ -328,16 +327,13 @@ class SecurityMonitoringStack(Stack):
             display_name="Security Alerts for Know-It-All Tutor System"
         )
         
-        # Add email subscription for production environment
-        if self.environment == "production":
-            # Note: In real deployment, replace with actual email
-            topic.add_subscription(
-                sns.Subscription(
-                    topic=topic,
-                    endpoint="security@knowitall-tutor.com",
-                    protocol=sns.SubscriptionProtocol.EMAIL
-                )
+        topic.add_subscription(
+            sns.Subscription(
+                topic=topic,
+                endpoint="knowitall-tutor@syntacticallysugary.dev",
+                protocol=sns.SubscriptionProtocol.EMAIL
             )
+        )
         
         return topic
     
@@ -345,23 +341,29 @@ class SecurityMonitoringStack(Stack):
         """Create CloudWatch alarms for security monitoring"""
         alarms = []
         
-        # Alarm for root account usage
+        # Alarm for root account usage — uses a metric filter on the CloudTrail log
+        # group so it only fires on actual root API calls, not all log events.
+        root_metric_filter = logs.MetricFilter(
+            self,
+            "RootUsageMetricFilter",
+            log_group=self.cloudtrail_log_group,
+            metric_namespace="TutorSystem/Security",
+            metric_name="RootAccountUsage",
+            filter_pattern=logs.FilterPattern.literal(
+                '{ $.userIdentity.type = "Root" && $.userIdentity.invokedBy NOT EXISTS && $.eventType != "AwsServiceEvent" }'
+            ),
+            metric_value="1",
+            default_value=0,
+        )
         root_usage_alarm = cloudwatch.Alarm(
             self,
             "RootAccountUsageAlarm",
             alarm_name=f"tutor-system-root-usage-{self.environment}",
             alarm_description="Alert when root account is used",
-            metric=cloudwatch.Metric(
-                namespace="CloudWatchLogs",
-                metric_name="IncomingLogEvents",
-                dimensions_map={
-                    "LogGroupName": f"/aws/cloudtrail/tutor-system-{self.environment}"
-                },
-                statistic="Sum"
-            ),
+            metric=root_metric_filter.metric(statistic="Sum"),
             threshold=1,
             evaluation_periods=1,
-            comparison_operator=cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD
+            comparison_operator=cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
         )
         root_usage_alarm.add_alarm_action(
             cloudwatch.SnsAction(self.security_alerts_topic)
