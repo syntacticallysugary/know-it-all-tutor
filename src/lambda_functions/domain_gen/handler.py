@@ -145,6 +145,28 @@ def _get_job(job_id: str, sub: str, is_admin: bool) -> dict[str, Any]:
     return create_response(200, _format_job(row, include_output=True))
 
 
+def _delete_job(job_id: str, sub: str, is_admin: bool) -> dict[str, Any]:
+    """Delete a job record. Running jobs cannot be deleted."""
+    rows = db.execute_query(
+        "SELECT id, user_id, status FROM domain_gen_jobs WHERE id = %s",
+        params=[job_id],
+        return_dict=True,
+    )
+    if not rows:
+        return create_error_response(404, "Job not found")
+    row = rows[0]
+    if str(row["user_id"]) != sub and not is_admin:
+        return create_error_response(403, "Access denied")
+    if row["status"] == "running":
+        return create_error_response(409, "Cannot delete a running job")
+    db.execute_query(
+        "DELETE FROM domain_gen_jobs WHERE id = %s",
+        params=[job_id],
+        return_dict=False,
+    )
+    return create_response(200, {"message": "Job deleted"})
+
+
 def _approve_job(job_id: str, sub: str, is_admin: bool) -> dict[str, Any]:
     """Save approved terms from a completed job into tree_nodes."""
     rows = db.execute_query(
@@ -228,13 +250,10 @@ def lambda_handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
     job_id = path_params.get("id")
     is_admin = _is_admin(event)
 
-    # POST /domains/generate/{id}/approve
-    if method == "POST" and job_id:
-        action = (event.get("pathParameters") or {}).get("action")
-        path = event.get("path", "")
-        if path.endswith("/approve"):
-            return _approve_job(job_id, sub, is_admin)
-        return create_error_response(405, "Method not allowed")
+    path = event.get("path", "")
+
+    if method == "POST" and job_id and path.endswith("/approve"):
+        return _approve_job(job_id, sub, is_admin)
 
     try:
         if method == "POST":
@@ -243,6 +262,8 @@ def lambda_handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
             return _get_job(job_id, sub, is_admin)
         if method == "GET":
             return _list_jobs(event, sub)
+        if method == "DELETE" and job_id:
+            return _delete_job(job_id, sub, is_admin)
         return create_error_response(405, "Method not allowed")
     except Exception:
         logger.exception("Unhandled error in domain_gen handler")

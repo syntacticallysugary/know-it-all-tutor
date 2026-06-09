@@ -350,6 +350,10 @@ class APIClient {
   async approveDomainGenJob(id: string): Promise<ApproveJobResult> {
     return this.request<ApproveJobResult>(`/domains/generate/${id}/approve`, { method: 'POST' })
   }
+
+  async deleteDomainGenJob(id: string): Promise<void> {
+    await this.request<{ message: string }>(`/domains/generate/${id}`, { method: 'DELETE' })
+  }
 }
 
 export interface BatchValidationResult {

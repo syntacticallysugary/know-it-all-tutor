@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { QueueListIcon } from '@heroicons/react/24/outline'
+import { QueueListIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { apiClient } from '../../services/api'
 import type { DomainGenJob } from '../../services/api'
 
@@ -34,6 +34,7 @@ const DomainGenQueue: React.FC<Props> = ({ newJob, onSelectJob }) => {
   const [jobs, setJobs] = useState<DomainGenJob[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState<Set<string>>(new Set())
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const load = async () => {
@@ -63,6 +64,19 @@ const DomainGenQueue: React.FC<Props> = ({ newJob, onSelectJob }) => {
     }, 20000)
     return () => { if (pollRef.current) clearInterval(pollRef.current) }
   }, [])
+
+  const handleDelete = async (job: DomainGenJob) => {
+    if (!window.confirm(`Delete "${job.topic}"?`)) return
+    setDeleting(prev => new Set(prev).add(job.id))
+    try {
+      await apiClient.deleteDomainGenJob(job.id)
+      setJobs(prev => prev.filter(j => j.id !== job.id))
+    } catch (e: any) {
+      setError(e.message || 'Failed to delete job.')
+    } finally {
+      setDeleting(prev => { const s = new Set(prev); s.delete(job.id); return s })
+    }
+  }
 
   if (loading) {
     return <div className="flex items-center justify-center py-12 text-gray-500">Loading jobs…</div>
@@ -124,6 +138,16 @@ const DomainGenQueue: React.FC<Props> = ({ newJob, onSelectJob }) => {
                     className="text-xs text-teal-600 hover:text-teal-500 font-medium"
                   >
                     View →
+                  </button>
+                )}
+                {job.status !== 'running' && (
+                  <button
+                    onClick={() => handleDelete(job)}
+                    disabled={deleting.has(job.id)}
+                    className="text-gray-300 hover:text-red-500 disabled:opacity-40 transition-colors"
+                    title="Delete job"
+                  >
+                    <TrashIcon className="h-4 w-4" />
                   </button>
                 )}
               </div>
