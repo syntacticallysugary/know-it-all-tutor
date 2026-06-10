@@ -1,71 +1,12 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import SignInForm from '../components/Auth/SignInForm'
-import SignUpForm from '../components/Auth/SignUpForm'
-import ConfirmSignUpForm from '../components/Auth/ConfirmSignUpForm'
-import ForgotPasswordForm from '../components/Auth/ForgotPasswordForm'
-
-type AuthView = 'signIn' | 'signUp' | 'confirmSignUp' | 'forgotPassword'
 
 const AuthPage = () => {
-  const { isAuthenticated } = useAuth()
-  const [currentView, setCurrentView] = useState<AuthView>('signIn')
-  const [pendingUsername, setPendingUsername] = useState('')
+  const { isAuthenticated, signIn } = useAuth()
 
-  // Redirect if already authenticated
   if (isAuthenticated) {
     return <Navigate to="/app/dashboard" replace />
-  }
-
-  const handleSignUpSuccess = (username: string) => {
-    setPendingUsername(username)
-    setCurrentView('confirmSignUp')
-  }
-
-  const handleConfirmationSuccess = () => {
-    setCurrentView('signIn')
-    setPendingUsername('')
-  }
-
-  const handleResetSuccess = () => {
-    setCurrentView('signIn')
-  }
-
-  const renderCurrentView = () => {
-    switch (currentView) {
-      case 'signIn':
-        return (
-          <SignInForm
-            onSwitchToSignUp={() => setCurrentView('signUp')}
-            onSwitchToForgotPassword={() => setCurrentView('forgotPassword')}
-          />
-        )
-      case 'signUp':
-        return (
-          <SignUpForm
-            onSwitchToSignIn={() => setCurrentView('signIn')}
-            onSignUpSuccess={handleSignUpSuccess}
-          />
-        )
-      case 'confirmSignUp':
-        return (
-          <ConfirmSignUpForm
-            username={pendingUsername}
-            onConfirmationSuccess={handleConfirmationSuccess}
-            onBackToSignUp={() => setCurrentView('signUp')}
-          />
-        )
-      case 'forgotPassword':
-        return (
-          <ForgotPasswordForm
-            onBackToSignIn={() => setCurrentView('signIn')}
-            onResetSuccess={handleResetSuccess}
-          />
-        )
-      default:
-        return null
-    }
   }
 
   return (
@@ -75,10 +16,19 @@ const AuthPage = () => {
           <div className="text-3xl font-bold text-primary-600 mb-8">
             Know-It-All Tutor
           </div>
+          <p className="text-gray-600 mb-8">Sign in to access your knowledge domains.</p>
         </div>
-        
-        <div className="bg-white p-8 rounded-lg shadow-md border">
-          {renderCurrentView()}
+
+        <div className="bg-white p-8 rounded-lg shadow-md border text-center">
+          <button
+            onClick={signIn}
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+          >
+            Sign In
+          </button>
+          <p className="mt-4 text-sm text-gray-500">
+            New here? You can register from the sign-in page. Accounts are reviewed before access is granted.
+          </p>
         </div>
       </div>
     </div>

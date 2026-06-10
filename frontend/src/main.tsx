@@ -12,7 +12,15 @@ const amplifyConfig = {
     Cognito: {
       userPoolId: import.meta.env.VITE_COGNITO_USER_POOL_ID || 'us-east-1_EXAMPLE123',
       userPoolClientId: import.meta.env.VITE_COGNITO_USER_POOL_CLIENT_ID || 'abcdef123456789example',
-      region: import.meta.env.VITE_AWS_REGION || 'us-east-1',
+      loginWith: {
+        oauth: {
+          domain: import.meta.env.VITE_AUTH_DOMAIN || 'auth.syntacticallysugary.dev',
+          scopes: ['openid', 'email', 'profile'],
+          redirectSignIn: [import.meta.env.VITE_REDIRECT_SIGN_IN || 'https://tutor.syntacticallysugary.dev/callback'],
+          redirectSignOut: [import.meta.env.VITE_REDIRECT_SIGN_OUT || 'https://tutor.syntacticallysugary.dev/'],
+          responseType: 'code' as const,
+        }
+      }
     }
   },
   API: {

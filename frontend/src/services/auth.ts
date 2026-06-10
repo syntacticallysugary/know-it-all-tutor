@@ -1,4 +1,4 @@
-import { signUp, signIn, signOut, confirmSignUp, resendSignUpCode, resetPassword, confirmResetPassword, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth'
+import { signUp, signIn, signInWithRedirect, signOut, confirmSignUp, resendSignUpCode, resetPassword, confirmResetPassword, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth'
 
 export interface SignUpParams {
   username: string
@@ -147,25 +147,8 @@ export class AuthService {
     }
   }
 
-  static async signIn({ username, password }: SignInParams) {
-    try {
-      const { isSignedIn, nextStep } = await signIn({
-        username,
-        password,
-      })
-
-      return {
-        success: true,
-        isSignedIn,
-        nextStep,
-      }
-    } catch (error) {
-      console.error('Sign in error:', error)
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Sign in failed',
-      }
-    }
+  static async redirectToSignIn() {
+    await signInWithRedirect()
   }
 
   static async signOut() {
