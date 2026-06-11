@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 import re
 
 import urllib3
@@ -206,7 +207,7 @@ def run_pipeline(
     n = len(decomposition.subdomains)
     logger.info(f"Subdomains ({n}): {[s.name for s in decomposition.subdomains]}")
 
-    max_per = 20
+    max_per = max(15, math.ceil(total_terms / n))
     subdomain_terms: dict[str, list[Term]] = {}
 
     for i, subdomain in enumerate(decomposition.subdomains, 1):
@@ -221,6 +222,7 @@ def run_pipeline(
             pre_context=pre_context,
             base_url=base_url,
             model=model,
+            max_turns=3,
         )
         subdomain_terms[subdomain.name] = terms
         logger.info(f"  collected {len(terms)} terms")

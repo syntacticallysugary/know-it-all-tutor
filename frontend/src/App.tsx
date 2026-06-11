@@ -18,6 +18,7 @@ import Profile from './pages/Profile'
 
 // Auth Components
 import AuthPage from './pages/AuthPage'
+import OAuthCallbackPage from './pages/OAuthCallbackPage'
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/auth/*" element={<AuthPage />} />
+          <Route path="/callback" element={<OAuthCallbackPage />} />
           
           {/* Protected Routes */}
           <Route path="/app" element={
