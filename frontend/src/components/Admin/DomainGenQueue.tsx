@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { QueueListIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { BoltIcon, QueueListIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { apiClient } from '../../services/api'
 import type { DomainGenJob } from '../../services/api'
+import { useAuth } from '../../contexts/AuthContext'
 
 interface Props {
   newJob: DomainGenJob | null
@@ -31,10 +32,13 @@ function formatDate(iso: string): string {
 }
 
 const DomainGenQueue: React.FC<Props> = ({ newJob, onSelectJob }) => {
+  const { user } = useAuth()
+  const isAdmin = user?.isAdmin ?? false
   const [jobs, setJobs] = useState<DomainGenJob[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<Set<string>>(new Set())
+  const [triggering, setTriggering] = useState<Set<string>>(new Set())
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const load = async () => {
@@ -64,6 +68,17 @@ const DomainGenQueue: React.FC<Props> = ({ newJob, onSelectJob }) => {
     }, 20000)
     return () => { if (pollRef.current) clearInterval(pollRef.current) }
   }, [])
+
+  const handleTrigger = async (job: DomainGenJob) => {
+    setTriggering(prev => new Set(prev).add(job.id))
+    try {
+      await apiClient.triggerDomainGenJob(job.id)
+    } catch (e: any) {
+      setError(e.message || 'Failed to trigger job.')
+    } finally {
+      setTriggering(prev => { const s = new Set(prev); s.delete(job.id); return s })
+    }
+  }
 
   const handleDelete = async (job: DomainGenJob) => {
     if (!window.confirm(`Delete "${job.topic}"?`)) return
@@ -138,6 +153,16 @@ const DomainGenQueue: React.FC<Props> = ({ newJob, onSelectJob }) => {
                     className="text-xs text-teal-600 hover:text-teal-500 font-medium"
                   >
                     View →
+                  </button>
+                )}
+                {isAdmin && job.status === 'pending' && (
+                  <button
+                    onClick={() => handleTrigger(job)}
+                    disabled={triggering.has(job.id)}
+                    className="text-gray-300 hover:text-primary-500 disabled:opacity-40 transition-colors"
+                    title="Run now"
+                  >
+                    <BoltIcon className="h-4 w-4" />
                   </button>
                 )}
                 {job.status !== 'running' && (

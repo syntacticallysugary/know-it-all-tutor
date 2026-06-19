@@ -354,6 +354,10 @@ class APIClient {
   async deleteDomainGenJob(id: string): Promise<void> {
     await this.request<{ message: string }>(`/domains/generate/${id}`, { method: 'DELETE' })
   }
+
+  async triggerDomainGenJob(id: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/domains/generate/${id}/run`, { method: 'POST' })
+  }
 }
 
 export interface BatchValidationResult {

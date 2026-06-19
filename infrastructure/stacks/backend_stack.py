@@ -498,6 +498,12 @@ class BackendStack(Stack):
             authorizer=authorizer,
             authorization_type=apigateway.AuthorizationType.COGNITO,
         )
+        generate_id_resource.add_resource("run").add_method(
+            "POST",
+            apigateway.LambdaIntegration(self.domain_gen_lambda),
+            authorizer=authorizer,
+            authorization_type=apigateway.AuthorizationType.COGNITO,
+        )
 
         # Batch Upload routes (with authorization)
         batch_resource = self.api.root.add_resource("batch")

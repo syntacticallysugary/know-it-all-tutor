@@ -167,6 +167,27 @@ def _delete_job(job_id: str, sub: str, is_admin: bool) -> dict[str, Any]:
     return create_response(200, {"message": "Job deleted"})
 
 
+def _trigger_job(job_id: str, is_admin: bool) -> dict[str, Any]:
+    """Mark a pending job as priority so the poll worker picks it up next."""
+    if not is_admin:
+        return create_error_response(403, "Admin only")
+    rows = db.execute_query(
+        "SELECT id, status FROM domain_gen_jobs WHERE id = %s",
+        params=[job_id],
+        return_dict=True,
+    )
+    if not rows:
+        return create_error_response(404, "Job not found")
+    if rows[0]["status"] != "pending":
+        return create_error_response(409, f"Only pending jobs can be triggered (status: {rows[0]['status']})")
+    db.execute_query(
+        "UPDATE domain_gen_jobs SET priority = TRUE, updated_at = NOW() WHERE id = %s",
+        params=[job_id],
+        return_dict=False,
+    )
+    return create_response(200, {"message": "Job marked for priority processing"})
+
+
 def _approve_job(job_id: str, sub: str, is_admin: bool) -> dict[str, Any]:
     """Save approved terms from a completed job into tree_nodes."""
     rows = db.execute_query(
@@ -254,6 +275,8 @@ def lambda_handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
 
     if method == "POST" and job_id and path.endswith("/approve"):
         return _approve_job(job_id, sub, is_admin)
+    if method == "POST" and job_id and path.endswith("/run"):
+        return _trigger_job(job_id, is_admin)
 
     try:
         if method == "POST":
