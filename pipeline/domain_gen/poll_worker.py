@@ -108,7 +108,7 @@ def _claim_job(fn_name: str) -> dict | None:
             SELECT id, topic, hints, total_terms
             FROM domain_gen_jobs
             WHERE status = 'pending'
-            ORDER BY priority DESC, created_at ASC
+            ORDER BY (priority IS TRUE) DESC, created_at ASC
             LIMIT 1
             """,
         )

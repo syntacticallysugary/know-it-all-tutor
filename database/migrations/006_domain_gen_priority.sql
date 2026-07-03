@@ -3,6 +3,8 @@
 -- by the poll worker (which orders by priority DESC, created_at ASC).
 -- Date: 2026-06-18
 
-ALTER TABLE domain_gen_jobs ADD COLUMN IF NOT EXISTS priority BOOLEAN NOT NULL DEFAULT FALSE;
+-- DSQL does not support ADD COLUMN with inline constraints; column is nullable,
+-- treated as FALSE by application code and poll worker (NULL OR FALSE = not priority).
+ALTER TABLE domain_gen_jobs ADD COLUMN IF NOT EXISTS priority BOOLEAN;
 
 CREATE INDEX IF NOT EXISTS idx_domain_gen_jobs_priority ON domain_gen_jobs (priority DESC, created_at ASC) WHERE status = 'pending';
